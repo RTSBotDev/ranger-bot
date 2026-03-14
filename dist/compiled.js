@@ -1353,7 +1353,7 @@ var utils_1 = __webpack_require__(10);
 exports.SPEED_FACTOR = 20;
 exports.WORKERS_PER_CASTLE = 12;
 exports.MAX_WORKERS = 50;
-exports.PRE_QUEUE_BUFFER = 10;
+exports.PRE_QUEUE_BUFFER = 7;
 exports.BUILDING_SPACE_BUFFER = 2;
 exports.NEAR_MAX_SUPPLY = 10;
 exports.MAX_MINING_DISTANCE = 6;
@@ -3536,6 +3536,9 @@ function _SurveySupply(my_building, data_hub) {
     }
 }
 function _SurveySpending(my_building, data_hub) {
+    if (_BuildOrderExceptionApplies(data_hub)) {
+        return;
+    }
     var unit_cost = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
             my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
@@ -3606,6 +3609,35 @@ function _SurveySpending(my_building, data_hub) {
     var cost_per_min = unit_cost * 60 / build_time;
     data_hub.gold_spend_per_min += cost_per_min;
 }
+function _BuildOrderExceptionApplies(data_hub) {
+    if ((0, utils_1.WolvesAreObsolete)()) {
+        return false;
+    }
+    else if (data_hub.active_mining_bases > 1) {
+        return false;
+    }
+    else if (data_hub.viable_gold_mines.length < 1) {
+        return false;
+    }
+    else if (!scope.player.buildings.house) {
+        return false;
+    }
+    else if (2 != scope.player.buildings.house) {
+        return false;
+    }
+    else if (!scope.player.buildings.wolvesden) {
+        return false;
+    }
+    else if (2 != scope.player.buildings.wolvesden) {
+        return false;
+    }
+    else if (scope.getMaxSupply() - scope.getCurrentSupply() > 1) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
 
 
 /***/ }),
@@ -3665,9 +3697,13 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BuildHouseIfNeeded = BuildHouseIfNeeded;
 var constants_1 = __webpack_require__(15);
 var build_1 = __webpack_require__(48);
+var utils_1 = __webpack_require__(10);
 function BuildHouseIfNeeded(_a) {
     var data_hub = _a.data_hub;
     if (scope.getMaxSupply() + data_hub.supply_under_construction >= scope.player.supplyCap) {
+        return;
+    }
+    else if (_IntentionalSupplyBlockOnOneBase(data_hub)) {
         return;
     }
     var house_builders = data_hub.house_builders;
@@ -3691,6 +3727,35 @@ function _CalculateAvailableSupply(house_builders, data_hub) {
         }
     }
     return output;
+}
+function _IntentionalSupplyBlockOnOneBase(data_hub) {
+    if ((0, utils_1.WolvesAreObsolete)()) {
+        return false;
+    }
+    else if (data_hub.active_mining_bases > 1) {
+        return false;
+    }
+    else if (data_hub.viable_gold_mines.length < 1) {
+        return false;
+    }
+    else if (!scope.player.buildings.house) {
+        return false;
+    }
+    else if (scope.player.buildings.house < 1) {
+        return false;
+    }
+    else if (!scope.player.buildings.wolvesden) {
+        return true;
+    }
+    else if (scope.getCurrentGameTimeInSec() < 110 && scope.player.buildings.wolvesden < 2) {
+        return true;
+    }
+    else if (scope.player.buildings.house < 2) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 
@@ -4212,12 +4277,16 @@ function TrainWolves(_a) {
         if (wolf_den.queue[0]) {
             continue;
         }
+        var queued_wolf = false;
         if (data_hub.spendable_gold >= constants_1.WOLF_COST && data_hub.available_supply >= constants_1.WOLF_SUPPLY) {
             scope.order('Train Wolf', [{ 'unit': wolf_den }]);
             wolf_den.ranger_bot.queue_finish_time = scope.getCurrentGameTimeInSec() + constants_1.WOLF_BUILD_TIME;
+            queued_wolf = true;
         }
-        data_hub.spendable_gold -= constants_1.WOLF_COST;
-        data_hub.available_supply -= constants_1.WOLF_SUPPLY;
+        if (!_BuildOrderExceptionApplies(data_hub, queued_wolf)) {
+            data_hub.spendable_gold -= constants_1.WOLF_COST;
+            data_hub.available_supply -= constants_1.WOLF_SUPPLY;
+        }
     }
     if (scope.getCurrentSupply() >= scope.player.supplyCap - constants_1.NEAR_MAX_SUPPLY) {
         return;
@@ -4240,12 +4309,53 @@ function TrainWolves(_a) {
         if (time_left >= constants_1.PRE_QUEUE_BUFFER) {
             continue;
         }
-        if (data_hub.spendable_gold >= constants_1.WOLF_COST && data_hub.available_supply >= constants_1.WOLF_SUPPLY) {
+        var available_supply = (function () {
+            if (_BuildOrderExceptionApplies(data_hub, false)) {
+                return data_hub.available_supply - data_hub.units_supply_producing;
+            }
+            else {
+                return data_hub.available_supply;
+            }
+        })();
+        var queued_wolf = false;
+        if (data_hub.spendable_gold >= constants_1.WOLF_COST && available_supply >= constants_1.WOLF_SUPPLY) {
             scope.order('Train Wolf', [{ 'unit': wolf_den }]);
             wolf_den.ranger_bot.queue_finish_time += constants_1.WOLF_BUILD_TIME;
+            queued_wolf = true;
         }
-        data_hub.spendable_gold -= constants_1.WOLF_COST;
-        data_hub.available_supply -= constants_1.WOLF_SUPPLY;
+        if (!_BuildOrderExceptionApplies(data_hub, queued_wolf)) {
+            data_hub.spendable_gold -= constants_1.WOLF_COST;
+            data_hub.available_supply -= constants_1.WOLF_SUPPLY;
+        }
+    }
+}
+function _BuildOrderExceptionApplies(data_hub, queued_wolf) {
+    if (queued_wolf) {
+        return false;
+    }
+    else if ((0, utils_1.WolvesAreObsolete)()) {
+        return false;
+    }
+    else if (data_hub.active_mining_bases > 1) {
+        return false;
+    }
+    else if (data_hub.viable_gold_mines.length < 1) {
+        return false;
+    }
+    else if (!scope.player.buildings.house) {
+        return false;
+    }
+    else if (2 != scope.player.buildings.house) {
+        return false;
+    }
+    else if (!scope.player.buildings.wolvesden) {
+        return false;
+    }
+    else if (2 != scope.player.buildings.wolvesden) {
+        return false;
+    }
+    else {
+        return true;
     }
 }
 
@@ -4365,7 +4475,7 @@ function NextBuildOrderStep(_a) {
     if ((0, build_towers_1.BuildTowers)({ data_hub: data_hub })) {
         return;
     }
-    if (data_hub.my_wolf_dens.length <= 0 && !(0, utils_1.WolvesAreObsolete)()) {
+    if (data_hub.my_wolf_dens.length < 2 && !(0, utils_1.WolvesAreObsolete)()) {
         if (data_hub.spendable_gold >= constants_1.WOLF_DEN_COST) {
             (0, build_1.BuildWolfDen)({ data_hub: data_hub });
         }
@@ -4380,7 +4490,7 @@ function NextBuildOrderStep(_a) {
             already_reserved_castle_gold = true;
         }
     }
-    if (data_hub.my_barracks.length < 2) {
+    if (data_hub.my_barracks.length < 1) {
         if (data_hub.spendable_gold >= constants_1.BARRACKS_COST) {
             (0, build_1.BuildBarracks)({ data_hub: data_hub });
         }
@@ -4395,7 +4505,7 @@ function NextBuildOrderStep(_a) {
             already_reserved_castle_gold = true;
         }
     }
-    if (data_hub.my_barracks.length < 4) {
+    if (data_hub.my_barracks.length < 3) {
         if (data_hub.spendable_gold >= constants_1.BARRACKS_COST) {
             (0, build_1.BuildBarracks)({ data_hub: data_hub });
         }
@@ -4868,9 +4978,6 @@ function _SeedThreats(data_hub) {
     scope.ranger_bot.team_caches[data_hub.team_cache_key].threats = new_threats;
 }
 function _ScoutGoldMines(data_hub, threats) {
-    if (scope.getCurrentGameTimeInSec() < constants_1.MINE_SCOUT_INTERVAL) {
-        return threats;
-    }
     var dx = (constants_1.CASTLE_WIDTH - 1) / 2;
     var dy = (constants_1.CASTLE_HEIGHT - 1) / 2;
     for (var i = 0; i < data_hub.gold_mines.length; i++) {

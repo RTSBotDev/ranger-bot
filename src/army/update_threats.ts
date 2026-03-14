@@ -63,10 +63,6 @@ function _SeedThreats(data_hub: DataHub): void {
 }
 
 function _ScoutGoldMines(data_hub: DataHub, threats: TeamThreatsCache): TeamThreatsCache {
-  if (scope.getCurrentGameTimeInSec() < MINE_SCOUT_INTERVAL) {
-    return threats;
-  }
-
   const dx = (CASTLE_WIDTH - 1) / 2;
   const dy = (CASTLE_HEIGHT - 1) / 2;
 

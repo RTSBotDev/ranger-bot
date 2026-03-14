@@ -45,7 +45,7 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     return;
   }
 
-  if (data_hub.my_wolf_dens.length <= 0 && !WolvesAreObsolete()) {
+  if (data_hub.my_wolf_dens.length < 2 && !WolvesAreObsolete()) {
     if (data_hub.spendable_gold >= WOLF_DEN_COST) {
       BuildWolfDen({ data_hub: data_hub });
     }
@@ -62,7 +62,7 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     }
   }
 
-  if (data_hub.my_barracks.length < 2) {
+  if (data_hub.my_barracks.length < 1) {
     if (data_hub.spendable_gold >= BARRACKS_COST) {
       BuildBarracks({ data_hub: data_hub });
     }
@@ -79,7 +79,7 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     }
   }
 
-  if (data_hub.my_barracks.length < 4) {
+  if (data_hub.my_barracks.length < 3) {
     if (data_hub.spendable_gold >= BARRACKS_COST) {
       BuildBarracks({ data_hub: data_hub });
     }
