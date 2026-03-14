@@ -10,7 +10,7 @@ interface IdentifyBattlesKwargs {
 function IdentifyBattles({ data_hub, squads }: IdentifyBattlesKwargs): RangerBotBattle[] {
   // Battles are graphs (nodes and edges) where squads are only connected to
   // targets, and targets are only connected to squads.
-  const unassigned_targets = [data_hub.targets.map((t) => t)];
+  const unassigned_targets = [data_hub.targets.filter((t) => (t.hp as number) > 0)];
   const unassigned_squads = [squads.map((s) => s)];
   let output: RangerBotBattle[] = [];
 

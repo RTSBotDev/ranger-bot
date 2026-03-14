@@ -15,7 +15,7 @@ function AllocateUnits({ data_hub, battles }: ManageSquadKwargs): void {
 }
 
 function _ExcludeBusyUnits(targets: RangerBotTarget[], battles: RangerBotBattle[]): RangerBotBusyUnits {
-  // Units tend to get stuck in protracted chains of battles and never get where they're going
+  // Prevent a unit from being allocated to 2 targets, or even the same target twice
   const busy_units: RangerBotBusyUnits = {};
 
   for (let i=0; i<battles.length; i++) {
@@ -35,6 +35,11 @@ function _ExcludeBusyUnits(targets: RangerBotTarget[], battles: RangerBotBattle[
     const target = targets[i];
 
     target.units = target.units.filter((u) => !busy_units[u.id]);
+    for (let j=0; j<target.units.length; j++) {
+      const unit = target.units[j];
+
+      busy_units[unit.id] = true;
+    }
   }
 
   return busy_units;
