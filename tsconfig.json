@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "baseUrl": "./",
+    "noUncheckedSideEffectImports": true,
+    "removeComments": true,
+    "allowJs": false,
+  },
+  "exclude": [
+    "./__test_setup/",
+    "./__tests__/",
+  ],
+}
