@@ -1406,12 +1406,12 @@ exports.REPLACEMENT_BASE_THRESHOLD = 1000;
 exports.MAX_FORGES = 3;
 exports.MAX_BARRACKS = 10;
 exports.BASE_TARGET_RADIUS = 3;
-exports.MIN_THREAT_RESPONSE = 0.2;
+exports.MIN_THREAT_RESPONSE = 2;
 exports.MAX_THREAT_RESPONSE = 5;
 exports.ATTACK_RADIUS = 19;
 exports.RETREAT_RADIUS = 9;
-exports.ATTACK_THRESHOLD = 1.25;
-exports.RETREAT_THRESHOLD = 0.95;
+exports.ATTACK_THRESHOLD = 1.65;
+exports.RETREAT_THRESHOLD = 0.85;
 exports.AGGRO_ATTACK_THRESHOLD = 0.5;
 exports.AGGRO_RETREAT_THRESHOLD = 0.25;
 exports.LAZY_ORDER_DISTANCE = 2;
@@ -1425,7 +1425,7 @@ exports.TARGET_RESET_THRESHOLD = 0.01;
 exports.PASSIVE_THREAT_FACTOR = 13;
 exports.SCOUT_RADIUS = 20;
 exports.SCOUTS = 4;
-exports.WORKER_DISRESPECT = 0.8;
+exports.WORKER_DISRESPECT = 0.15;
 exports.CASTLE_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'sizeX' });
 exports.CASTLE_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'sizeY' });
 exports.MINE_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'goldmine', field_name: 'sizeX' });
@@ -6483,25 +6483,27 @@ function AssignUnitsToTargets(_a) {
             just_one: false,
         });
     }
-    if (scout_targets.length > 0) {
-        scout_targets = scout_targets.sort(function (a, b) { return a.priority - b.priority; });
-        fighting_units = _ReAssign({
-            fighting_units: fighting_units,
-            to_targets: scout_targets,
-            from_targets: [passive_targets, active_targets],
-            max_response: false,
-            just_one: true,
-        });
-    }
     if (active_targets.length > 0) {
         active_targets = active_targets.sort(function (a, b) { return a.priority - b.priority; });
         fighting_units = _ReAssign({
             fighting_units: fighting_units,
             to_targets: active_targets,
+            from_targets: [passive_targets, scout_targets],
+            max_response: false,
+            just_one: true,
+        });
+    }
+    if (scout_targets.length > 0) {
+        scout_targets = scout_targets.sort(function (a, b) { return a.priority - b.priority; });
+        fighting_units = _ReAssign({
+            fighting_units: fighting_units,
+            to_targets: scout_targets,
             from_targets: [passive_targets],
             max_response: false,
             just_one: true,
         });
+    }
+    if (active_targets.length > 0) {
         fighting_units = _ReAssign({
             fighting_units: fighting_units,
             to_targets: active_targets,
@@ -6523,8 +6525,7 @@ function AssignUnitsToTargets(_a) {
     if (0 == fighting_units.length) {
         return;
     }
-    var all_threats = urgent_targets.concat(active_targets);
-    all_threats = all_threats.concat(passive_targets);
+    var all_threats = urgent_targets.concat(active_targets).concat(passive_targets);
     all_threats = all_threats.sort(function (a, b) { return a.priority - b.priority; });
     var assigner = new unit_assigner_1.UnitAssigner(fighting_units, true);
     assigner.Assign({

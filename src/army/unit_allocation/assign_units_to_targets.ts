@@ -41,7 +41,7 @@ function AssignUnitsToTargets({ data_hub }: AssignUnitsToTargetsKwargs): void {
   }
   fighting_units = fighting_units.filter((u) => !data_hub.busy_units[u.id]);
 
-  // First defend, then scout, then attack
+  // First defend
   if (urgent_targets.length > 0) {
     urgent_targets = urgent_targets.sort((a, b) => (a.priority as number) - (b.priority as number));
 
@@ -53,28 +53,31 @@ function AssignUnitsToTargets({ data_hub }: AssignUnitsToTargetsKwargs): void {
       just_one: false,
     });
   }
-  if (scout_targets.length > 0) {
-    scout_targets = scout_targets.sort((a, b) => (a.priority as number) - (b.priority as number));
-
-    fighting_units = _ReAssign({
-      fighting_units: fighting_units,
-      to_targets: scout_targets,
-      from_targets: [passive_targets, active_targets],
-      max_response: false,
-      just_one: true,
-    });
-  }
+  // then scout
   if (active_targets.length > 0) {
     active_targets = active_targets.sort((a, b) => (a.priority as number) - (b.priority as number));
 
     fighting_units = _ReAssign({
       fighting_units: fighting_units,
       to_targets: active_targets,
-      from_targets: [passive_targets],
+      from_targets: [passive_targets, scout_targets],
       max_response: false,
       just_one: true, // keep an eye on all enemy armies
     });
+  }
+  if (scout_targets.length > 0) {
+    scout_targets = scout_targets.sort((a, b) => (a.priority as number) - (b.priority as number));
 
+    fighting_units = _ReAssign({
+      fighting_units: fighting_units,
+      to_targets: scout_targets,
+      from_targets: [passive_targets],
+      max_response: false,
+      just_one: true,
+    });
+  }
+  // attack last
+  if (active_targets.length > 0) {
     fighting_units = _ReAssign({
       fighting_units: fighting_units,
       to_targets: active_targets,
@@ -102,8 +105,7 @@ function AssignUnitsToTargets({ data_hub }: AssignUnitsToTargetsKwargs): void {
   // attacking every enemy position we know about, with what we expect to be
   // overwhelming force. So it shouldn't matter too much where we allocate the
   // rest of our units, just throw them at the highest priority target.
-  let all_threats = urgent_targets.concat(active_targets);
-  all_threats = all_threats.concat(passive_targets);
+  let all_threats = urgent_targets.concat(active_targets).concat(passive_targets);
   all_threats = all_threats.sort((a, b) => (a.priority as number) - (b.priority as number));
 
   const assigner = new UnitAssigner(fighting_units, true);
