@@ -80,4 +80,20 @@ function BuildForge({ data_hub }: BuildKwargs): void {
   }
 }
 
-export { BuildHouse, BuildWolfDen, BuildBarracks, BuildArmory, BuildForge };
+function BuildSnakeCharmer({ data_hub }: BuildKwargs): void {
+  const traveling_snake_charmer_builders = data_hub.traveling_snake_charmer_builders as LwgUnit[];
+  if (traveling_snake_charmer_builders.length > 0) {
+    return undefined;
+  }
+  const new_snake_charmer_builder: LwgUnit | undefined = ConstructBuilding({
+    building_type: 'snakecharmer',
+    build_order: 'Build Snake Charmer',
+    data_hub: data_hub,
+  });
+  if (new_snake_charmer_builder) {
+    traveling_snake_charmer_builders.push(new_snake_charmer_builder);
+  }
+}
+
+export { BuildHouse, BuildWolfDen, BuildBarracks, BuildArmory, BuildForge,
+  BuildSnakeCharmer };

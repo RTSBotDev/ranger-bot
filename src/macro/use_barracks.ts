@@ -2,6 +2,7 @@ import { DataHub } from '../data_hub';
 import { SOLDIER_COST, SOLDIER_SUPPLY, SOLDIER_BUILD_TIME, PRE_QUEUE_BUFFER,
   ARCHER_COST, ARCHER_SUPPLY, ARCHER_BUILD_TIME, NEAR_MAX_SUPPLY,
   SPEED_FACTOR } from '../constants';
+import { WolvesAreObsolete } from '../utils';
 
 interface UseBarracksKwargs {
   data_hub: DataHub;
@@ -85,13 +86,6 @@ function UseBarracks({ data_hub }: UseBarracksKwargs): void {
   }
 }
 
-interface UnitSelection {
-  order: string;
-  cost: number;
-  supply: number;
-  build_time: number;
-}
-
 const SOLDIER_SELECTION: UnitSelection = {
   'order': 'Train Soldier',
   'cost': SOLDIER_COST,
@@ -107,6 +101,10 @@ const ARCHER_SELECTION: UnitSelection = {
 };
 
 function _SelectBarracksUnit(data_hub: DataHub): UnitSelection {
+  if (_ShouldFavorArchers()) {
+    data_hub.count_ranged ++;
+    return ARCHER_SELECTION;
+  }
   if (data_hub.count_melee < 7) {
     data_hub.count_melee ++;
     return SOLDIER_SELECTION;
@@ -121,6 +119,18 @@ function _SelectBarracksUnit(data_hub: DataHub): UnitSelection {
   } else {
     data_hub.count_melee ++;
     return SOLDIER_SELECTION;
+  }
+}
+
+function _ShouldFavorArchers(): boolean {
+  if (WolvesAreObsolete()) {
+    return false;
+  } else if (undefined === scope.player.buildings.snakecharmer || scope.player.buildings.snakecharmer < 1) {
+    return true;
+  } else if (undefined === scope.player.buildings.wolvesden) {
+    return false;
+  } else {
+    return (scope.player.buildings.barracks as number) <= scope.player.buildings.wolvesden;
   }
 }
 

@@ -35,8 +35,10 @@ class DataHub {
   my_watchtowers: LwgBuilding[];
   my_forges: LwgBuilding[];
   my_armories: LwgBuilding[];
+  my_snake_charmers: LwgBuilding[];
   my_workers: LwgUnit[];
   my_wolves: LwgUnit[];
+  my_snakes: LwgUnit[];
   my_archers: LwgUnit[];
   my_soldiers: LwgUnit[];
   my_fighting_units: LwgUnit[];
@@ -67,12 +69,14 @@ class DataHub {
   tower_builders?: LwgUnit[];
   armory_builders?: LwgUnit[];
   forge_builders?: LwgUnit[];
+  snake_charmer_builders?: LwgUnit[];
   traveling_house_builders?: LwgUnit[];
   traveling_wolf_den_builders?: LwgUnit[];
   traveling_barracks_builders?: LwgUnit[];
   traveling_tower_builders?: LwgUnit[];
   traveling_armory_builders?: LwgUnit[];
   traveling_forge_builders?: LwgUnit[];
+  traveling_snake_charmer_builders?: LwgUnit[];
 
   viable_gold_mines?: CachedGoldMine[];
   active_castles?: LwgBuilding[];
@@ -113,11 +117,13 @@ class DataHub {
     this.my_watchtowers = scope.getBuildings({ player: this.teams.my.id, type: 'Watchtower' }).map((v) => v.unit);
     this.my_forges = scope.getBuildings({ player: this.teams.my.id, type: 'Forge' }).map((v) => v.unit);
     this.my_armories = scope.getBuildings({ player: this.teams.my.id, type: 'Armory' }).map((v) => v.unit);
+    this.my_snake_charmers = scope.getBuildings({ player: this.teams.my.id, type: 'Snake Charmer' }).map((v) => v.unit);
     this.my_workers = scope.getUnits({ player: this.teams.my.id, type: 'Worker' }).map((v) => v.unit);
     this.my_wolves = scope.getUnits({ player: this.teams.my.id, type: 'Wolf' }).map((v) => v.unit);
+    this.my_snakes = scope.getUnits({ player: this.teams.my.id, type: 'Snake' }).map((v) => v.unit);
     this.my_archers = scope.getUnits({ player: this.teams.my.id, type: 'Archer' }).map((v) => v.unit);
     this.my_soldiers = scope.getUnits({ player: this.teams.my.id, type: 'Soldier' }).map((v) => v.unit);
-    this.my_fighting_units = this.my_wolves.concat(this.my_archers).concat(this.my_soldiers);
+    this.my_fighting_units = this.my_wolves.concat(this.my_archers).concat(this.my_soldiers).concat(this.my_snakes);
 
     this.spendable_gold = scope.player.gold + 0; // not sure if + 0 is necessary but I don't want to mutate scope.player.gold
     this.units_supply_producing = 0;
@@ -130,7 +136,7 @@ class DataHub {
     this.net_gold_per_sec = 0;
     this.available_supply = scope.getMaxSupply() - scope.getCurrentSupply();
     this.count_melee = this.my_wolves.length + this.my_soldiers.length;
-    this.count_ranged = this.my_archers.length;
+    this.count_ranged = this.my_archers.length + this.my_snakes.length;
 
     this.friendly_buildings = this.my_buildings.map((b) => b);
     for (let i:number=0; i<this.teams.allies.length; i++) {

@@ -39,6 +39,8 @@ function _SurveyMeleeVsRanged(my_building: LwgBuilding, data_hub: DataHub): void
       data_hub.count_ranged ++;
     } else if (queued_unit.id_string == 'wolf') {
       data_hub.count_melee ++;
+    } else if (queued_unit.id_string == 'snake') {
+      data_hub.count_ranged ++;
     } else if (queued_unit.id_string == 'worker') {
     } else if (queued_unit.isUpgrade) {
     } else {
@@ -50,7 +52,8 @@ function _SurveyMeleeVsRanged(my_building: LwgBuilding, data_hub: DataHub): void
 function _SurveySupply(my_building: LwgBuilding, data_hub: DataHub): void {
   const unit_supply: number = (() => {
     if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+        my_building.type.name == 'Snake Charmer') {
       return 0;
     } else if (my_building.queue && my_building.queue[0]) {
       return my_building.queue[0].supply;
@@ -83,7 +86,8 @@ function _SurveySupply(my_building: LwgBuilding, data_hub: DataHub): void {
 
   const seconds_left: number = (() => {
     if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+        my_building.type.name == 'Snake Charmer') {
       return 0;
     } else if (my_building.queue && my_building.queue[0]) {
       if (my_building.ranger_bot.queue_finish_time) {
@@ -125,7 +129,8 @@ function _SurveySpending(my_building: LwgBuilding, data_hub: DataHub): void {
 
   const unit_cost: number = (() => {
     if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+        my_building.type.name == 'Snake Charmer') {
       return 0;
     } else if (my_building.queue && my_building.queue[0]) {
       return my_building.queue[0].cost;
@@ -155,7 +160,8 @@ function _SurveySpending(my_building: LwgBuilding, data_hub: DataHub): void {
 
   const build_time: number = (() => {
     if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+        my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+        my_building.type.name == 'Snake Charmer') {
       return 0;
     } else if (my_building.queue && my_building.queue[0]) {
       return my_building.queue[0].buildTime / SPEED_FACTOR;

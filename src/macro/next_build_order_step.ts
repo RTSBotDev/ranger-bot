@@ -1,8 +1,9 @@
 import { DataHub } from '../data_hub';
 import { CASTLE_COST, HOUSE_COST, WOLF_DEN_COST, BARRACKS_COST, FORGE_COST,
-  ARMORY_COST, MAX_BARRACKS, MAX_FORGES } from '../constants';
+  ARMORY_COST, MAX_BARRACKS, MAX_FORGES, SNAKE_CHARMER_COST } from '../constants';
 import { StartExpansionWhenReady } from '../construction/start_expansion_when_ready';
-import { BuildHouse, BuildWolfDen, BuildBarracks, BuildForge, BuildArmory } from '../build';
+import { BuildHouse, BuildWolfDen, BuildBarracks, BuildForge, BuildArmory,
+  BuildSnakeCharmer } from '../build';
 import { BuildTowers } from '../construction/build_towers';
 import { WolvesAreObsolete } from '../utils';
 
@@ -70,6 +71,13 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
       data_hub.spendable_gold -= CASTLE_COST;
       already_reserved_castle_gold = true;
     }
+  }
+
+  if (!WolvesAreObsolete() && data_hub.my_snake_charmers.length < 1) {
+    if (data_hub.spendable_gold >= SNAKE_CHARMER_COST) {
+      BuildSnakeCharmer({ data_hub: data_hub });
+    }
+    return;
   }
 
   const rax_on_2_base = WolvesAreObsolete() ? 3 : 1;
