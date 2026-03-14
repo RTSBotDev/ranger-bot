@@ -7,7 +7,7 @@ interface TrainWolvesKwargs {
   data_hub: DataHub;
 }
 
-function TrainWolves({ data_hub }: TrainWolvesKwargs): void {
+function UseWolvesDen({ data_hub }: TrainWolvesKwargs): void {
   if (WolvesAreObsolete()) {
     return;
   }
@@ -104,4 +104,4 @@ function _BuildOrderExceptionApplies(data_hub: DataHub, queued_wolf: boolean): b
   }
 }
 
-export { TrainWolves };
+export { UseWolvesDen };

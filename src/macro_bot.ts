@@ -10,7 +10,7 @@ import { ReserveGoldForBuilders } from './macro/reserve_gold_for_builders';
 import { BuildHouseIfNeeded } from './macro/build_house_if_needed';
 import { TrainWorkersIfNeeded } from './macro/train_workers_if_needed';
 import { UseBarracks } from './macro/use_barracks';
-import { TrainWolves } from './macro/use_wolves_den';
+import { UseWolvesDen } from './macro/use_wolves_den';
 import { ResearchUpgrades } from './macro/research_upgrades';
 import { NextBuildOrderStep } from './macro/next_build_order_step';
 
@@ -37,7 +37,7 @@ class MacroBot {
     BuildHouseIfNeeded({ data_hub: this.data_hub });
     TrainWorkersIfNeeded({ data_hub: this.data_hub });
     UseBarracks({ data_hub: this.data_hub });
-    TrainWolves({ data_hub: this.data_hub });
+    UseWolvesDen({ data_hub: this.data_hub });
     ResearchUpgrades({ data_hub: this.data_hub });
     NextBuildOrderStep({ data_hub: this.data_hub });
   }
