@@ -16,11 +16,12 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
   const viable_gold_mines = data_hub.viable_gold_mines as CachedGoldMine[];
 
   if (data_hub.NeedReplacementExpansion()) {
-    data_hub.spendable_gold += CASTLE_COST;
+    // Once to compensate for ReserveGoldForBuilders, twice to expedite it.
+    data_hub.spendable_gold += 2 * CASTLE_COST;
     if (castle_builders.length <= 0) {
       StartExpansionWhenReady({ data_hub: data_hub });
     }
-    data_hub.spendable_gold -= CASTLE_COST;
+    data_hub.spendable_gold -= 2 * CASTLE_COST;
     already_reserved_castle_gold = true;
   }
 
@@ -45,11 +46,20 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     return;
   }
 
-  if (data_hub.my_wolf_dens.length < 2 && !WolvesAreObsolete()) {
-    if (data_hub.spendable_gold >= WOLF_DEN_COST) {
-      BuildWolfDen({ data_hub: data_hub });
+  if (WolvesAreObsolete()) {
+    if (data_hub.my_barracks.length < 1) {
+      if (data_hub.spendable_gold >= BARRACKS_COST) {
+        BuildBarracks({ data_hub: data_hub });
+      }
+      return;
     }
-    return;
+  } else {
+    if (data_hub.my_wolf_dens.length < 2) {
+      if (data_hub.spendable_gold >= WOLF_DEN_COST) {
+        BuildWolfDen({ data_hub: data_hub });
+      }
+      return;
+    }
   }
 
   if (data_hub.active_mining_bases < 2 && viable_gold_mines.length > 0) {
@@ -62,7 +72,8 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     }
   }
 
-  if (data_hub.my_barracks.length < 1) {
+  const rax_on_2_base = WolvesAreObsolete() ? 3 : 1;
+  if (data_hub.my_barracks.length < rax_on_2_base) {
     if (data_hub.spendable_gold >= BARRACKS_COST) {
       BuildBarracks({ data_hub: data_hub });
     }
@@ -79,7 +90,8 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     }
   }
 
-  if (data_hub.my_barracks.length < 3) {
+  const rax_on_3_base = WolvesAreObsolete() ? 4 : 3;
+  if (data_hub.my_barracks.length < rax_on_3_base) {
     if (data_hub.spendable_gold >= BARRACKS_COST) {
       BuildBarracks({ data_hub: data_hub });
     }

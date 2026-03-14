@@ -4450,11 +4450,11 @@ function NextBuildOrderStep(_a) {
     var castle_builders = data_hub.castle_builders;
     var viable_gold_mines = data_hub.viable_gold_mines;
     if (data_hub.NeedReplacementExpansion()) {
-        data_hub.spendable_gold += constants_1.CASTLE_COST;
+        data_hub.spendable_gold += 2 * constants_1.CASTLE_COST;
         if (castle_builders.length <= 0) {
             (0, start_expansion_when_ready_1.StartExpansionWhenReady)({ data_hub: data_hub });
         }
-        data_hub.spendable_gold -= constants_1.CASTLE_COST;
+        data_hub.spendable_gold -= 2 * constants_1.CASTLE_COST;
         already_reserved_castle_gold = true;
     }
     if (data_hub.active_mining_bases < 1 && viable_gold_mines.length > 0) {
@@ -4475,11 +4475,21 @@ function NextBuildOrderStep(_a) {
     if ((0, build_towers_1.BuildTowers)({ data_hub: data_hub })) {
         return;
     }
-    if (data_hub.my_wolf_dens.length < 2 && !(0, utils_1.WolvesAreObsolete)()) {
-        if (data_hub.spendable_gold >= constants_1.WOLF_DEN_COST) {
-            (0, build_1.BuildWolfDen)({ data_hub: data_hub });
+    if ((0, utils_1.WolvesAreObsolete)()) {
+        if (data_hub.my_barracks.length < 1) {
+            if (data_hub.spendable_gold >= constants_1.BARRACKS_COST) {
+                (0, build_1.BuildBarracks)({ data_hub: data_hub });
+            }
+            return;
         }
-        return;
+    }
+    else {
+        if (data_hub.my_wolf_dens.length < 2) {
+            if (data_hub.spendable_gold >= constants_1.WOLF_DEN_COST) {
+                (0, build_1.BuildWolfDen)({ data_hub: data_hub });
+            }
+            return;
+        }
     }
     if (data_hub.active_mining_bases < 2 && viable_gold_mines.length > 0) {
         if (castle_builders.length <= 0) {
@@ -4490,7 +4500,8 @@ function NextBuildOrderStep(_a) {
             already_reserved_castle_gold = true;
         }
     }
-    if (data_hub.my_barracks.length < 1) {
+    var rax_on_2_base = (0, utils_1.WolvesAreObsolete)() ? 3 : 1;
+    if (data_hub.my_barracks.length < rax_on_2_base) {
         if (data_hub.spendable_gold >= constants_1.BARRACKS_COST) {
             (0, build_1.BuildBarracks)({ data_hub: data_hub });
         }
@@ -4505,7 +4516,8 @@ function NextBuildOrderStep(_a) {
             already_reserved_castle_gold = true;
         }
     }
-    if (data_hub.my_barracks.length < 3) {
+    var rax_on_3_base = (0, utils_1.WolvesAreObsolete)() ? 4 : 3;
+    if (data_hub.my_barracks.length < rax_on_3_base) {
         if (data_hub.spendable_gold >= constants_1.BARRACKS_COST) {
             (0, build_1.BuildBarracks)({ data_hub: data_hub });
         }
@@ -5584,7 +5596,7 @@ var constants_1 = __webpack_require__(15);
 var ground_distance_1 = __webpack_require__(9);
 function IdentifyBattles(_a) {
     var data_hub = _a.data_hub, squads = _a.squads;
-    var unassigned_targets = [data_hub.targets.map(function (t) { return t; })];
+    var unassigned_targets = [data_hub.targets.filter(function (t) { return t.hp > 0; })];
     var unassigned_squads = [squads.map(function (s) { return s; })];
     var output = [];
     while (unassigned_squads[0].length > 0) {
@@ -6077,6 +6089,10 @@ function _ExcludeBusyUnits(targets, battles) {
     for (var i = 0; i < targets.length; i++) {
         var target = targets[i];
         target.units = target.units.filter(function (u) { return !busy_units[u.id]; });
+        for (var j = 0; j < target.units.length; j++) {
+            var unit = target.units[j];
+            busy_units[unit.id] = true;
+        }
     }
     return busy_units;
 }
