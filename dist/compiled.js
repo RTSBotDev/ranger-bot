@@ -121,11 +121,13 @@ var DataHub = (function () {
         this.my_watchtowers = scope.getBuildings({ player: this.teams.my.id, type: 'Watchtower' }).map(function (v) { return v.unit; });
         this.my_forges = scope.getBuildings({ player: this.teams.my.id, type: 'Forge' }).map(function (v) { return v.unit; });
         this.my_armories = scope.getBuildings({ player: this.teams.my.id, type: 'Armory' }).map(function (v) { return v.unit; });
+        this.my_snake_charmers = scope.getBuildings({ player: this.teams.my.id, type: 'Snake Charmer' }).map(function (v) { return v.unit; });
         this.my_workers = scope.getUnits({ player: this.teams.my.id, type: 'Worker' }).map(function (v) { return v.unit; });
         this.my_wolves = scope.getUnits({ player: this.teams.my.id, type: 'Wolf' }).map(function (v) { return v.unit; });
+        this.my_snakes = scope.getUnits({ player: this.teams.my.id, type: 'Snake' }).map(function (v) { return v.unit; });
         this.my_archers = scope.getUnits({ player: this.teams.my.id, type: 'Archer' }).map(function (v) { return v.unit; });
         this.my_soldiers = scope.getUnits({ player: this.teams.my.id, type: 'Soldier' }).map(function (v) { return v.unit; });
-        this.my_fighting_units = this.my_wolves.concat(this.my_archers).concat(this.my_soldiers);
+        this.my_fighting_units = this.my_wolves.concat(this.my_archers).concat(this.my_soldiers).concat(this.my_snakes);
         this.spendable_gold = scope.player.gold + 0;
         this.units_supply_producing = 0;
         this.supply_under_construction = 0;
@@ -137,7 +139,7 @@ var DataHub = (function () {
         this.net_gold_per_sec = 0;
         this.available_supply = scope.getMaxSupply() - scope.getCurrentSupply();
         this.count_melee = this.my_wolves.length + this.my_soldiers.length;
-        this.count_ranged = this.my_archers.length;
+        this.count_ranged = this.my_archers.length + this.my_snakes.length;
         this.friendly_buildings = this.my_buildings.map(function (b) { return b; });
         for (var i = 0; i < this.teams.allies.length; i++) {
             var ally_id = this.teams.allies[i];
@@ -1347,8 +1349,8 @@ function _OverlapsWorkerPaths(map_location, worker_paths) {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = exports.SOLDIER_COST = exports.ARCHER_COST = exports.WOLF_COST = exports.WORKER_COST = exports.FORGE_COST = exports.ARMORY_COST = exports.BARRACKS_COST = exports.WOLF_DEN_COST = exports.HOUSE_COST = exports.CASTLE_COST = exports.TOWER_HEIGHT = exports.TOWER_WIDTH = exports.MINE_HEIGHT = exports.MINE_WIDTH = exports.CASTLE_HEIGHT = exports.CASTLE_WIDTH = exports.WORKER_DISRESPECT = exports.SCOUTS = exports.SCOUT_RADIUS = exports.PASSIVE_THREAT_FACTOR = exports.TARGET_RESET_THRESHOLD = exports.AGGRO_STOP_GAP = exports.AGGRO_START_GAP = exports.MINE_SCOUT_INTERVAL = exports.THREAT_DECAY = exports.CALM_DOWN_DISTANCE = exports.CONSCRIPTION_DISTANCE = exports.LAZY_ORDER_DISTANCE = exports.AGGRO_RETREAT_THRESHOLD = exports.AGGRO_ATTACK_THRESHOLD = exports.RETREAT_THRESHOLD = exports.ATTACK_THRESHOLD = exports.RETREAT_RADIUS = exports.ATTACK_RADIUS = exports.MAX_THREAT_RESPONSE = exports.MIN_THREAT_RESPONSE = exports.BASE_TARGET_RADIUS = exports.MAX_BARRACKS = exports.MAX_FORGES = exports.REPLACEMENT_BASE_THRESHOLD = exports.GOLD_PER_MIN = exports.MAX_MINING_DISTANCE = exports.NEAR_MAX_SUPPLY = exports.BUILDING_SPACE_BUFFER = exports.PRE_QUEUE_BUFFER = exports.MAX_WORKERS = exports.WORKERS_PER_CASTLE = exports.SPEED_FACTOR = void 0;
-exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.WOLF_SUPPLY = void 0;
+exports.SOLDIER_COST = exports.ARCHER_COST = exports.SNAKE_COST = exports.WOLF_COST = exports.WORKER_COST = exports.FORGE_COST = exports.ARMORY_COST = exports.BARRACKS_COST = exports.SNAKE_CHARMER_COST = exports.WOLF_DEN_COST = exports.HOUSE_COST = exports.CASTLE_COST = exports.TOWER_HEIGHT = exports.TOWER_WIDTH = exports.MINE_HEIGHT = exports.MINE_WIDTH = exports.CASTLE_HEIGHT = exports.CASTLE_WIDTH = exports.WORKER_DISRESPECT = exports.SCOUTS = exports.SCOUT_RADIUS = exports.PASSIVE_THREAT_FACTOR = exports.TARGET_RESET_THRESHOLD = exports.AGGRO_STOP_GAP = exports.AGGRO_START_GAP = exports.MINE_SCOUT_INTERVAL = exports.THREAT_DECAY = exports.CALM_DOWN_DISTANCE = exports.CONSCRIPTION_DISTANCE = exports.LAZY_ORDER_DISTANCE = exports.AGGRO_RETREAT_THRESHOLD = exports.AGGRO_ATTACK_THRESHOLD = exports.RETREAT_THRESHOLD = exports.ATTACK_THRESHOLD = exports.RETREAT_RADIUS = exports.ATTACK_RADIUS = exports.MAX_THREAT_RESPONSE = exports.MIN_THREAT_RESPONSE = exports.BASE_TARGET_RADIUS = exports.MAX_BARRACKS = exports.MAX_FORGES = exports.REPLACEMENT_BASE_THRESHOLD = exports.GOLD_PER_MIN = exports.MAX_MINING_DISTANCE = exports.NEAR_MAX_SUPPLY = exports.BUILDING_SPACE_BUFFER = exports.PRE_QUEUE_BUFFER = exports.MAX_WORKERS = exports.WORKERS_PER_CASTLE = exports.SPEED_FACTOR = void 0;
+exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.SNAKE_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.SNAKE_SUPPLY = exports.WOLF_SUPPLY = exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = void 0;
 var utils_1 = __webpack_require__(10);
 exports.SPEED_FACTOR = 20;
 exports.WORKERS_PER_CASTLE = 12;
@@ -1406,21 +1408,25 @@ exports.TOWER_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtowe
 exports.CASTLE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'cost' });
 exports.HOUSE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'house', field_name: 'cost' });
 exports.WOLF_DEN_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolvesden', field_name: 'cost' });
+exports.SNAKE_CHARMER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snakecharmer', field_name: 'cost' });
 exports.BARRACKS_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'barracks', field_name: 'cost' });
 exports.ARMORY_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'armory', field_name: 'cost' });
 exports.FORGE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'forge', field_name: 'cost' });
 exports.WORKER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'cost' });
 exports.WOLF_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'cost' });
+exports.SNAKE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'cost' });
 exports.ARCHER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'cost' });
 exports.SOLDIER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'cost' });
 exports.ARCHER_RANGE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgrange', field_name: 'cost' });
 exports.WORKER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'supply' });
 exports.WOLF_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'supply' });
+exports.SNAKE_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'supply' });
 exports.ARCHER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'supply' });
 exports.SOLDIER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'supply' });
 exports.HOUSE_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'house', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
 exports.WORKER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
 exports.WOLF_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
+exports.SNAKE_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
 exports.ARCHER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
 exports.SOLDIER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
 exports.WORKER_SPEED = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'movementSpeed' }) * exports.SPEED_FACTOR;
@@ -2593,12 +2599,14 @@ function ManageStates(_a) {
     data_hub.tower_builders = data_hub.builders.filter(function (b) { return b.ranger_bot.order == 'Build Watchtower'; });
     data_hub.armory_builders = data_hub.builders.filter(function (b) { return b.ranger_bot.order == 'Build Armory'; });
     data_hub.forge_builders = data_hub.builders.filter(function (b) { return b.ranger_bot.order == 'Build Forge'; });
+    data_hub.snake_charmer_builders = data_hub.builders.filter(function (b) { return b.ranger_bot.order == 'Build Snake Charmer'; });
     data_hub.traveling_house_builders = data_hub.house_builders.filter(function (b) { return !b.ranger_bot.target_building; });
     data_hub.traveling_wolf_den_builders = data_hub.wolf_den_builders.filter(function (b) { return !b.ranger_bot.target_building; });
     data_hub.traveling_barracks_builders = data_hub.barracks_builders.filter(function (b) { return !b.ranger_bot.target_building; });
     data_hub.traveling_tower_builders = data_hub.tower_builders.filter(function (b) { return !b.ranger_bot.target_building; });
     data_hub.traveling_armory_builders = data_hub.armory_builders.filter(function (b) { return !b.ranger_bot.target_building; });
     data_hub.traveling_forge_builders = data_hub.forge_builders.filter(function (b) { return !b.ranger_bot.target_building; });
+    data_hub.traveling_snake_charmer_builders = data_hub.snake_charmer_builders.filter(function (b) { return !b.ranger_bot.target_building; });
     data_hub.repairers = data_hub.my_workers.filter(function (w) { return w.ranger_bot.job == 'repair'; });
     (0, manage_repairers_1.ManageRepairers)({ repairers: data_hub.repairers });
     data_hub.repairers = data_hub.repairers.filter(function (r) { return r.ranger_bot.job == 'repair'; });
@@ -2979,7 +2987,7 @@ var reserve_gold_for_builders_1 = __webpack_require__(46);
 var build_house_if_needed_1 = __webpack_require__(47);
 var train_workers_if_needed_1 = __webpack_require__(51);
 var use_barracks_1 = __webpack_require__(52);
-var train_wolves_1 = __webpack_require__(53);
+var use_wolves_den_1 = __webpack_require__(53);
 var research_upgrades_1 = __webpack_require__(54);
 var next_build_order_step_1 = __webpack_require__(55);
 var MacroBot = (function () {
@@ -2999,7 +3007,7 @@ var MacroBot = (function () {
         (0, build_house_if_needed_1.BuildHouseIfNeeded)({ data_hub: this.data_hub });
         (0, train_workers_if_needed_1.TrainWorkersIfNeeded)({ data_hub: this.data_hub });
         (0, use_barracks_1.UseBarracks)({ data_hub: this.data_hub });
-        (0, train_wolves_1.TrainWolves)({ data_hub: this.data_hub });
+        (0, use_wolves_den_1.UseWolvesDen)({ data_hub: this.data_hub });
         (0, research_upgrades_1.ResearchUpgrades)({ data_hub: this.data_hub });
         (0, next_build_order_step_1.NextBuildOrderStep)({ data_hub: this.data_hub });
     };
@@ -3445,6 +3453,9 @@ function _SurveyMeleeVsRanged(my_building, data_hub) {
         else if (queued_unit.id_string == 'wolf') {
             data_hub.count_melee++;
         }
+        else if (queued_unit.id_string == 'snake') {
+            data_hub.count_ranged++;
+        }
         else if (queued_unit.id_string == 'worker') {
         }
         else if (queued_unit.isUpgrade) {
@@ -3457,7 +3468,8 @@ function _SurveyMeleeVsRanged(my_building, data_hub) {
 function _SurveySupply(my_building, data_hub) {
     var unit_supply = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+            my_building.type.name == 'Snake Charmer') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -3494,7 +3506,8 @@ function _SurveySupply(my_building, data_hub) {
     data_hub.units_supply_producing += unit_supply;
     var seconds_left = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+            my_building.type.name == 'Snake Charmer') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -3541,7 +3554,8 @@ function _SurveySpending(my_building, data_hub) {
     }
     var unit_cost = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+            my_building.type.name == 'Snake Charmer') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -3576,7 +3590,8 @@ function _SurveySpending(my_building, data_hub) {
     }
     var build_time = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
-            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
+            my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
+            my_building.type.name == 'Snake Charmer') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -3770,6 +3785,7 @@ exports.BuildWolfDen = BuildWolfDen;
 exports.BuildBarracks = BuildBarracks;
 exports.BuildArmory = BuildArmory;
 exports.BuildForge = BuildForge;
+exports.BuildSnakeCharmer = BuildSnakeCharmer;
 var construct_building_1 = __webpack_require__(49);
 function BuildHouse(_a) {
     var data_hub = _a.data_hub;
@@ -3844,6 +3860,21 @@ function BuildForge(_a) {
     });
     if (new_forge_builder) {
         traveling_forge_builders.push(new_forge_builder);
+    }
+}
+function BuildSnakeCharmer(_a) {
+    var data_hub = _a.data_hub;
+    var traveling_snake_charmer_builders = data_hub.traveling_snake_charmer_builders;
+    if (traveling_snake_charmer_builders.length > 0) {
+        return undefined;
+    }
+    var new_snake_charmer_builder = (0, construct_building_1.ConstructBuilding)({
+        building_type: 'snakecharmer',
+        build_order: 'Build Snake Charmer',
+        data_hub: data_hub,
+    });
+    if (new_snake_charmer_builder) {
+        traveling_snake_charmer_builders.push(new_snake_charmer_builder);
     }
 }
 
@@ -4163,6 +4194,7 @@ function _PreQueue(castle, data_hub) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UseBarracks = UseBarracks;
 var constants_1 = __webpack_require__(15);
+var utils_1 = __webpack_require__(10);
 function UseBarracks(_a) {
     var data_hub = _a.data_hub;
     for (var i = 0; i < data_hub.my_barracks.length; i++) {
@@ -4237,6 +4269,10 @@ var ARCHER_SELECTION = {
     'build_time': constants_1.ARCHER_BUILD_TIME,
 };
 function _SelectBarracksUnit(data_hub) {
+    if (_ShouldFavorArchers()) {
+        data_hub.count_ranged++;
+        return ARCHER_SELECTION;
+    }
     if (data_hub.count_melee < 7) {
         data_hub.count_melee++;
         return SOLDIER_SELECTION;
@@ -4253,6 +4289,20 @@ function _SelectBarracksUnit(data_hub) {
         return SOLDIER_SELECTION;
     }
 }
+function _ShouldFavorArchers() {
+    if ((0, utils_1.WolvesAreObsolete)()) {
+        return false;
+    }
+    else if (undefined === scope.player.buildings.snakecharmer || scope.player.buildings.snakecharmer < 1) {
+        return true;
+    }
+    else if (undefined === scope.player.buildings.wolvesden) {
+        return false;
+    }
+    else {
+        return scope.player.buildings.barracks <= scope.player.buildings.wolvesden;
+    }
+}
 
 
 /***/ }),
@@ -4261,10 +4311,10 @@ function _SelectBarracksUnit(data_hub) {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TrainWolves = TrainWolves;
+exports.UseWolvesDen = UseWolvesDen;
 var utils_1 = __webpack_require__(10);
 var constants_1 = __webpack_require__(15);
-function TrainWolves(_a) {
+function UseWolvesDen(_a) {
     var data_hub = _a.data_hub;
     if ((0, utils_1.WolvesAreObsolete)()) {
         return;
@@ -4277,15 +4327,16 @@ function TrainWolves(_a) {
         if (wolf_den.queue[0]) {
             continue;
         }
-        var queued_wolf = false;
-        if (data_hub.spendable_gold >= constants_1.WOLF_COST && data_hub.available_supply >= constants_1.WOLF_SUPPLY) {
-            scope.order('Train Wolf', [{ 'unit': wolf_den }]);
-            wolf_den.ranger_bot.queue_finish_time = scope.getCurrentGameTimeInSec() + constants_1.WOLF_BUILD_TIME;
-            queued_wolf = true;
+        var unit_selection = _SelectWolfDenUnit(data_hub);
+        var queued_unit = false;
+        if (data_hub.spendable_gold >= unit_selection.cost && data_hub.available_supply >= unit_selection.supply) {
+            scope.order(unit_selection.order, [{ 'unit': wolf_den }]);
+            wolf_den.ranger_bot.queue_finish_time = scope.getCurrentGameTimeInSec() + unit_selection.build_time;
+            queued_unit = true;
         }
-        if (!_BuildOrderExceptionApplies(data_hub, queued_wolf)) {
-            data_hub.spendable_gold -= constants_1.WOLF_COST;
-            data_hub.available_supply -= constants_1.WOLF_SUPPLY;
+        if (!_BuildOrderExceptionApplies(data_hub, queued_unit)) {
+            data_hub.spendable_gold -= unit_selection.cost;
+            data_hub.available_supply -= unit_selection.supply;
         }
     }
     if (scope.getCurrentSupply() >= scope.player.supplyCap - constants_1.NEAR_MAX_SUPPLY) {
@@ -4309,6 +4360,7 @@ function TrainWolves(_a) {
         if (time_left >= constants_1.PRE_QUEUE_BUFFER) {
             continue;
         }
+        var unit_selection = _SelectWolfDenUnit(data_hub);
         var available_supply = (function () {
             if (_BuildOrderExceptionApplies(data_hub, false)) {
                 return data_hub.available_supply - data_hub.units_supply_producing;
@@ -4317,20 +4369,20 @@ function TrainWolves(_a) {
                 return data_hub.available_supply;
             }
         })();
-        var queued_wolf = false;
-        if (data_hub.spendable_gold >= constants_1.WOLF_COST && available_supply >= constants_1.WOLF_SUPPLY) {
-            scope.order('Train Wolf', [{ 'unit': wolf_den }]);
-            wolf_den.ranger_bot.queue_finish_time += constants_1.WOLF_BUILD_TIME;
-            queued_wolf = true;
+        var queued_unit = false;
+        if (data_hub.spendable_gold >= unit_selection.cost && available_supply >= unit_selection.supply) {
+            scope.order(unit_selection.order, [{ 'unit': wolf_den }]);
+            wolf_den.ranger_bot.queue_finish_time += unit_selection.build_time;
+            queued_unit = true;
         }
-        if (!_BuildOrderExceptionApplies(data_hub, queued_wolf)) {
-            data_hub.spendable_gold -= constants_1.WOLF_COST;
-            data_hub.available_supply -= constants_1.WOLF_SUPPLY;
+        if (!_BuildOrderExceptionApplies(data_hub, queued_unit)) {
+            data_hub.spendable_gold -= unit_selection.cost;
+            data_hub.available_supply -= unit_selection.supply;
         }
     }
 }
-function _BuildOrderExceptionApplies(data_hub, queued_wolf) {
-    if (queued_wolf) {
+function _BuildOrderExceptionApplies(data_hub, queued_unit) {
+    if (queued_unit) {
         return false;
     }
     else if ((0, utils_1.WolvesAreObsolete)()) {
@@ -4356,6 +4408,38 @@ function _BuildOrderExceptionApplies(data_hub, queued_wolf) {
     }
     else {
         return true;
+    }
+}
+var WOLF_SELECTION = {
+    'order': 'Train Wolf',
+    'cost': constants_1.WOLF_COST,
+    'supply': constants_1.WOLF_SUPPLY,
+    'build_time': constants_1.WOLF_BUILD_TIME,
+};
+var SNAKE_SELECTION = {
+    'order': 'Train Snake',
+    'cost': constants_1.SNAKE_COST,
+    'supply': constants_1.SNAKE_SUPPLY,
+    'build_time': constants_1.SNAKE_BUILD_TIME,
+};
+function _SelectWolfDenUnit(data_hub) {
+    if (!scope.player.buildings.snakecharmer || scope.player.buildings.snakecharmer < 1) {
+        return WOLF_SELECTION;
+    }
+    if (data_hub.count_melee < 7) {
+        data_hub.count_melee++;
+        return WOLF_SELECTION;
+    }
+    var total = data_hub.count_melee + data_hub.count_ranged;
+    var target_ratio = total / 50;
+    var actual_ratio = data_hub.count_ranged / total;
+    if (target_ratio > actual_ratio) {
+        data_hub.count_ranged++;
+        return SNAKE_SELECTION;
+    }
+    else {
+        data_hub.count_melee++;
+        return WOLF_SELECTION;
     }
 }
 
@@ -4499,6 +4583,12 @@ function NextBuildOrderStep(_a) {
             data_hub.spendable_gold -= constants_1.CASTLE_COST;
             already_reserved_castle_gold = true;
         }
+    }
+    if (!(0, utils_1.WolvesAreObsolete)() && data_hub.my_snake_charmers.length < 1) {
+        if (data_hub.spendable_gold >= constants_1.SNAKE_CHARMER_COST) {
+            (0, build_1.BuildSnakeCharmer)({ data_hub: data_hub });
+        }
+        return;
     }
     var rax_on_2_base = (0, utils_1.WolvesAreObsolete)() ? 3 : 1;
     if (data_hub.my_barracks.length < rax_on_2_base) {
@@ -6524,6 +6614,10 @@ function MicroUnits(_a) {
     for (var i = 0; i < data_hub.my_wolves.length; i++) {
         var wolf = data_hub.my_wolves[i];
         (0, micro_combat_unit_1.MicroCombatUnit)(wolf);
+    }
+    for (var i = 0; i < data_hub.my_snakes.length; i++) {
+        var snake = data_hub.my_snakes[i];
+        (0, micro_combat_unit_1.MicroCombatUnit)(snake);
     }
     for (var i = 0; i < data_hub.my_archers.length; i++) {
         var archer = data_hub.my_archers[i];
