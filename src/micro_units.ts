@@ -16,6 +16,12 @@ function MicroUnits({ data_hub }: MicroUnitsKwargs): void {
     MicroCombatUnit(wolf);
   }
 
+  for (let i=0; i<data_hub.my_snakes.length; i++) {
+    const snake: LwgUnit = data_hub.my_snakes[i];
+
+    MicroCombatUnit(snake);
+  }
+
   for (let i=0; i<data_hub.my_archers.length; i++) {
     const archer: LwgUnit = data_hub.my_archers[i];
 

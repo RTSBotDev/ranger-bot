@@ -39,6 +39,8 @@ function _SurveyMeleeVsRanged(my_building: LwgBuilding, data_hub: DataHub): void
       data_hub.count_ranged ++;
     } else if (queued_unit.id_string == 'wolf') {
       data_hub.count_melee ++;
+    } else if (queued_unit.id_string == 'snake') {
+      data_hub.count_ranged ++;
     } else if (queued_unit.id_string == 'worker') {
     } else if (queued_unit.isUpgrade) {
     } else {
