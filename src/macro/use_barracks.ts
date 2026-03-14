@@ -85,13 +85,6 @@ function UseBarracks({ data_hub }: UseBarracksKwargs): void {
   }
 }
 
-interface UnitSelection {
-  order: string;
-  cost: number;
-  supply: number;
-  build_time: number;
-}
-
 const SOLDIER_SELECTION: UnitSelection = {
   'order': 'Train Soldier',
   'cost': SOLDIER_COST,

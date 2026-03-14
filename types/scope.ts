@@ -80,6 +80,7 @@ interface LwgPlayerUpgrades {
 interface LwgPlayerBuildingCounts {
   house?: number;
   wolvesden?: number;
+  snakecharmer?: number;
 }
 
 interface LwgPlayer {
