@@ -62,6 +62,7 @@ export const TOWER_HEIGHT: number = GetNumberFieldValue({ piece_name: 'watchtowe
 export const CASTLE_COST: number = GetNumberFieldValue({ piece_name: 'castle', field_name: 'cost' });
 export const HOUSE_COST: number = GetNumberFieldValue({ piece_name: 'house', field_name: 'cost' });
 export const WOLF_DEN_COST: number = GetNumberFieldValue({ piece_name: 'wolvesden', field_name: 'cost' });
+export const SNAKE_CHARMER_COST: number = GetNumberFieldValue({ piece_name: 'snakecharmer', field_name: 'cost' });
 export const BARRACKS_COST: number = GetNumberFieldValue({ piece_name: 'barracks', field_name: 'cost' });
 export const ARMORY_COST: number = GetNumberFieldValue({ piece_name: 'armory', field_name: 'cost' });
 export const FORGE_COST: number = GetNumberFieldValue({ piece_name: 'forge', field_name: 'cost' });

@@ -30,12 +30,14 @@ function ManageStates({ data_hub }: ManageStatesKwargs): void {
   data_hub.tower_builders = data_hub.builders.filter((b) => b.ranger_bot.order == 'Build Watchtower');
   data_hub.armory_builders = data_hub.builders.filter((b) => b.ranger_bot.order == 'Build Armory');
   data_hub.forge_builders = data_hub.builders.filter((b) => b.ranger_bot.order == 'Build Forge');
+  data_hub.snake_charmer_builders = data_hub.builders.filter((b) => b.ranger_bot.order == 'Build Snake Charmer');
   data_hub.traveling_house_builders = data_hub.house_builders.filter((b) => !b.ranger_bot.target_building);
   data_hub.traveling_wolf_den_builders = data_hub.wolf_den_builders.filter((b) => !b.ranger_bot.target_building);
   data_hub.traveling_barracks_builders = data_hub.barracks_builders.filter((b) => !b.ranger_bot.target_building);
   data_hub.traveling_tower_builders = data_hub.tower_builders.filter((b) => !b.ranger_bot.target_building);
   data_hub.traveling_armory_builders = data_hub.armory_builders.filter((b) => !b.ranger_bot.target_building);
   data_hub.traveling_forge_builders = data_hub.forge_builders.filter((b) => !b.ranger_bot.target_building);
+  data_hub.traveling_snake_charmer_builders = data_hub.snake_charmer_builders.filter((b) => !b.ranger_bot.target_building);
 
   data_hub.repairers = data_hub.my_workers.filter((w) => w.ranger_bot.job == 'repair');
   ManageRepairers({ repairers: data_hub.repairers });

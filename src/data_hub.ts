@@ -35,6 +35,7 @@ class DataHub {
   my_watchtowers: LwgBuilding[];
   my_forges: LwgBuilding[];
   my_armories: LwgBuilding[];
+  my_snake_charmers: LwgBuilding[];
   my_workers: LwgUnit[];
   my_wolves: LwgUnit[];
   my_archers: LwgUnit[];
@@ -67,12 +68,14 @@ class DataHub {
   tower_builders?: LwgUnit[];
   armory_builders?: LwgUnit[];
   forge_builders?: LwgUnit[];
+  snake_charmer_builders?: LwgUnit[];
   traveling_house_builders?: LwgUnit[];
   traveling_wolf_den_builders?: LwgUnit[];
   traveling_barracks_builders?: LwgUnit[];
   traveling_tower_builders?: LwgUnit[];
   traveling_armory_builders?: LwgUnit[];
   traveling_forge_builders?: LwgUnit[];
+  traveling_snake_charmer_builders?: LwgUnit[];
 
   viable_gold_mines?: CachedGoldMine[];
   active_castles?: LwgBuilding[];
@@ -113,6 +116,7 @@ class DataHub {
     this.my_watchtowers = scope.getBuildings({ player: this.teams.my.id, type: 'Watchtower' }).map((v) => v.unit);
     this.my_forges = scope.getBuildings({ player: this.teams.my.id, type: 'Forge' }).map((v) => v.unit);
     this.my_armories = scope.getBuildings({ player: this.teams.my.id, type: 'Armory' }).map((v) => v.unit);
+    this.my_snake_charmers = scope.getBuildings({ player: this.teams.my.id, type: 'Snake Charmer' }).map((v) => v.unit);
     this.my_workers = scope.getUnits({ player: this.teams.my.id, type: 'Worker' }).map((v) => v.unit);
     this.my_wolves = scope.getUnits({ player: this.teams.my.id, type: 'Wolf' }).map((v) => v.unit);
     this.my_archers = scope.getUnits({ player: this.teams.my.id, type: 'Archer' }).map((v) => v.unit);
