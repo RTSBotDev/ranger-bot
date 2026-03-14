@@ -119,6 +119,10 @@ function _SurveySupply(my_building: LwgBuilding, data_hub: DataHub): void {
 }
 
 function _SurveySpending(my_building: LwgBuilding, data_hub: DataHub): void {
+  if (_BuildOrderExceptionApplies(data_hub)) {
+    return;
+  }
+
   const unit_cost: number = (() => {
     if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
         my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower') {
@@ -177,6 +181,28 @@ function _SurveySpending(my_building: LwgBuilding, data_hub: DataHub): void {
 
   const cost_per_min = unit_cost * 60 / build_time;
   data_hub.gold_spend_per_min += cost_per_min;
+}
+
+function _BuildOrderExceptionApplies(data_hub: DataHub): boolean {
+  if (WolvesAreObsolete()) {
+    return false;
+  } else if (data_hub.active_mining_bases > 1) {
+    return false;
+  } else if ((data_hub.viable_gold_mines as CachedGoldMine[]).length < 1) {
+    return false;
+  } else if (!scope.player.buildings.house) {
+    return false;
+  } else if (2 != scope.player.buildings.house) {
+    return false;
+  } else if (!scope.player.buildings.wolvesden) {
+    return false;
+  } else if (2 != scope.player.buildings.wolvesden) {
+    return false;
+  } else if (scope.getMaxSupply() - scope.getCurrentSupply() > 1) {
+    return false
+  } else {
+    return true;
+  }
 }
 
 export { SurveyProduction };

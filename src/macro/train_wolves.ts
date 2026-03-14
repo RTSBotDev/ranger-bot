@@ -23,13 +23,17 @@ function TrainWolves({ data_hub }: TrainWolvesKwargs): void {
       continue;
     }
 
+    let queued_wolf = false;
     if (data_hub.spendable_gold >= WOLF_COST && data_hub.available_supply >= WOLF_SUPPLY) {
       scope.order('Train Wolf', [{'unit': wolf_den}]);
       wolf_den.ranger_bot.queue_finish_time = scope.getCurrentGameTimeInSec() + WOLF_BUILD_TIME;
+      queued_wolf = true;
     }
 
-    data_hub.spendable_gold -= WOLF_COST;
-    data_hub.available_supply -= WOLF_SUPPLY;
+    if (!_BuildOrderExceptionApplies(data_hub, queued_wolf)) {
+      data_hub.spendable_gold -= WOLF_COST;
+      data_hub.available_supply -= WOLF_SUPPLY;
+    }
   }
 
   // Then pre-queue, unless maxed
@@ -57,13 +61,46 @@ function TrainWolves({ data_hub }: TrainWolvesKwargs): void {
       continue;
     }
 
-    if (data_hub.spendable_gold >= WOLF_COST && data_hub.available_supply >= WOLF_SUPPLY) {
+    const available_supply = (() => {
+      if (_BuildOrderExceptionApplies(data_hub, false)) {
+        return data_hub.available_supply - data_hub.units_supply_producing;
+      } else {
+        return data_hub.available_supply;
+      }
+    })();
+    let queued_wolf = false;
+    if (data_hub.spendable_gold >= WOLF_COST && available_supply >= WOLF_SUPPLY) {
       scope.order('Train Wolf', [{'unit': wolf_den}]);
       wolf_den.ranger_bot.queue_finish_time += WOLF_BUILD_TIME;
+      queued_wolf = true;
     }
 
-    data_hub.spendable_gold -= WOLF_COST;
-    data_hub.available_supply -= WOLF_SUPPLY;
+    if (!_BuildOrderExceptionApplies(data_hub, queued_wolf)) {
+      data_hub.spendable_gold -= WOLF_COST;
+      data_hub.available_supply -= WOLF_SUPPLY;
+    }
+  }
+}
+
+function _BuildOrderExceptionApplies(data_hub: DataHub, queued_wolf: boolean): boolean {
+  if (queued_wolf) {
+    return false;
+  } else if (WolvesAreObsolete()) {
+    return false;
+  } else if (data_hub.active_mining_bases > 1) {
+    return false;
+  } else if ((data_hub.viable_gold_mines as CachedGoldMine[]).length < 1) {
+    return false;
+  } else if (!scope.player.buildings.house) {
+    return false;
+  } else if (2 != scope.player.buildings.house) {
+    return false;
+  } else if (!scope.player.buildings.wolvesden) {
+    return false;
+  } else if (2 != scope.player.buildings.wolvesden) {
+    return false;
+  } else {
+    return true;
   }
 }
 

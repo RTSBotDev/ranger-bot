@@ -3,7 +3,7 @@ import { GetNumberFieldValue } from './utils';
 export const SPEED_FACTOR: number = 20;
 export const WORKERS_PER_CASTLE: number = 12;
 export const MAX_WORKERS: number = 50;
-export const PRE_QUEUE_BUFFER: number = 10;
+export const PRE_QUEUE_BUFFER: number = 7;
 export const BUILDING_SPACE_BUFFER: number = 2;
 export const NEAR_MAX_SUPPLY: number = 10;
 export const MAX_MINING_DISTANCE: number = 6;
