@@ -81,6 +81,7 @@ interface LwgPlayerBuildingCounts {
   house?: number;
   wolvesden?: number;
   snakecharmer?: number;
+  barracks?: number;
 }
 
 interface LwgPlayer {
