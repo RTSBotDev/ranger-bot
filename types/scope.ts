@@ -105,7 +105,7 @@ interface LwgScope {
   chatMsg(msg: string): void;
   getMyPlayerNumber(): number;
   getMyTeamNumber(): number;
-  getStartLocationForPlayerNumber(player_id: number): MapLocation;
+  getStartLocationForPlayerNumber(player_id: number): MapLocation | undefined;
   getArrayOfPlayerNumbers(): number[];
   getTeamNumber(player_id: number): number;
   getTypeFieldValue(piece_name: string, field_name: string): number | string;

@@ -252,7 +252,7 @@ function AnalyzeTeams(_a) {
     if (scope.ranger_bot.player_caches[player_cache_key].teams === undefined) {
         var my_id = scope.getMyPlayerNumber();
         var my_team_id = scope.getMyTeamNumber();
-        var my_start = ConfigureStartLocation(my_team_id);
+        var my_start = ConfigureStartLocation(my_id);
         var new_my = {
             'id': my_id,
             'team_id': my_team_id,
@@ -293,13 +293,40 @@ function AnalyzeTeams(_a) {
     }
     return scope.ranger_bot.player_caches[player_cache_key].teams;
 }
+var CONFIGURED_START_LOCATIONS = {
+    '2vs2 Cloud Kingdom': {
+        1: { 'x': 103, 'y': 8 },
+        2: { 'x': 115, 'y': 33 },
+        3: { 'x': 19, 'y': 114 },
+        4: { 'x': 7, 'y': 89 },
+    },
+};
 function ConfigureStartLocation(player_id) {
     var raw_start_location = scope.getStartLocationForPlayerNumber(player_id);
     if (raw_start_location) {
         return raw_start_location;
     }
-    var map_name = '';
-    throw new Error('Map "' + map_name + '"" not supported, no start location for player ' + player_id);
+    var map_name = game.data.name;
+    if (!map_name) {
+        console.log(game);
+        throw new Error('Cannot find map name for ConfigureStartLocation');
+    }
+    var start_locations_config = CONFIGURED_START_LOCATIONS[map_name];
+    if (!start_locations_config) {
+        console.log(game);
+        console.log(game.start_locations);
+        throw new Error('No start locations configured for "' + map_name + '"');
+    }
+    var configured_start_location = start_locations_config[player_id];
+    if (!configured_start_location) {
+        console.log(game);
+        console.log('map_name: ' + map_name + ', player_id: ' + player_id);
+        console.log(start_locations_config);
+        throw new Error('No start location configured for player ' + player_id + ' on "' + map_name + '"');
+    }
+    else {
+        return configured_start_location;
+    }
 }
 
 

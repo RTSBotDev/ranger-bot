@@ -144,7 +144,7 @@ function PrintExpansionData(expansions: Expansion[]): void {
   const players: number[] = scope.getArrayOfPlayerNumbers();
   for (let i=0; i<players.length; i++) {
     const player_id = players[i];
-    const start_location: MapLocation = ConfigureStartLocation(player_id);
+    const start_location = ConfigureStartLocation(player_id);
 
     for (let dx=0; dx<CASTLE_WIDTH; dx++) {
       const x = start_location.x + dx;
