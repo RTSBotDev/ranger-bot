@@ -10,7 +10,7 @@ import { ReserveGoldForBuilders } from './macro/reserve_gold_for_builders';
 import { BuildHouseIfNeeded } from './macro/build_house_if_needed';
 import { TrainWorkersIfNeeded } from './macro/train_workers_if_needed';
 import { UseBarracks } from './macro/use_barracks';
-import { TrainWolves } from './macro/train_wolves';
+import { TrainWolves } from './macro/use_wolves_den';
 import { ResearchUpgrades } from './macro/research_upgrades';
 import { NextBuildOrderStep } from './macro/next_build_order_step';
 
