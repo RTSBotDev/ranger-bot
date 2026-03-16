@@ -29,4 +29,8 @@ function ArmorFactor(armor: number): number {
   return 13 / (13 - armor);
 }
 
-export { CalculateDps, CalculateArmor, CalculateRange, ArmorFactor };
+function IsFlying(unit: LwgUnit): boolean {
+  return !!unit.type.flying || !!unit.type.isFlying;
+}
+
+export { CalculateDps, CalculateArmor, CalculateRange, ArmorFactor, IsFlying };

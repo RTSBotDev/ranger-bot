@@ -1,6 +1,6 @@
 import { DataHub } from '../data_hub';
 import { MINE_SCOUT_INTERVAL, CASTLE_WIDTH, CASTLE_HEIGHT, THREAT_DECAY } from '../constants';
-import { CalculateDps, CalculateArmor, CalculateRange } from '../unit_stats';
+import { CalculateDps, CalculateArmor, CalculateRange, IsFlying } from '../unit_stats';
 import { GetNumberFieldValue } from '../utils';
 
 interface UpdateThreatsKwargs {
@@ -179,7 +179,7 @@ function _RollOverUnitThreats(data_hub: DataHub, threats: TeamThreatsCache): Tea
       // TODO: remove this after implementing manual unit targeting
       continue;
     }
-    
+
     new_unit_threats.push({
       'owner_id': unit.owner.number,
       'utid': String(unit.id),
@@ -190,7 +190,7 @@ function _RollOverUnitThreats(data_hub: DataHub, threats: TeamThreatsCache): Tea
       'armor': CalculateArmor(unit),
       'dps': CalculateDps(unit),
       'range': CalculateRange(unit),
-      'is_air': !!unit.type.flying,
+      'is_air': IsFlying(unit),
       'cleared': false,
     });
 

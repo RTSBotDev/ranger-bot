@@ -6,7 +6,7 @@ Computer player for [LittleWarGame](https://www.littlewargame.com/)
 1. Download or copy the transpiled javascript file to your machine.
 
     It's the `dist/compiled.js` file from the repo. It's also attached to each release.
-2. Upload the JS file to the website.
+2. Upload the JS file to the website. (This step must be repeated if you refresh the page.)
     1. Click the "Options" button in the upper left hand corner.
     2. Select "Load custom AI".
     3. Select the JS file you downloaded.
@@ -24,4 +24,4 @@ Computer player for [LittleWarGame](https://www.littlewargame.com/)
     3. Select "Start".
 
 #### Supported vs Unsupported Use Cases
-RangerBot is designed primarily for 1v1 games on standard maps. If you give it a team mate, it may bug out, even if that team mate is another RangerBot. However it can handle playing against multiple opponents, and may even win if its opponents aren't very strong. It also does not play very well on fast money maps, and sometimes even bugs out, depending on the specific map. It also doesn't do well vs cheeses like tower rushing and 1 base air. There are plans to support all of these features and use cases in the future.
+RangerBot is designed primarily for 1v1 games on standard maps. If you give it a team mate, it may bug out, even if that team mate is another RangerBot. However it can handle playing against multiple opponents, and may even win if its opponents aren't very strong. It also does not play very well on fast money maps, and sometimes even bugs out, depending on the specific map. It also doesn't do well vs cheeses like tower rushing and 1 base air. There are plans to support all of these features and use cases in the future. I do most of my testing on Chrome, so if you run into any unexpected issues, switching to that browser might help.

@@ -1,6 +1,6 @@
-npm run compile
+This is a personal project I'm using to learn TypeScript and improve my resume, so I'm not accepting contributors at this time. This file mostly contains notes for myself.
 
-
+`npm run compile`
 
 TODO:
 - tower rush defense

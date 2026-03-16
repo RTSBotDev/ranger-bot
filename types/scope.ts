@@ -7,6 +7,7 @@ interface LwgPieceType {
   maxUnitsToRepair: number;
   supplyProvided: number | undefined;
   flying?: boolean;
+  isFlying?: boolean;
   canAttackFlying?: boolean;
   range: number;
 }

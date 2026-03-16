@@ -2269,6 +2269,7 @@ exports.CalculateDps = CalculateDps;
 exports.CalculateArmor = CalculateArmor;
 exports.CalculateRange = CalculateRange;
 exports.ArmorFactor = ArmorFactor;
+exports.IsFlying = IsFlying;
 var utils_1 = __webpack_require__(10);
 var constants_1 = __webpack_require__(15);
 function CalculateDps(piece) {
@@ -2290,6 +2291,9 @@ function CalculateRange(piece) {
 }
 function ArmorFactor(armor) {
     return 13 / (13 - armor);
+}
+function IsFlying(unit) {
+    return !!unit.type.flying || !!unit.type.isFlying;
 }
 
 
@@ -5214,7 +5218,7 @@ function _RollOverUnitThreats(data_hub, threats) {
             'armor': (0, unit_stats_1.CalculateArmor)(unit),
             'dps': (0, unit_stats_1.CalculateDps)(unit),
             'range': (0, unit_stats_1.CalculateRange)(unit),
-            'is_air': !!unit.type.flying,
+            'is_air': (0, unit_stats_1.IsFlying)(unit),
             'cleared': false,
         });
         new_unit_ids[String(unit.id)] = true;
@@ -5514,6 +5518,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FormSquads = FormSquads;
 var constants_1 = __webpack_require__(15);
 var ground_distance_1 = __webpack_require__(9);
+var unit_stats_1 = __webpack_require__(25);
 function FormSquads(_a) {
     var data_hub = _a.data_hub;
     var output = [];
@@ -5528,7 +5533,7 @@ function FormSquads(_a) {
             'location': location_1,
             'r': constants_1.BASE_TARGET_RADIUS,
             'units': [unit],
-            'is_air': !!unit.type.flying,
+            'is_air': (0, unit_stats_1.IsFlying)(unit),
         };
         _AddUnits(new_squad, unallocated_units);
         output.push(new_squad);
@@ -5570,7 +5575,7 @@ function _GlomUnits(squad, units) {
     var done = true;
     while (units[0].length > 0) {
         var unit = units[0].pop();
-        if (!!unit.type.flying != squad.is_air) {
+        if ((0, unit_stats_1.IsFlying)(unit) != squad.is_air) {
             new_units.push(unit);
             continue;
         }
@@ -5579,7 +5584,7 @@ function _GlomUnits(squad, units) {
             new_units.push(unit);
             continue;
         }
-        else if (unit.type.flying) {
+        else if ((0, unit_stats_1.IsFlying)(unit)) {
             squad.units.push(unit);
             done = false;
             continue;
@@ -5622,6 +5627,9 @@ function ConscriptWorkers(_a) {
                 return false;
             }
             if (!target.active_castle || !target.ground_distance) {
+                return false;
+            }
+            if (target.is_air) {
                 return false;
             }
             return target.active_castle.id == active_castle.id;

@@ -1,6 +1,7 @@
 import { DataHub } from '../data_hub';
 import { BASE_TARGET_RADIUS, TARGET_RESET_THRESHOLD } from '../constants';
 import { SafeGroundDistance } from '../ground_distance';
+import { IsFlying } from '../unit_stats';
 
 interface FormSquadsKwargs {
   data_hub: DataHub;
@@ -22,7 +23,7 @@ function FormSquads({ data_hub }: FormSquadsKwargs): RangerBotSquad[] {
       'location': location,
       'r': BASE_TARGET_RADIUS,
       'units': [unit],
-      'is_air': !!unit.type.flying,
+      'is_air': IsFlying(unit),
     }
 
     _AddUnits(new_squad, unallocated_units);
@@ -70,7 +71,7 @@ function _GlomUnits(squad: RangerBotSquad, units: LwgUnit[][]): boolean {
   while (units[0].length > 0) {
     const unit = units[0].pop() as LwgUnit;
 
-    if (!!unit.type.flying != squad.is_air) {
+    if (IsFlying(unit) != squad.is_air) {
       new_units.push(unit);
       continue;
     }
@@ -79,7 +80,7 @@ function _GlomUnits(squad: RangerBotSquad, units: LwgUnit[][]): boolean {
     if (air_distance > squad.r) {
       new_units.push(unit);
       continue;
-    } else if (unit.type.flying) {
+    } else if (IsFlying(unit)) {
       squad.units.push(unit);
       done = false;
       continue;
