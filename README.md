@@ -15,7 +15,7 @@ Computer player for [LittleWarGame](https://www.littlewargame.com/)
     a) Spectate a game between RangerBot and other bots:
     1. Select a map.
     2. Drag yourself to the "Spectators" box.
-    3. Make sure there's only 1 ranger bot in the lobby, and that it's on a team by itself. If the computer player has "Custom AI 1" selected from the drop down, it will be controlled by the RangerBot script. Other bots are named things like "Default", "Death AI", and "Hurricane AI".
+    3. Make sure each ranger bot is on its own team. If the computer player has "Custom AI 1" selected from the drop down, it will be controlled by the RangerBot script. Other bots are named things like "Default", "Death AI", and "Hurricane AI".
     4. Select "Start".
 
     b) Play vs RangerBot:
@@ -24,4 +24,4 @@ Computer player for [LittleWarGame](https://www.littlewargame.com/)
     3. Select "Start".
 
 #### Supported vs Unsupported Use Cases
-RangerBot is designed primarily for 1v1 games on standard maps. If you give it a team mate, it may bug out, even if that team mate is another RangerBot. However it can handle playing against multiple opponents, and may even win if its opponents aren't very strong. It also does not play very well on fast money maps, and sometimes even bugs out, depending on the specific map. It also doesn't do well vs cheeses like tower rushing and 1 base air. There are plans to support all of these features and use cases in the future. I do most of my testing on Chrome, so if you run into any unexpected issues, switching to that browser might help.
+RangerBot is designed primarily for 1v1 games on standard maps. If you give it a team mate, it may bug out, even if that team mate is another RangerBot. However it can handle playing against multiple opponents, and may even win. It also does not play very well on fast money maps, and sometimes even bugs out, depending on the specific map. It also doesn't do well vs cheeses like tower rushing and 1 base air. There are plans to support all of these features and use cases in the future. I do most of my testing on Chrome, so if you run into any unexpected issues, switching to that browser might help.
