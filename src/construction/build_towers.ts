@@ -22,7 +22,7 @@ function BuildTowers({ data_hub }: BuildTowersKwargs): boolean {
   }
 
   if (data_hub.spendable_gold < data_hub.TowerCost()) {
-    return false;
+    return true;
   }
 
   const next_castle: LwgBuilding = without_towers[0];
@@ -35,7 +35,7 @@ function BuildTowers({ data_hub }: BuildTowersKwargs): boolean {
   });
   if (!new_builder) {
     console.log('ERROR: Missing new_builder for BuildTowers');
-    return false;
+    return true;
   }
 
   new_builder.ranger_bot = {

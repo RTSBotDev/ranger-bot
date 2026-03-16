@@ -1,6 +1,6 @@
 import { DataHub } from '../data_hub';
 import { MINE_SCOUT_INTERVAL, CASTLE_WIDTH, CASTLE_HEIGHT, THREAT_DECAY } from '../constants';
-import { CalculateDps, CalculateArmor, CalculateRange, IsFlying } from '../unit_stats';
+import { CalculateDps, CalculateArmor, CalculateRange, IsFlying, IsInvisible } from '../unit_stats';
 import { GetNumberFieldValue } from '../utils';
 
 interface UpdateThreatsKwargs {
@@ -55,6 +55,7 @@ function _SeedThreats(data_hub: DataHub): void {
       'dps': 1,
       'range': 0,
       'is_air': false,
+      'is_invisible': false,
       'cleared': false,
     });
   }
@@ -113,6 +114,7 @@ function _ScoutGoldMines(data_hub: DataHub, threats: TeamThreatsCache): TeamThre
           'dps': 0,
           'range': 0,
           'is_air': false,
+          'is_invisible': false,
           'cleared': false,
         };
         gold_mine.scouting_threats.push(new_threat);
@@ -152,6 +154,7 @@ function _LookEverywhere(threats: TeamThreatsCache): TeamThreatsCache {
         'dps': 0,
         'range': 0,
         'is_air': false,
+        'is_invisible': false,
         'cleared': false,
       });
     }
@@ -191,6 +194,7 @@ function _RollOverUnitThreats(data_hub: DataHub, threats: TeamThreatsCache): Tea
       'dps': CalculateDps(unit),
       'range': CalculateRange(unit),
       'is_air': IsFlying(unit),
+      'is_invisible': IsInvisible(unit),
       'cleared': false,
     });
 
@@ -269,6 +273,7 @@ function _QueryBuildingThreats(data_hub: DataHub, threats: TeamThreatsCache): Te
       'dps': dps,
       'range': CalculateRange(building),
       'is_air': false,
+      'is_invisible': IsInvisible(building),
       'cleared': false,
     });
   }

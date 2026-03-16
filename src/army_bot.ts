@@ -72,6 +72,7 @@ class ArmyBot {
         'threats': [],
         'units': old_target.units,
         'is_air': old_target.is_air,
+        'is_invisible': old_target.is_invisible,
       };
 
       if (undefined !== old_target.ground_distance && !isNaN(old_target.ground_distance)) {

@@ -123,6 +123,7 @@ function _CalculateMiningDistance(base_x: number, base_y: number, mine_id: numbe
     'buildTicksLeft': 0,
     'queue': [],
     'owner': scope.player,
+    'modifierMods': {},
   };
   return GroundDistanceBetweenBuildings(hypothetical_castle, real_gold_mine);
 }

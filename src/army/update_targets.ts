@@ -49,6 +49,7 @@ function UpdateTargets({ data_hub }: UpdateTargetsKwargs): RangerBotTarget[] {
       'threats': [building_threat],
       'units': [],
       'is_air': false,
+      'is_invisible': building_threat.is_invisible,
     };
 
     _AllocateTargets(new_target, unallocated_building_threats, unallocated_unit_threats);
@@ -68,6 +69,7 @@ function UpdateTargets({ data_hub }: UpdateTargetsKwargs): RangerBotTarget[] {
       'threats': [unit_threat],
       'units': [],
       'is_air': unit_threat.is_air,
+      'is_invisible': unit_threat.is_invisible,
     }
 
     _AllocateTargets(new_target, unallocated_building_threats, unallocated_unit_threats);
@@ -130,6 +132,9 @@ function _GlomThreats(target: RangerBotTarget, threats: RangerBotThreat[][]): bo
     const threat = threats[0].pop() as RangerBotThreat;
 
     if (target.is_air != threat.is_air) {
+      new_threats.push(threat);
+      continue;
+    } else if (target.is_invisible != threat.is_invisible) {
       new_threats.push(threat);
       continue;
     }

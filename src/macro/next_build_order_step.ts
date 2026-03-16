@@ -6,6 +6,7 @@ import { BuildHouse, BuildWolfDen, BuildBarracks, BuildForge, BuildArmory,
   BuildSnakeCharmer } from '../build';
 import { BuildTowers } from '../construction/build_towers';
 import { WolvesAreObsolete } from '../utils';
+import { UpgradeWatchtowers } from '../construction/upgrade_watchtowers';
 
 interface NextBuildOrderStepKwargs {
   data_hub: DataHub;
@@ -46,6 +47,9 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
   if (BuildTowers({ data_hub: data_hub })) {
     return;
   }
+  if (UpgradeWatchtowers({ data_hub: data_hub })) {
+    return;
+  }
 
   if (WolvesAreObsolete()) {
     if (data_hub.my_barracks.length < 1) {
@@ -77,6 +81,12 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     if (data_hub.spendable_gold >= SNAKE_CHARMER_COST) {
       BuildSnakeCharmer({ data_hub: data_hub });
     }
+    return;
+  }
+
+  if (!scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers) {
+    scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers = true;
+    BuildTowers({ data_hub: data_hub });
     return;
   }
 
@@ -119,8 +129,6 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     }
     return;
   }
-
-  scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers = true;
 
   if (data_hub.active_mining_bases < 4 && viable_gold_mines.length > 0) {
     if (castle_builders.length <= 0) {
