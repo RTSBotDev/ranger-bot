@@ -14,6 +14,7 @@ interface RangerBotThreat {
   dps: number;
   range: number;
   is_air: boolean;
+  is_invisible: boolean;
   cleared: boolean;
 }
 
@@ -23,6 +24,7 @@ interface RangerBotTarget {
   threats: RangerBotThreat[];
   units: LwgUnit[];
   is_air: boolean;
+  is_invisible: boolean;
   ground_distance?: number;
   active_castle?: LwgBuilding;
   base_priority?: number;

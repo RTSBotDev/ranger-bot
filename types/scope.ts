@@ -32,6 +32,7 @@ interface LwgPiece {
   hp: number;
   order: LwgOrder;
   owner: LwgPlayer;
+  modifierMods: LwgModifierMods;
   targetUnit?: LwgPiece;
   isAlive?: boolean;
   target?: any;
@@ -121,6 +122,10 @@ interface LwgScope {
   getCurrentSupply(): number;
   order(command: string, units: LwgUnitWrapper[] | LwgBuildingWrapper[], target?: LwgOrderIdiosyncrasy | MapLocation, shift?: boolean): void;
   getGold(): number;
+}
+
+interface LwgModifierMods {
+  isInvisible?: number;
 }
 
 var scope: LwgScope;

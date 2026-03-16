@@ -33,4 +33,8 @@ function IsFlying(unit: LwgUnit): boolean {
   return !!unit.type.flying || !!unit.type.isFlying;
 }
 
-export { CalculateDps, CalculateArmor, CalculateRange, ArmorFactor, IsFlying };
+function IsInvisible(piece: LwgPiece): boolean {
+  return piece.modifierMods && undefined !== piece.modifierMods.isInvisible && 0 < piece.modifierMods.isInvisible;
+}
+
+export { CalculateDps, CalculateArmor, CalculateRange, ArmorFactor, IsFlying, IsInvisible };
