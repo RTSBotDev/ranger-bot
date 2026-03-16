@@ -22,6 +22,10 @@ function ConscriptWorkers({ data_hub }: ConscriptWorkersKwargs): RangerBotSquad[
       if (target.is_air) {
         return false;
       }
+      if (target.is_invisible) {
+        // TODO: Should conscript iff there's a detector nearby
+        return false;
+      }
       // TODO: Should targets have mining_data_id's instead of active_castle_id's?
       return target.active_castle.id == active_castle.id;
     }).sort((a, b) => {
