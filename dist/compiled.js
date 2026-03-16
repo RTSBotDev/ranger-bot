@@ -13,8 +13,8 @@ var data_hub_1 = __webpack_require__(3);
 var print_expansion_data_1 = __webpack_require__(28);
 var manage_states_1 = __webpack_require__(29);
 var macro_bot_1 = __webpack_require__(38);
-var army_bot_1 = __webpack_require__(59);
-var micro_units_1 = __webpack_require__(75);
+var army_bot_1 = __webpack_require__(60);
+var micro_units_1 = __webpack_require__(76);
 var RangerBot = (function () {
     function RangerBot(_a) {
         var debug = _a.debug, team_cache_key = _a.team_cache_key, player_cache_key = _a.player_cache_key;
@@ -119,6 +119,7 @@ var DataHub = (function () {
         this.my_barracks = scope.getBuildings({ player: this.teams.my.id, type: 'Barracks' }).map(function (v) { return v.unit; });
         this.my_wolf_dens = scope.getBuildings({ player: this.teams.my.id, type: 'Wolves Den' }).map(function (v) { return v.unit; });
         this.my_watchtowers = scope.getBuildings({ player: this.teams.my.id, type: 'Watchtower' }).map(function (v) { return v.unit; });
+        this.my_upgraded_watchtowers = scope.getBuildings({ player: this.teams.my.id, type: 'Watchtower (detection)' }).map(function (v) { return v.unit; });
         this.my_forges = scope.getBuildings({ player: this.teams.my.id, type: 'Forge' }).map(function (v) { return v.unit; });
         this.my_armories = scope.getBuildings({ player: this.teams.my.id, type: 'Armory' }).map(function (v) { return v.unit; });
         this.my_snake_charmers = scope.getBuildings({ player: this.teams.my.id, type: 'Snake Charmer' }).map(function (v) { return v.unit; });
@@ -227,7 +228,7 @@ var DataHub = (function () {
         if (!this._tower_cost) {
             var base_cost = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower', field_name: 'cost' });
             var increment_cost = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower', field_name: 'costIncrease' });
-            this._tower_cost = base_cost + increment_cost * this.my_watchtowers.length;
+            this._tower_cost = base_cost + increment_cost * (this.my_watchtowers.length + this.my_upgraded_watchtowers.length);
         }
         return this._tower_cost;
     };
@@ -1377,7 +1378,7 @@ function _OverlapsWorkerPaths(map_location, worker_paths) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SOLDIER_COST = exports.ARCHER_COST = exports.SNAKE_COST = exports.WOLF_COST = exports.WORKER_COST = exports.FORGE_COST = exports.ARMORY_COST = exports.BARRACKS_COST = exports.SNAKE_CHARMER_COST = exports.WOLF_DEN_COST = exports.HOUSE_COST = exports.CASTLE_COST = exports.TOWER_HEIGHT = exports.TOWER_WIDTH = exports.MINE_HEIGHT = exports.MINE_WIDTH = exports.CASTLE_HEIGHT = exports.CASTLE_WIDTH = exports.WORKER_DISRESPECT = exports.SCOUTS = exports.SCOUT_RADIUS = exports.PASSIVE_THREAT_FACTOR = exports.TARGET_RESET_THRESHOLD = exports.AGGRO_STOP_GAP = exports.AGGRO_START_GAP = exports.MINE_SCOUT_INTERVAL = exports.THREAT_DECAY = exports.CALM_DOWN_DISTANCE = exports.CONSCRIPTION_DISTANCE = exports.LAZY_ORDER_DISTANCE = exports.AGGRO_RETREAT_THRESHOLD = exports.AGGRO_ATTACK_THRESHOLD = exports.RETREAT_THRESHOLD = exports.ATTACK_THRESHOLD = exports.RETREAT_RADIUS = exports.ATTACK_RADIUS = exports.MAX_THREAT_RESPONSE = exports.MIN_THREAT_RESPONSE = exports.BASE_TARGET_RADIUS = exports.MAX_BARRACKS = exports.MAX_FORGES = exports.REPLACEMENT_BASE_THRESHOLD = exports.GOLD_PER_MIN = exports.MAX_MINING_DISTANCE = exports.NEAR_MAX_SUPPLY = exports.BUILDING_SPACE_BUFFER = exports.PRE_QUEUE_BUFFER = exports.MAX_WORKERS = exports.WORKERS_PER_CASTLE = exports.SPEED_FACTOR = void 0;
-exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.SNAKE_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.SNAKE_SUPPLY = exports.WOLF_SUPPLY = exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = void 0;
+exports.WATCHTOWER_DETECTION_COST = exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.SNAKE_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.SNAKE_SUPPLY = exports.WOLF_SUPPLY = exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = void 0;
 var utils_1 = __webpack_require__(10);
 exports.SPEED_FACTOR = 20;
 exports.WORKERS_PER_CASTLE = 12;
@@ -1459,6 +1460,7 @@ exports.SOLDIER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece
 exports.WORKER_SPEED = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'movementSpeed' }) * exports.SPEED_FACTOR;
 exports.MAX_ATTACK_UPGRADE_LEVEL = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgattack', field_name: 'maxLevel' });
 exports.MAX_ARMOR_UPGRADE_LEVEL = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgarmor', field_name: 'maxLevel' });
+exports.WATCHTOWER_DETECTION_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower2', field_name: 'cost' });
 
 
 /***/ }),
@@ -1568,6 +1570,7 @@ function _CalculateMiningDistance(base_x, base_y, mine_id) {
         'buildTicksLeft': 0,
         'queue': [],
         'owner': scope.player,
+        'modifierMods': {},
     };
     return (0, ground_distance_1.GroundDistanceBetweenBuildings)(hypothetical_castle, real_gold_mine);
 }
@@ -2270,6 +2273,7 @@ exports.CalculateArmor = CalculateArmor;
 exports.CalculateRange = CalculateRange;
 exports.ArmorFactor = ArmorFactor;
 exports.IsFlying = IsFlying;
+exports.IsInvisible = IsInvisible;
 var utils_1 = __webpack_require__(10);
 var constants_1 = __webpack_require__(15);
 function CalculateDps(piece) {
@@ -2294,6 +2298,9 @@ function ArmorFactor(armor) {
 }
 function IsFlying(unit) {
     return !!unit.type.flying || !!unit.type.isFlying;
+}
+function IsInvisible(piece) {
+    return piece.modifierMods && undefined !== piece.modifierMods.isInvisible && 0 < piece.modifierMods.isInvisible;
 }
 
 
@@ -3491,6 +3498,8 @@ function _SurveyMeleeVsRanged(my_building, data_hub) {
         }
         else if (queued_unit.isUpgrade) {
         }
+        else if ('watchtower2' == queued_unit.id_string) {
+        }
         else {
             console.log('\nERROR: Unhandled id_string: ' + queued_unit.id_string);
         }
@@ -3500,7 +3509,7 @@ function _SurveySupply(my_building, data_hub) {
     var unit_supply = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
             my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
-            my_building.type.name == 'Snake Charmer') {
+            my_building.type.name == 'Snake Charmer' || my_building.type.name == 'Watchtower (detection)') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -3538,7 +3547,7 @@ function _SurveySupply(my_building, data_hub) {
     var seconds_left = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
             my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
-            my_building.type.name == 'Snake Charmer') {
+            my_building.type.name == 'Snake Charmer' || my_building.type.name == 'Watchtower (detection)') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -3586,7 +3595,7 @@ function _SurveySpending(my_building, data_hub) {
     var unit_cost = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
             my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
-            my_building.type.name == 'Snake Charmer') {
+            my_building.type.name == 'Snake Charmer' || my_building.type.name == 'Watchtower (detection)') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -3622,7 +3631,7 @@ function _SurveySpending(my_building, data_hub) {
     var build_time = (function () {
         if (my_building.type.name == 'House' || my_building.type.name == 'Forge' ||
             my_building.type.name == 'Armory' || my_building.type.name == 'Watchtower' ||
-            my_building.type.name == 'Snake Charmer') {
+            my_building.type.name == 'Snake Charmer' || my_building.type.name == 'Watchtower (detection)') {
             return 0;
         }
         else if (my_building.queue && my_building.queue[0]) {
@@ -4559,6 +4568,7 @@ var start_expansion_when_ready_1 = __webpack_require__(56);
 var build_1 = __webpack_require__(48);
 var build_towers_1 = __webpack_require__(58);
 var utils_1 = __webpack_require__(10);
+var upgrade_watchtowers_1 = __webpack_require__(59);
 function NextBuildOrderStep(_a) {
     var data_hub = _a.data_hub;
     var already_reserved_castle_gold = false;
@@ -4590,6 +4600,9 @@ function NextBuildOrderStep(_a) {
     if ((0, build_towers_1.BuildTowers)({ data_hub: data_hub })) {
         return;
     }
+    if ((0, upgrade_watchtowers_1.UpgradeWatchtowers)({ data_hub: data_hub })) {
+        return;
+    }
     if ((0, utils_1.WolvesAreObsolete)()) {
         if (data_hub.my_barracks.length < 1) {
             if (data_hub.spendable_gold >= constants_1.BARRACKS_COST) {
@@ -4619,6 +4632,11 @@ function NextBuildOrderStep(_a) {
         if (data_hub.spendable_gold >= constants_1.SNAKE_CHARMER_COST) {
             (0, build_1.BuildSnakeCharmer)({ data_hub: data_hub });
         }
+        return;
+    }
+    if (!scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers) {
+        scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers = true;
+        (0, build_towers_1.BuildTowers)({ data_hub: data_hub });
         return;
     }
     var rax_on_2_base = (0, utils_1.WolvesAreObsolete)() ? 3 : 1;
@@ -4656,7 +4674,6 @@ function NextBuildOrderStep(_a) {
         }
         return;
     }
-    scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers = true;
     if (data_hub.active_mining_bases < 4 && viable_gold_mines.length > 0) {
         if (castle_builders.length <= 0) {
             (0, start_expansion_when_ready_1.StartExpansionWhenReady)({ data_hub: data_hub });
@@ -4906,7 +4923,7 @@ function BuildTowers(_a) {
         return false;
     }
     if (data_hub.spendable_gold < data_hub.TowerCost()) {
-        return false;
+        return true;
     }
     var next_castle = without_towers[0];
     var mining_data = next_castle.ranger_bot.mining_data;
@@ -4918,7 +4935,7 @@ function BuildTowers(_a) {
     });
     if (!new_builder) {
         console.log('ERROR: Missing new_builder for BuildTowers');
-        return false;
+        return true;
     }
     new_builder.ranger_bot = {
         'castle': next_castle,
@@ -4942,20 +4959,55 @@ function BuildTowers(_a) {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UpgradeWatchtowers = UpgradeWatchtowers;
+var constants_1 = __webpack_require__(15);
+function UpgradeWatchtowers(_a) {
+    var data_hub = _a.data_hub;
+    if (!scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers) {
+        return false;
+    }
+    if (0 == data_hub.my_watchtowers.length) {
+        return false;
+    }
+    for (var i = 0; i < data_hub.my_watchtowers.length; i++) {
+        var tower = data_hub.my_watchtowers[i];
+        if (tower.isUnderConstruction) {
+            continue;
+        }
+        if (tower.queue && tower.queue[0] && 'watchtower2' == tower.queue[0].id_string) {
+            continue;
+        }
+        console.log(tower);
+        if (data_hub.spendable_gold < constants_1.WATCHTOWER_DETECTION_COST) {
+            return true;
+        }
+        scope.order('Research Detection', [{ 'unit': tower }]);
+        data_hub.spendable_gold -= constants_1.WATCHTOWER_DETECTION_COST;
+    }
+    return false;
+}
+
+
+/***/ }),
+/* 60 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ArmyBot = void 0;
 var constants_1 = __webpack_require__(15);
-var update_threats_1 = __webpack_require__(60);
-var update_targets_1 = __webpack_require__(61);
-var prioritize_targets_1 = __webpack_require__(62);
-var form_squads_1 = __webpack_require__(63);
-var conscript_workers_1 = __webpack_require__(64);
-var identify_battles_1 = __webpack_require__(65);
-var calculate_squad_strength_1 = __webpack_require__(66);
-var evaluate_battle_1 = __webpack_require__(67);
-var manage_squad_1 = __webpack_require__(68);
-var manage_battle_status_1 = __webpack_require__(69);
-var allocate_units_1 = __webpack_require__(70);
-var command_idle_units_1 = __webpack_require__(74);
+var update_threats_1 = __webpack_require__(61);
+var update_targets_1 = __webpack_require__(62);
+var prioritize_targets_1 = __webpack_require__(63);
+var form_squads_1 = __webpack_require__(64);
+var conscript_workers_1 = __webpack_require__(65);
+var identify_battles_1 = __webpack_require__(66);
+var calculate_squad_strength_1 = __webpack_require__(67);
+var evaluate_battle_1 = __webpack_require__(68);
+var manage_squad_1 = __webpack_require__(69);
+var manage_battle_status_1 = __webpack_require__(70);
+var allocate_units_1 = __webpack_require__(71);
+var command_idle_units_1 = __webpack_require__(75);
 var ArmyBot = (function () {
     function ArmyBot(_a) {
         var data_hub = _a.data_hub;
@@ -5002,6 +5054,7 @@ var ArmyBot = (function () {
                 'threats': [],
                 'units': old_target.units,
                 'is_air': old_target.is_air,
+                'is_invisible': old_target.is_invisible,
             };
             if (undefined !== old_target.ground_distance && !isNaN(old_target.ground_distance)) {
                 new_target['ground_distance'] = old_target.ground_distance;
@@ -5057,7 +5110,7 @@ exports.ArmyBot = ArmyBot;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5105,6 +5158,7 @@ function _SeedThreats(data_hub) {
             'dps': 1,
             'range': 0,
             'is_air': false,
+            'is_invisible': false,
             'cleared': false,
         });
     }
@@ -5155,6 +5209,7 @@ function _ScoutGoldMines(data_hub, threats) {
                     'dps': 0,
                     'range': 0,
                     'is_air': false,
+                    'is_invisible': false,
                     'cleared': false,
                 };
                 gold_mine.scouting_threats.push(new_threat);
@@ -5187,6 +5242,7 @@ function _LookEverywhere(threats) {
                 'dps': 0,
                 'range': 0,
                 'is_air': false,
+                'is_invisible': false,
                 'cleared': false,
             });
         }
@@ -5219,6 +5275,7 @@ function _RollOverUnitThreats(data_hub, threats) {
             'dps': (0, unit_stats_1.CalculateDps)(unit),
             'range': (0, unit_stats_1.CalculateRange)(unit),
             'is_air': (0, unit_stats_1.IsFlying)(unit),
+            'is_invisible': (0, unit_stats_1.IsInvisible)(unit),
             'cleared': false,
         });
         new_unit_ids[String(unit.id)] = true;
@@ -5280,6 +5337,7 @@ function _QueryBuildingThreats(data_hub, threats) {
             'dps': dps,
             'range': (0, unit_stats_1.CalculateRange)(building),
             'is_air': false,
+            'is_invisible': (0, unit_stats_1.IsInvisible)(building),
             'cleared': false,
         });
     };
@@ -5292,7 +5350,7 @@ function _QueryBuildingThreats(data_hub, threats) {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5334,6 +5392,7 @@ function UpdateTargets(_a) {
             'threats': [building_threat],
             'units': [],
             'is_air': false,
+            'is_invisible': building_threat.is_invisible,
         };
         _AllocateTargets(new_target, unallocated_building_threats, unallocated_unit_threats);
         output.push(new_target);
@@ -5350,6 +5409,7 @@ function UpdateTargets(_a) {
             'threats': [unit_threat],
             'units': [],
             'is_air': unit_threat.is_air,
+            'is_invisible': unit_threat.is_invisible,
         };
         _AllocateTargets(new_target, unallocated_building_threats, unallocated_unit_threats);
         output.push(new_target);
@@ -5410,6 +5470,10 @@ function _GlomThreats(target, threats) {
             new_threats.push(threat);
             continue;
         }
+        else if (target.is_invisible != threat.is_invisible) {
+            new_threats.push(threat);
+            continue;
+        }
         var air_distance = Math.sqrt(Math.pow((target.location.x - threat.location.x), 2) + Math.pow((target.location.y - threat.location.y), 2));
         if (air_distance > target.r) {
             new_threats.push(threat);
@@ -5440,7 +5504,7 @@ function _GlomThreats(target, threats) {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5510,7 +5574,7 @@ function _CalculateTargetStrength(target) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5609,7 +5673,7 @@ function _GlomUnits(squad, units) {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5630,6 +5694,9 @@ function ConscriptWorkers(_a) {
                 return false;
             }
             if (target.is_air) {
+                return false;
+            }
+            if (target.is_invisible) {
                 return false;
             }
             return target.active_castle.id == active_castle.id;
@@ -5711,7 +5778,7 @@ function _UnconscriptCastle(mining_data) {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5817,7 +5884,7 @@ function _GlomBattleSquads(battle_targets, unassigned_squads) {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5857,7 +5924,7 @@ function CalculateSquadStrength(squad) {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5970,7 +6037,7 @@ function EvaluateBattle(battle, aggro_mode) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6118,7 +6185,7 @@ function _CommandUnitsToRetreat(squad, data_hub) {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -6184,14 +6251,14 @@ function ManageBattleStatus(_a) {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AllocateUnits = AllocateUnits;
-var assign_units_to_battle_1 = __webpack_require__(71);
-var assign_units_to_targets_1 = __webpack_require__(73);
+var assign_units_to_battle_1 = __webpack_require__(72);
+var assign_units_to_targets_1 = __webpack_require__(74);
 function AllocateUnits(_a) {
     var data_hub = _a.data_hub, battles = _a.battles;
     data_hub.busy_units = _ExcludeBusyUnits(data_hub.targets, battles);
@@ -6244,13 +6311,13 @@ function _AllocateUnitsInBattle(battles) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AssignUnitsToBattle = AssignUnitsToBattle;
-var unit_assigner_1 = __webpack_require__(72);
+var unit_assigner_1 = __webpack_require__(73);
 var constants_1 = __webpack_require__(15);
 function AssignUnitsToBattle(battle) {
     var all_units_in_battle = [];
@@ -6281,7 +6348,7 @@ function AssignUnitsToBattle(battle) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6435,13 +6502,13 @@ exports.UnitAssigner = UnitAssigner;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AssignUnitsToTargets = AssignUnitsToTargets;
-var unit_assigner_1 = __webpack_require__(72);
+var unit_assigner_1 = __webpack_require__(73);
 var constants_1 = __webpack_require__(15);
 function AssignUnitsToTargets(_a) {
     var data_hub = _a.data_hub;
@@ -6602,7 +6669,7 @@ function _DeAssign(targets) {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -6635,15 +6702,15 @@ function CommandIdleUnits(my_fighting_units) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MicroUnits = MicroUnits;
-var micro_combat_unit_1 = __webpack_require__(76);
+var micro_combat_unit_1 = __webpack_require__(77);
 var constants_1 = __webpack_require__(15);
-var micro_worker_1 = __webpack_require__(77);
+var micro_worker_1 = __webpack_require__(78);
 function MicroUnits(_a) {
     var data_hub = _a.data_hub;
     _RallyCastles(data_hub);
@@ -6718,7 +6785,7 @@ function _RallyCastles(data_hub) {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6769,13 +6836,13 @@ function _LazyCombatOrder(unit, order) {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MicroWorker = MicroWorker;
-var micro_combat_unit_1 = __webpack_require__(76);
+var micro_combat_unit_1 = __webpack_require__(77);
 var utils_1 = __webpack_require__(10);
 var buildable_1 = __webpack_require__(14);
 var select_castle_placement_1 = __webpack_require__(57);
