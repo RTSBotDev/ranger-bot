@@ -86,3 +86,4 @@ export const SOLDIER_BUILD_TIME: number = Math.floor(GetNumberFieldValue({ piece
 export const WORKER_SPEED: number = GetNumberFieldValue({ piece_name: 'worker', field_name: 'movementSpeed' }) * SPEED_FACTOR;
 export const MAX_ATTACK_UPGRADE_LEVEL: number = GetNumberFieldValue({ piece_name: 'upgattack', field_name: 'maxLevel' });
 export const MAX_ARMOR_UPGRADE_LEVEL: number = GetNumberFieldValue({ piece_name: 'upgarmor', field_name: 'maxLevel' });
+export const WATCHTOWER_DETECTION_COST: number = GetNumberFieldValue({ piece_name: 'watchtower2', field_name: 'cost' });

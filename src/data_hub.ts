@@ -33,6 +33,7 @@ class DataHub {
   my_barracks: LwgBuilding[];
   my_wolf_dens: LwgBuilding[];
   my_watchtowers: LwgBuilding[];
+  my_upgraded_watchtowers: LwgBuilding[];
   my_forges: LwgBuilding[];
   my_armories: LwgBuilding[];
   my_snake_charmers: LwgBuilding[];
@@ -115,6 +116,7 @@ class DataHub {
     this.my_barracks = scope.getBuildings({ player: this.teams.my.id, type: 'Barracks' }).map((v) => v.unit);
     this.my_wolf_dens = scope.getBuildings({ player: this.teams.my.id, type: 'Wolves Den' }).map((v) => v.unit);
     this.my_watchtowers = scope.getBuildings({ player: this.teams.my.id, type: 'Watchtower' }).map((v) => v.unit);
+    this.my_upgraded_watchtowers = scope.getBuildings({ player: this.teams.my.id, type: 'Watchtower (detection)' }).map((v) => v.unit);
     this.my_forges = scope.getBuildings({ player: this.teams.my.id, type: 'Forge' }).map((v) => v.unit);
     this.my_armories = scope.getBuildings({ player: this.teams.my.id, type: 'Armory' }).map((v) => v.unit);
     this.my_snake_charmers = scope.getBuildings({ player: this.teams.my.id, type: 'Snake Charmer' }).map((v) => v.unit);
@@ -239,7 +241,7 @@ class DataHub {
       // TODO: is there a way to get this from the API?
       const base_cost = GetNumberFieldValue({ piece_name: 'watchtower', field_name: 'cost' });
       const increment_cost = GetNumberFieldValue({ piece_name: 'watchtower', field_name: 'costIncrease' });
-      this._tower_cost = base_cost + increment_cost*this.my_watchtowers.length;
+      this._tower_cost = base_cost + increment_cost * (this.my_watchtowers.length + this.my_upgraded_watchtowers.length);
     } 
     return this._tower_cost;
   }
