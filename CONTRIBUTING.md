@@ -3,6 +3,7 @@ This is a personal project I'm using to learn TypeScript and improve my resume, 
 `npm run compile`
 
 TODO:
+- real ground distances
 - tower rush defense
 - change aggro mode to take allies into account
 - support team play in general
