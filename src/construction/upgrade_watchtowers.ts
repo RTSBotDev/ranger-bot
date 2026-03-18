@@ -22,7 +22,6 @@ function UpgradeWatchtowers({ data_hub }: UpgradeWatchtowersKwargs): boolean {
     if (tower.queue && tower.queue[0] && 'watchtower2' == tower.queue[0].id_string) {
       continue;
     }
-    console.log(tower);
 
     if (data_hub.spendable_gold < WATCHTOWER_DETECTION_COST) {
       return true;

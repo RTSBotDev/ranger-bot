@@ -3,9 +3,10 @@ import { IsBuildable } from './buildable';
 interface MapGoldMinePerimeterKwargs {
   raw_mine: LwgGoldMine;
   raw_gold_mines: LwgGoldMine[];
+  teams: RangerBotTeams;
 }
 
-function MapGoldMinePerimeter({ raw_mine, raw_gold_mines }: MapGoldMinePerimeterKwargs): boolean[][] {
+function MapGoldMinePerimeter({ raw_mine, raw_gold_mines, teams }: MapGoldMinePerimeterKwargs): boolean[][] {
   const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
   if (mine_cache.exclusion_zone === undefined) {
     throw new Error('MapGoldMinePerimeter called out of order'); // hush TS
@@ -35,7 +36,7 @@ function MapGoldMinePerimeter({ raw_mine, raw_gold_mines }: MapGoldMinePerimeter
           return x;
         }
       })();
-      if (_IsValid(new_x, y, z, raw_gold_mines)) {
+      if (_IsValid(new_x, y, z, raw_gold_mines, teams)) {
         if (output[new_x] === undefined) {
           output[new_x] = [];
         }
@@ -51,7 +52,7 @@ function MapGoldMinePerimeter({ raw_mine, raw_gold_mines }: MapGoldMinePerimeter
           return y;
         }
       })();
-      if (_IsValid(x, new_y, z, raw_gold_mines)) {
+      if (_IsValid(x, new_y, z, raw_gold_mines, teams)) {
         if (output[x] === undefined) {
           output[x] = [];
         }
@@ -63,7 +64,7 @@ function MapGoldMinePerimeter({ raw_mine, raw_gold_mines }: MapGoldMinePerimeter
   return output;
 }
 
-function _IsValid(x: number, y: number, z: number, raw_gold_mines: LwgGoldMine[]): boolean {
+function _IsValid(x: number, y: number, z: number, raw_gold_mines: LwgGoldMine[], teams: RangerBotTeams): boolean {
   if (scope.getHeightLevel(x, y) != z) {
     return false;
   }
@@ -83,7 +84,11 @@ function _IsValid(x: number, y: number, z: number, raw_gold_mines: LwgGoldMine[]
   }
 
   const map_location: MapLocation = {'x': x, 'y': y};
-  return IsBuildable({ map_location: map_location, exclude_worker_paths: false });
+  return IsBuildable({
+    map_location: map_location,
+    teams: teams,
+    exclude_worker_paths: false,
+  });
 }
 
 export { MapGoldMinePerimeter };

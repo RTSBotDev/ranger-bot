@@ -34,6 +34,7 @@ export const MAX_BARRACKS: number = 10;
 export const BASE_TARGET_RADIUS: number = 3;
 export const MIN_THREAT_RESPONSE: number = 2;
 export const MAX_THREAT_RESPONSE: number = 5;
+export const CONSCRIPTION_THREAT_RESPONSE: number = 2;
 export const ATTACK_RADIUS: number = 19; // > 2 * RETREAT_RADIUS
 export const RETREAT_RADIUS: number = 9; // most units have vision 8
 export const ATTACK_THRESHOLD: number = 1.65;

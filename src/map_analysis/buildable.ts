@@ -6,9 +6,10 @@ interface IsBuildableKwargs {
   exclude_worker_paths: boolean;
   raw_gold_mines?: LwgGoldMine[];
   data_hub?: DataHub;
+  teams?: RangerBotTeams;
 }
 
-function IsBuildable({ map_location, exclude_worker_paths, raw_gold_mines, data_hub }: IsBuildableKwargs): boolean {
+function IsBuildable({ map_location, exclude_worker_paths, raw_gold_mines, data_hub, teams }: IsBuildableKwargs): boolean {
   if (map_location.x < 0 || scope.getMapWidth() < map_location.x) {
     return false;
   }
@@ -24,20 +25,26 @@ function IsBuildable({ map_location, exclude_worker_paths, raw_gold_mines, data_
       return false;
     }
 
-    // Our initial castle makes our starting position unpathable,
-    // think of AnalyzeGoldMines at the start of the game.
+    if (teams) {
+      // Initial castles makes starting positions unpathable,
+      // think of AnalyzeGoldMines at the start of the game.
+      const start_locations = [teams.my.start];
+      const players_data = Object.values(teams.players);
+      for (let i=0; i<players_data.length; i++) {
+        const player_data = players_data[i];
 
-    // this.all_my_castles might not be defined yet
-    const castles: LwgBuilding[] = scope.getBuildings({type: 'Castle'}).map((c: LwgBuildingWrapper) => c.unit);
-    for (let i=0; i<castles.length; i++) {
-      const castle: LwgBuilding = castles[i];
-
-      if (castle.x <= map_location.x && map_location.x <= (castle.x + CASTLE_WIDTH) &&
-          castle.y <= map_location.y && map_location.y <= (castle.y + CASTLE_HEIGHT)) {
-        return true;
+        start_locations.push(player_data.start_location);
       }
+      for (let i=0; i<start_locations.length; i++) {
+        const start_location = start_locations[i];
+
+        if (start_location.x <= map_location.x && map_location.x <= (start_location.x + CASTLE_WIDTH) &&
+            start_location.y <= map_location.y && map_location.y <= (start_location.y + CASTLE_HEIGHT)) {
+          return true;
+        }
+      }
+      return false;
     }
-    return false;
   }
 
   if (exclude_worker_paths) {
@@ -66,9 +73,10 @@ interface AreBuildableKwargs {
   exclude_worker_paths: boolean;
   raw_gold_mines?: LwgGoldMine[];
   data_hub?: DataHub;
+  teams?: RangerBotTeams;
 }
 
-function AreBuildable({ x_min, x_max, y_min, y_max, exclude_worker_paths, raw_gold_mines, data_hub}: AreBuildableKwargs): boolean {
+function AreBuildable({ x_min, x_max, y_min, y_max, exclude_worker_paths, raw_gold_mines, data_hub, teams }: AreBuildableKwargs): boolean {
   for (let x:number=x_min; x<=x_max; x++) {
     for (let y:number=y_min; y<=y_max; y++) {
       const map_location: MapLocation = {'x': x, 'y': y};
@@ -82,6 +90,9 @@ function AreBuildable({ x_min, x_max, y_min, y_max, exclude_worker_paths, raw_go
       }
       if (data_hub) {
         kwargs['data_hub'] = data_hub;
+      }
+      if (teams) {
+        kwargs['teams'] = teams;
       }
 
       if (!IsBuildable(kwargs)) {
@@ -99,11 +110,11 @@ function _UseGoldMines(map_location: MapLocation, raw_gold_mines: LwgGoldMine[])
     const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
 
     const all_worker_paths: boolean[][][] = (() => {
-      if (mine_cache.expansion_data) {
-        return mine_cache.expansion_data.map((ed:ExpansionData) => ed.worker_paths);
-      } else if (mine_cache._worker_paths) {
+      if (mine_cache._worker_paths) {
         return [mine_cache._worker_paths];
-      } else {
+      } else if (mine_cache.expansion_data) {
+        return mine_cache.expansion_data.map((ed:ExpansionData) => ed.worker_paths);
+      }  else {
         throw new Error('all_worker_paths missing for _UseGoldMines');
       }
     })();
@@ -116,10 +127,10 @@ function _UseGoldMines(map_location: MapLocation, raw_gold_mines: LwgGoldMine[])
     }
 
     const castle_locations: MapLocation[] = (() => {
-      if (mine_cache.expansion_data) {
-        return mine_cache.expansion_data.map((ed:ExpansionData) => ed.castle_location);
-      } else if (mine_cache._castle_location) {
+      if (mine_cache._castle_location) {
         return [mine_cache._castle_location];
+      } else if (mine_cache.expansion_data) {
+        return mine_cache.expansion_data.map((ed:ExpansionData) => ed.castle_location);
       } else {
         throw new Error('castle_locations missing for _UseGoldMines');
       }

@@ -68,14 +68,18 @@ function AssignRepairers({ data_hub }: AssignRepairersKwargs): void {
       if (!new_repairer) {
         continue;
       }
-      new_repairer.ranger_bot = {
-        'job': 'repair',
-        'target_building': my_building,
-      };
-      scope.order('Move', [{'unit': new_repairer}], my_building.ranger_bot.center);
+      AssignWorkerToRepair(new_repairer, my_building);
       repairers.push(new_repairer);
     }
   }
 }
 
-export { AssignRepairers };
+function AssignWorkerToRepair(worker: LwgUnit, building: LwgBuilding): void {
+  worker.ranger_bot = {
+    'job': 'repair',
+    'target_building': building,
+  };
+  scope.order('Move', [{'unit': worker}], building.ranger_bot.center);
+}
+
+export { AssignRepairers, AssignWorkerToRepair };

@@ -5,7 +5,7 @@ import { SelectCastleLocations } from './select_castle_locations';
 import { GetGoldMines } from '../utils';
 import { MINE_WIDTH, MINE_HEIGHT } from '../constants';
 
-function AnalyzeGoldMines(): Expansion[] {
+function AnalyzeGoldMines(teams: RangerBotTeams): Expansion[] {
   if (scope.ranger_bot.expansions === undefined) {
     const raw_gold_mines: LwgGoldMine[] = GetGoldMines();
 
@@ -38,7 +38,11 @@ function AnalyzeGoldMines(): Expansion[] {
       const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
 
       if (mine_cache.perimeter === undefined) {
-        mine_cache.perimeter = MapGoldMinePerimeter({ raw_mine: raw_mine, raw_gold_mines: raw_gold_mines });
+        mine_cache.perimeter = MapGoldMinePerimeter({
+          raw_mine: raw_mine,
+          raw_gold_mines: raw_gold_mines,
+          teams: teams,
+        });
       }
     }
 
@@ -47,11 +51,18 @@ function AnalyzeGoldMines(): Expansion[] {
       const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
 
       if (mine_cache.viable_castle_locations === undefined) {
-        mine_cache.viable_castle_locations = CalculateViableCastleLocations({ raw_mine: raw_mine, raw_gold_mines: raw_gold_mines });
+        mine_cache.viable_castle_locations = CalculateViableCastleLocations({
+          raw_mine: raw_mine,
+          raw_gold_mines: raw_gold_mines,
+          teams: teams,
+        });
       }
     }
 
-    const new_expansions: Expansion[] = SelectCastleLocations({ raw_gold_mines: raw_gold_mines });
+    const new_expansions: Expansion[] = SelectCastleLocations({
+      raw_gold_mines: raw_gold_mines,
+      teams: teams,
+    });
     scope.ranger_bot.expansions = new_expansions;
   }
 

@@ -193,6 +193,10 @@ class DataHub {
     if (this.viable_gold_mines.length <= 0) {
       return false;
     }
+    if (this.active_mining_bases >= 4) {
+      return false;
+    }
+
     return (this.active_mining_bases < active_mining_bases);
   }
 

@@ -44,6 +44,10 @@ class UnitAssigner {
       for (let j=0; j<target.units.length; j++) {
         const unit = target.units[j];
 
+        if (unit.ranger_bot.conscripted) {
+          continue;
+        }
+
         const effective_hp = unit.hp * ArmorFactor(unit.type.armor);
         hp += effective_hp;
         dps += CalculateDps(unit);
