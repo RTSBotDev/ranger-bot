@@ -1,3 +1,4 @@
+import { AssignWorkerToRepair } from '../macro/assign_repairers';
 
 interface ManageBuildersKwargs {
   builders: LwgUnit[];
@@ -69,8 +70,12 @@ function _DealocateIfFinishedOrDestroyed(builder: LwgUnit): void {
   }
   const target_building = builder.ranger_bot.target_building as LwgBuilding;
 
-  if (!target_building.isUnderConstruction && target_building.hp >= target_building.type.hp) {
-    builder.ranger_bot = {};
+  if (!target_building.isUnderConstruction) {
+    if (target_building.hp >= target_building.type.hp) {
+      builder.ranger_bot = {};
+    } else {
+      AssignWorkerToRepair(builder, target_building);
+    }
   } else if (!target_building.isAlive && target_building.hp <= 0){
     builder.ranger_bot = {};
   }
