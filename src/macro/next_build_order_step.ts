@@ -23,7 +23,10 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     if (castle_builders.length <= 0) {
       StartExpansionWhenReady({ data_hub: data_hub });
     }
-    data_hub.spendable_gold -= 2 * CASTLE_COST;
+    // Twice to undo the addition above, a 3rd time to reserve gold.
+    // StartExpansionWhenReady does not reserve any gold, which is normally correct.
+    // But when a replacement expansion is needed, gold should be reserved.
+    data_hub.spendable_gold -= 3 * CASTLE_COST;
     already_reserved_castle_gold = true;
   }
 
@@ -116,14 +119,16 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     return;
   }
 
-  if (data_hub.my_forges.length < 1) {
+  const count_forges_needed = _CalculateForgesNeeded(data_hub);
+
+  if (data_hub.my_forges.length < Math.min(1, count_forges_needed)) {
     if (data_hub.spendable_gold >= FORGE_COST) {
       BuildForge({ data_hub: data_hub });
     }
     return;
   }
 
-  if (data_hub.my_armories.length < 1) {
+  if (data_hub.my_armories.length < 1 && 0 == scope.player.upgrades.upgrange) {
     if (data_hub.spendable_gold >= ARMORY_COST) {
       BuildArmory({ data_hub: data_hub });
     }
@@ -140,24 +145,16 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     }
   }
 
-  if (data_hub.my_barracks.length < MAX_BARRACKS &&
-      data_hub.my_barracks.every((b) => b.isUnderConstruction || b.queue[0])) {
+  if (data_hub.my_barracks.length < 6) {
     if (data_hub.spendable_gold >= BARRACKS_COST) {
       BuildBarracks({ data_hub: data_hub });
     }
     return;
   }
 
-  if (data_hub.my_forges.length < MAX_FORGES) {
+  if (data_hub.my_forges.length < Math.min(2, count_forges_needed)) {
     if (data_hub.spendable_gold >= FORGE_COST) {
       BuildForge({ data_hub: data_hub });
-    }
-    return;
-  }
-
-  if (data_hub.my_barracks.length < MAX_BARRACKS) {
-    if (data_hub.spendable_gold >= BARRACKS_COST) {
-      BuildBarracks({ data_hub: data_hub });
     }
     return;
   }
@@ -170,6 +167,28 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
       data_hub.spendable_gold -= CASTLE_COST;
       already_reserved_castle_gold = true;
     }
+  }
+
+  if (data_hub.my_barracks.length < 8) {
+    if (data_hub.spendable_gold >= BARRACKS_COST) {
+      BuildBarracks({ data_hub: data_hub });
+    }
+    return;
+  }
+
+  if (data_hub.my_forges.length < count_forges_needed) {
+    if (data_hub.spendable_gold >= FORGE_COST) {
+      BuildForge({ data_hub: data_hub });
+    }
+    return;
+  }
+
+  if (data_hub.my_barracks.length < MAX_BARRACKS &&
+      data_hub.my_barracks.every((b) => b.isUnderConstruction || b.queue[0])) {
+    if (data_hub.spendable_gold >= BARRACKS_COST) {
+      BuildBarracks({ data_hub: data_hub });
+    }
+    return;
   }
 }
 
@@ -185,6 +204,26 @@ function _NeedFirstHouse(data_hub: DataHub): boolean {
     return false;
   }
   return true;
+}
+
+function _CalculateForgesNeeded(data_hub: DataHub): number {
+  let forge_upgrades_needed = 10 - data_hub.AttackUpgradeLevel() - data_hub.ArmorUpgradeLevel();
+
+  let idle_forges = 0;
+  for (let i=0; i<data_hub.my_forges.length; i++) {
+    const forge = data_hub.my_forges[i];
+
+    if (forge.isUnderConstruction) {
+      continue;
+    }
+    if (forge.queue[0]) {
+      continue;
+    }
+
+    idle_forges ++;
+  }
+
+  return Math.min(forge_upgrades_needed - idle_forges, MAX_FORGES);
 }
 
 export { NextBuildOrderStep };
