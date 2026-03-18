@@ -4,9 +4,10 @@ import { IsBuildable } from './buildable';
 interface CalculateWorkerPathsKwargs {
   raw_mine: LwgGoldMine;
   castle_location: MapLocation;
+  teams: RangerBotTeams;
 }
 
-function CalculateWorkerPaths({ raw_mine, castle_location }: CalculateWorkerPathsKwargs): boolean[][] {
+function CalculateWorkerPaths({ raw_mine, castle_location, teams }: CalculateWorkerPathsKwargs): boolean[][] {
   const castle_points: MapLocation[] = [];
   for (let dx:number=0; dx<CASTLE_WIDTH; dx++) {
     for (let dy:number=0; dy<CASTLE_HEIGHT; dy++) {
@@ -72,7 +73,7 @@ function CalculateWorkerPaths({ raw_mine, castle_location }: CalculateWorkerPath
           point = candidates[0];
         }
 
-        if (IsBuildable({ map_location: point, exclude_worker_paths: false })) {
+        if (IsBuildable({ map_location: point, teams: teams, exclude_worker_paths: false })) {
           if (output[point.x] === undefined) {
             output[point.x] = [];
           }

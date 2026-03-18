@@ -6,9 +6,10 @@ import { GetGoldMines } from '../utils';
 interface CalculateViableCastleLocationsKwargs {
   raw_mine: LwgGoldMine;
   raw_gold_mines: LwgGoldMine[];
+  teams: RangerBotTeams;
 }
 
-function CalculateViableCastleLocations({ raw_mine, raw_gold_mines }: CalculateViableCastleLocationsKwargs): number[][] {
+function CalculateViableCastleLocations({ raw_mine, raw_gold_mines, teams }: CalculateViableCastleLocationsKwargs): number[][] {
   const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
   if (mine_cache.perimeter === undefined) {
     throw new Error('CalculateViableCastleLocations called out of order');
@@ -37,7 +38,7 @@ function CalculateViableCastleLocations({ raw_mine, raw_gold_mines }: CalculateV
         for (let dy:number=0; dy<CASTLE_HEIGHT; dy++) {
           const yy: number = y - dy;
 
-          if (!_IsViable(xx, yy, z, raw_gold_mines)) {
+          if (!_IsViable(xx, yy, z, raw_gold_mines, teams)) {
             continue;
           }
 
@@ -59,7 +60,7 @@ function CalculateViableCastleLocations({ raw_mine, raw_gold_mines }: CalculateV
   return output;
 }
 
-function _IsViable(base_x: number, base_y: number, z: number, raw_gold_mines: LwgGoldMine[]): boolean {
+function _IsViable(base_x: number, base_y: number, z: number, raw_gold_mines: LwgGoldMine[], teams: RangerBotTeams): boolean {
   if (z != scope.getHeightLevel(base_x, base_y)) {
     return false;
   }
@@ -90,7 +91,8 @@ function _IsViable(base_x: number, base_y: number, z: number, raw_gold_mines: Lw
     x_min: base_x,
     x_max: base_x + CASTLE_WIDTH - 1,
     y_min: base_y,
-    y_max: base_y + CASTLE_HEIGHT - 1, 
+    y_max: base_y + CASTLE_HEIGHT - 1,
+    teams: teams,
     exclude_worker_paths: false,
   });
 }

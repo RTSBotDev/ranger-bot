@@ -26,7 +26,7 @@ function AnalyzeMap({ player_cache_key, teams }: AnalyzeMapKwargs): PlayerMapDat
   }
 
   if (scope.ranger_bot.player_caches[player_cache_key].expansions === undefined) {
-    const expansions = AnalyzeGoldMines();
+    const expansions = AnalyzeGoldMines(teams);
     const starting_castle: LwgBuilding = IdentifyStartingCastle({ teams: teams });
     const starting_expansion: Expansion = IdentifyStartingExpansion({
       expansions: expansions,

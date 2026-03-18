@@ -4,6 +4,7 @@ import { CalculateTowerLocation } from './calculate_tower_location';
 
 interface SelectCastleLocationsKwargs {
   raw_gold_mines: LwgGoldMine[];
+  teams: RangerBotTeams;
 }
 
 interface PartialExpansion {
@@ -11,11 +12,11 @@ interface PartialExpansion {
   raw_gold_mines: LwgGoldMine[];
 }
 
-function SelectCastleLocations({ raw_gold_mines }: SelectCastleLocationsKwargs): Expansion[] {
+function SelectCastleLocations({ raw_gold_mines, teams }: SelectCastleLocationsKwargs): Expansion[] {
   let grouping: _GroupCastleLocations = new _GroupCastleLocations(raw_gold_mines);
   let placements: PartialExpansion[] = grouping.Run();
   return placements.map((placement: PartialExpansion, index: number) => {
-    return _AddCastlePositionData(placement, index);
+    return _AddCastlePositionData(placement, index, teams);
   });
 }
 
@@ -102,21 +103,20 @@ class _GroupCastleLocations {
   }
 }
 
-function _AddCastlePositionData(partial: PartialExpansion, expansion_id: number): Expansion {
+function _AddCastlePositionData(partial: PartialExpansion, expansion_id: number, teams: RangerBotTeams): Expansion {
   const castle_placements: CastlePlacement[] = partial.viable_castle_locations.map((location: MapLocation) => {
-    return _CalculateCastlePositionData(location, partial.raw_gold_mines);
+    return _CalculateCastlePositionData(location, partial.raw_gold_mines, teams);
   });
 
   for (let i=0; i<partial.raw_gold_mines.length; i++) {
-    const raw_mine: LwgGoldMine = partial.raw_gold_mines[i];
-
+    const raw_mine = partial.raw_gold_mines[i];
     const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
 
     if (mine_cache.expansion_data) {
-      throw new Error('ranger_bot.expansion_data has already been set');
+      continue;
     }
-    mine_cache.expansion_data = [];
 
+    const new_expansion_data: ExpansionData[] = [];
     for (let j=0; j<castle_placements.length; j++) {
       const castle_data: CastlePlacement = castle_placements[j];
 
@@ -127,13 +127,15 @@ function _AddCastlePositionData(partial: PartialExpansion, expansion_id: number)
         throw new Error('Missing mine_data for _AddCastlePositionData');
       }
 
-      mine_cache.expansion_data.push({
+      new_expansion_data.push({
         'castle_location': castle_data.castle_location,
         'midpoint': mine_data.midpoint,
         'worker_paths': mine_data.worker_paths,
         'tower_location': castle_data.tower_location,
       });
     }
+
+    mine_cache.expansion_data = new_expansion_data;
   }
 
   const new_expansion_placement: Expansion = {
@@ -143,7 +145,7 @@ function _AddCastlePositionData(partial: PartialExpansion, expansion_id: number)
   return new_expansion_placement;
 }
 
-function _CalculateCastlePositionData(castle_location: MapLocation, raw_gold_mines: LwgGoldMine[]): CastlePlacement {
+function _CalculateCastlePositionData(castle_location: MapLocation, raw_gold_mines: LwgGoldMine[], teams: RangerBotTeams): CastlePlacement {
   const mines_data: CastleMineData[] = [];
   const castle_center_x: number = castle_location.x + (CASTLE_WIDTH - 1) / 2;
   const castle_center_y: number = castle_location.y + (CASTLE_HEIGHT - 1) / 2;
@@ -160,6 +162,7 @@ function _CalculateCastlePositionData(castle_location: MapLocation, raw_gold_min
     const worker_paths: boolean[][] = CalculateWorkerPaths({
       raw_mine: raw_mine,
       castle_location: castle_location,
+      teams: teams,
     });
 
     // stop judging me
@@ -177,6 +180,12 @@ function _CalculateCastlePositionData(castle_location: MapLocation, raw_gold_min
     mines_data: mines_data,
     raw_gold_mines: raw_gold_mines,
   });
+  for (let i=0; i<raw_gold_mines.length; i++) {
+    const mine_cache = raw_gold_mines[i].ranger_bot as RangerBotGoldMine;
+
+    delete mine_cache['_worker_paths'];
+    delete mine_cache['_castle_location'];
+  }
 
   let score: number = 0;
   for (let i=0; i<raw_gold_mines.length; i++) {
