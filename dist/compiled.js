@@ -4716,7 +4716,6 @@ function NextBuildOrderStep(_a) {
         }
         return;
     }
-    console.log('upgrange: ' + scope.player.upgrades.upgrange);
     if (data_hub.my_armories.length < 1 &&
         (undefined === scope.player.upgrades.upgrange || 0 == scope.player.upgrades.upgrange)) {
         if (data_hub.spendable_gold >= constants_1.ARMORY_COST) {

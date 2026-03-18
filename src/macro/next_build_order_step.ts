@@ -128,7 +128,6 @@ function NextBuildOrderStep({ data_hub }: NextBuildOrderStepKwargs): void {
     return;
   }
 
-  console.log('upgrange: ' + scope.player.upgrades.upgrange);
   if (data_hub.my_armories.length < 1 &&
       (undefined === scope.player.upgrades.upgrange || 0 == scope.player.upgrades.upgrange)) {
     if (data_hub.spendable_gold >= ARMORY_COST) {
