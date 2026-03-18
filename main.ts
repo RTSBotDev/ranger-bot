@@ -31,9 +31,8 @@ try {
     team_cache_key: team_cache_key,
   });
   ranger_bot.Step();
-} catch(err: unknown) {
+} catch (err: unknown) {
   if (err instanceof Error) {
-    console.log('\nError:\n' + err);
-    console.log('\n' + err.stack);
+    console.log(err);
   }
 }

@@ -7194,8 +7194,7 @@ try {
 }
 catch (err) {
     if (err instanceof Error) {
-        console.log('\nError:\n' + err);
-        console.log('\n' + err.stack);
+        console.log(err);
     }
 }
 
