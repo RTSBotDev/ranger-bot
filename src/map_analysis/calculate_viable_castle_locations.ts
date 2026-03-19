@@ -2,6 +2,8 @@ import { CASTLE_WIDTH, CASTLE_HEIGHT, MAX_MINING_DISTANCE } from '../constants';
 import { AreBuildable } from './buildable';
 import { GroundDistanceBetweenBuildings } from '../ground_distance';
 import { GetGoldMines } from '../utils';
+import { DEBUG } from '../constants';
+import { PrintExpansionData } from './print_expansion_data';
 
 interface CalculateViableCastleLocationsKwargs {
   raw_mine: LwgGoldMine;
@@ -69,10 +71,12 @@ function CalculateViableCastleLocations({ raw_mine, raw_gold_mines, teams }: Cal
   }
 
   if (0 == output.length) {
-    // const debug: boolean[][] = [];
-    // debug[raw_mine.x + 1] = [];
-    // debug[raw_mine.x + 1][raw_mine.y + 1] = true;
-    // PrintExpansionData({ debug: debug });
+    if (DEBUG) {
+      const debug: boolean[][] = [];
+      debug[raw_mine.x + 1] = [];
+      debug[raw_mine.x + 1][raw_mine.y + 1] = true;
+      PrintExpansionData({ debug: debug });
+    }
     throw new Error('No viable castle locations');
   }
   return output;
