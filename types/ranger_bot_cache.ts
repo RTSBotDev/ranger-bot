@@ -30,4 +30,5 @@ interface RangerBotCache {
   pathable_locations?: boolean[][];
   expansions?: Expansion[];
   map_printed: boolean;
+  raw_gold_mines?: LwgGoldMine[];
 }

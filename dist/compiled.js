@@ -909,8 +909,25 @@ function DrawRectangle(_a) {
     return output;
 }
 function GetGoldMines() {
-    return scope.getBuildings({ type: 'Goldmine' })
-        .map(function (g) { return g.unit; });
+    if (undefined === scope.ranger_bot.raw_gold_mines) {
+        var all_mines = scope.getBuildings({ type: 'Goldmine' })
+            .map(function (g) { return g.unit; });
+        var unique_mines = [];
+        var mine_locations = [];
+        for (var i = 0; i < all_mines.length; i++) {
+            var mine = all_mines[i];
+            if (mine_locations[mine.x] === undefined) {
+                mine_locations[mine.x] = [];
+            }
+            if (mine_locations[mine.x][mine.y]) {
+                continue;
+            }
+            unique_mines.push(mine);
+            mine_locations[mine.x][mine.y] = true;
+        }
+        scope.ranger_bot.raw_gold_mines = unique_mines;
+    }
+    return scope.ranger_bot.raw_gold_mines;
 }
 function WolvesAreObsolete() {
     if (scope.player.upgrades.upgattack && scope.player.upgrades.upgattack > 0) {

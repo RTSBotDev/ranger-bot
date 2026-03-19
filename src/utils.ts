@@ -53,8 +53,29 @@ function DrawRectangle({ corner, width, height }: DrawRectangleKwargs): MapLocat
 }
 
 function GetGoldMines(): LwgGoldMine[] {
-  return scope.getBuildings({type: 'Goldmine'})
-    .map((g) => g.unit as unknown as LwgGoldMine);
+  // AFAIK duplicate mines are only an issue on Frozen Tombstones
+  if (undefined === scope.ranger_bot.raw_gold_mines) {
+    const all_mines = scope.getBuildings({type: 'Goldmine'})
+      .map((g) => g.unit as unknown as LwgGoldMine);
+    const unique_mines: LwgGoldMine[] = [];
+    const mine_locations: boolean[][] = [];
+
+    for (let i=0; i<all_mines.length; i++) {
+      const mine = all_mines[i];
+
+      if (mine_locations[mine.x] === undefined) {
+        mine_locations[mine.x] = [];
+      }
+      if (mine_locations[mine.x][mine.y]) {
+        continue;
+      }
+      unique_mines.push(mine);
+      mine_locations[mine.x][mine.y] = true;
+    }
+
+    scope.ranger_bot.raw_gold_mines = unique_mines;
+  }
+  return scope.ranger_bot.raw_gold_mines;
 }
 
 function WolvesAreObsolete(): boolean {
