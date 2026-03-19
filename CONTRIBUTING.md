@@ -6,6 +6,7 @@ TODO:
 - real ground distances
 - micro
 - tower rush defense
+- cancel buildings if they're going to die
 - change aggro mode to take allies into account
 - support team play in general
 - prioritize using fast units like wolves as scouts

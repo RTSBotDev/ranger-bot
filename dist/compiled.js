@@ -5180,10 +5180,13 @@ var manage_squad_1 = __webpack_require__(69);
 var manage_battle_status_1 = __webpack_require__(70);
 var allocate_units_1 = __webpack_require__(71);
 var command_idle_units_1 = __webpack_require__(75);
+var unit_stats_1 = __webpack_require__(26);
 var ArmyBot = (function () {
     function ArmyBot(_a) {
         var data_hub = _a.data_hub;
         this.data_hub = data_hub;
+        this.army_hp = 0;
+        this.army_dps = 0;
     }
     ArmyBot.prototype.Step = function () {
         this._ResetUnitOrders();
@@ -5213,6 +5216,7 @@ var ArmyBot = (function () {
         (0, allocate_units_1.AllocateUnits)({
             data_hub: this.data_hub,
             battles: battles,
+            army_strength: this.army_hp * this.army_dps,
         });
         (0, command_idle_units_1.CommandIdleUnits)(this.data_hub.my_fighting_units);
     };
@@ -5250,6 +5254,18 @@ var ArmyBot = (function () {
             var lwg_cache = my_unit.ranger_bot;
             delete lwg_cache['command'];
             delete lwg_cache['command_at'];
+            if ('Worker' == my_unit.type.name) {
+                continue;
+            }
+            else if ('Wolf' == my_unit.type.name || 'Snake' == my_unit.type.name ||
+                'Archer' == my_unit.type.name || 'Soldier' == my_unit.type.name) {
+                this.army_dps += (0, unit_stats_1.CalculateDps)(my_unit);
+                var effective_hp = my_unit.hp * (0, unit_stats_1.ArmorFactor)(my_unit.type.armor);
+                this.army_hp += effective_hp;
+            }
+            else if (constants_1.DEBUG) {
+                console.log('Error: Unhandled unit type "' + my_unit.type.name + '" for _ResetUnitOrders');
+            }
         }
     };
     ArmyBot.prototype._ManageBattle = function (battle) {
@@ -6475,10 +6491,13 @@ exports.AllocateUnits = AllocateUnits;
 var assign_units_to_battle_1 = __webpack_require__(72);
 var assign_units_to_targets_1 = __webpack_require__(74);
 function AllocateUnits(_a) {
-    var data_hub = _a.data_hub, battles = _a.battles;
+    var data_hub = _a.data_hub, battles = _a.battles, army_strength = _a.army_strength;
     data_hub.busy_units = _ExcludeBusyUnits(data_hub.targets, battles);
     _AllocateUnitsInBattle(battles);
-    (0, assign_units_to_targets_1.AssignUnitsToTargets)({ data_hub: data_hub });
+    (0, assign_units_to_targets_1.AssignUnitsToTargets)({
+        data_hub: data_hub,
+        army_strength: army_strength,
+    });
     _UpdateCommands(data_hub.targets);
 }
 function _ExcludeBusyUnits(targets, battles) {
@@ -6729,10 +6748,9 @@ exports.AssignUnitsToTargets = AssignUnitsToTargets;
 var unit_assigner_1 = __webpack_require__(73);
 var constants_1 = __webpack_require__(15);
 function AssignUnitsToTargets(_a) {
-    var data_hub = _a.data_hub;
+    var data_hub = _a.data_hub, army_strength = _a.army_strength;
     var fighting_units = data_hub.my_fighting_units.map(function (u) { return u; });
-    var rush_factor = ((data_hub.my_castles.length + 2) / data_hub.gold_mines.length);
-    var effective_rush_distance = (1 - rush_factor) * data_hub.map.rush_distance;
+    var urgent_distance = data_hub.map.rush_distance / 3;
     var scout_targets = [];
     var passive_targets = [];
     var active_targets = [];
@@ -6748,7 +6766,9 @@ function AssignUnitsToTargets(_a) {
                     return target.ground_distance;
                 }
             })();
-            if (threat_distance < effective_rush_distance) {
+            var danger_factor = 0 == army_strength ? 1 : Math.min(target.strength / army_strength, 1);
+            var respond_distance = (1 + danger_factor) * urgent_distance;
+            if (threat_distance < respond_distance) {
                 urgent_targets.push(target);
             }
             else {

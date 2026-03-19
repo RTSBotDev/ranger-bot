@@ -1,5 +1,5 @@
 import { DataHub } from './data_hub';
-import { AGGRO_START_GAP, AGGRO_STOP_GAP } from './constants';
+import { AGGRO_START_GAP, AGGRO_STOP_GAP, DEBUG } from './constants';
 import { UpdateThreats } from './army/update_threats';
 import { UpdateTargets } from './army/update_targets';
 import { PrioritizeTargets } from './army/prioritize_targets';
@@ -12,6 +12,7 @@ import { ManageSquad } from './army/manage_squad';
 import { ManageBattleStatus } from './army/manage_battle_status';
 import { AllocateUnits } from './army/allocate_units';
 import { CommandIdleUnits } from './army/command_idle_units';
+import { CalculateDps, ArmorFactor } from './unit_stats';
 
 interface ArmyBotConstructor {
   data_hub: DataHub;
@@ -19,9 +20,13 @@ interface ArmyBotConstructor {
 
 class ArmyBot {
   data_hub: DataHub;
+  army_hp: number;
+  army_dps: number;
 
   constructor({ data_hub }: ArmyBotConstructor) {
     this.data_hub = data_hub;
+    this.army_hp = 0;
+    this.army_dps = 0;
   }
 
   Step(): void {
@@ -56,6 +61,7 @@ class ArmyBot {
     AllocateUnits({
       data_hub: this.data_hub,
       battles: battles,
+      army_strength: this.army_hp * this.army_dps,
     });
     CommandIdleUnits(this.data_hub.my_fighting_units);
   }
@@ -100,6 +106,19 @@ class ArmyBot {
 
       delete lwg_cache['command'];
       delete lwg_cache['command_at'];
+
+      // We need to iterate over data_hub.my_units anyway, might as well collect
+      // these stats while we're here.
+      if ('Worker' == my_unit.type.name) {
+        continue;
+      } else if ('Wolf' == my_unit.type.name || 'Snake' == my_unit.type.name ||
+          'Archer' == my_unit.type.name || 'Soldier' == my_unit.type.name) {
+        this.army_dps += CalculateDps(my_unit);
+        const effective_hp = my_unit.hp * ArmorFactor(my_unit.type.armor);
+        this.army_hp += effective_hp;
+      } else if (DEBUG) {
+        console.log('Error: Unhandled unit type "' + my_unit.type.name + '" for _ResetUnitOrders')
+      }
     }
   }
 

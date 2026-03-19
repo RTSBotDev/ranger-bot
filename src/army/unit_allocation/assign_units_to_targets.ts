@@ -4,13 +4,12 @@ import { MIN_THREAT_RESPONSE, MAX_THREAT_RESPONSE } from '../../constants';
 
 interface AssignUnitsToTargetsKwargs {
   data_hub: DataHub;
-  // battles: RangerBotBattle[];
+  army_strength: number;
 }
 
-function AssignUnitsToTargets({ data_hub }: AssignUnitsToTargetsKwargs): void {
+function AssignUnitsToTargets({ data_hub, army_strength }: AssignUnitsToTargetsKwargs): void {
   let fighting_units = data_hub.my_fighting_units.map((u) => u);
-  const rush_factor = ((data_hub.my_castles.length + 2) / data_hub.gold_mines.length);
-  const effective_rush_distance = (1 - rush_factor) * data_hub.map.rush_distance;
+  const urgent_distance = data_hub.map.rush_distance / 3;
 
   let scout_targets = [];
   let passive_targets = [];
@@ -27,8 +26,9 @@ function AssignUnitsToTargets({ data_hub }: AssignUnitsToTargetsKwargs): void {
           return target.ground_distance as number;
         }
       })() as number; // TS you are trying my patience
-      if (threat_distance < effective_rush_distance) {
-        // basically, are they pushing out
+      const danger_factor = 0 == army_strength ? 1 : Math.min((target.strength as number) / army_strength, 1);
+      const respond_distance = (1 + danger_factor) * urgent_distance;
+      if (threat_distance < respond_distance) {
         urgent_targets.push(target);
       } else {
         active_targets.push(target);

@@ -35,7 +35,7 @@ RangerBot cannot handle island maps, it will bug out. If there is an expansion t
 
 ###### Strategies
 
-RangerBot does pretty well against normal 1 base all ins like 2 rax and 2 den, but it fails against the really cheesy stuff like tower rushing and 1 base air.
+RangerBot does pretty well against normal 1 base all ins like 2 rax and 2 den, but it currently fails against the really cheesy stuff like tower rushing and 1 base air.
 
 ###### Browsers
 
@@ -43,4 +43,4 @@ In theory, any browser that supports [LittleWarGame](https://www.littlewargame.c
 
 #### Future Plans
 
-RangerBot currently doesn't use real ground distances. It uses air distance as a proxy instead. This is primarily due to performance issues. That will be the next major feature I work on, and release as version `0.2.0`. After that, I intend to go back and make it more resilient against early game cheeses.
+RangerBot currently doesn't use real ground distances. It uses air distance as a proxy. This can cause it to place its castles incorrectly, and move its units in strange ways. So that will be the next major feature I work on, and release as version `0.2.0`. The primarily hurdle to implementing ground distances is performance. Calculating ground pathing takes a lot of CPU time, and calculating too many in the same game tick can cause lag. After that, I plan to go back and make it more resilient against early game cheeses.

@@ -5,12 +5,16 @@ import { AssignUnitsToTargets } from './unit_allocation/assign_units_to_targets'
 interface ManageSquadKwargs {
   data_hub: DataHub;
   battles: RangerBotBattle[];
+  army_strength: number;
 }
 
-function AllocateUnits({ data_hub, battles }: ManageSquadKwargs): void {
+function AllocateUnits({ data_hub, battles, army_strength }: ManageSquadKwargs): void {
   data_hub.busy_units = _ExcludeBusyUnits(data_hub.targets, battles);
   _AllocateUnitsInBattle(battles);
-  AssignUnitsToTargets({ data_hub: data_hub });
+  AssignUnitsToTargets({
+    data_hub: data_hub,
+    army_strength: army_strength,
+  });
   _UpdateCommands(data_hub.targets)
 }
 
