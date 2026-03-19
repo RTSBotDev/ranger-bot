@@ -1,5 +1,6 @@
 import { GetClosestActiveMineToBuilding, GetClosestUnitToBuilding,
   GetClosestActiveMineToLocation, GetClosestUnitToLocation } from './ground_distance';
+import { DEBUG } from './constants';
 
 interface AllocateAvailableWorkerClosestToBuildingKwargs {
   building: LwgBuilding;
@@ -15,14 +16,14 @@ function AllocateAvailableWorkerClosestToBuilding({ building, active_mines, idle
       const new_worker: LwgUnit | undefined = AllocateWorkerFromActiveMine(giver_mine);
       if (new_worker) {
         return new_worker;
-      } else {
-        console.log('ERROR: Missing new_worker for AllocateAvailableWorkerClosestToBuilding');
+      } else if (DEBUG) {
+        console.log('Error: Missing new_worker for AllocateAvailableWorkerClosestToBuilding');
       }
-    } else {
-      console.log('ERROR: Missing giver_mine for AllocateAvailableWorkerClosestToBuilding');
+    } else if (DEBUG) {
+      console.log('Error: Missing giver_mine for AllocateAvailableWorkerClosestToBuilding');
     }
-  } else {
-    console.log('ERROR: No useful_mines  for AllocateAvailableWorkerClosestToBuilding');
+  } else if (DEBUG) {
+    console.log('Error: No useful_mines  for AllocateAvailableWorkerClosestToBuilding');
   }
     
   if (idle_workers.length > 0) {
@@ -31,23 +32,31 @@ function AllocateAvailableWorkerClosestToBuilding({ building, active_mines, idle
       closest_idle_worker.ranger_bot = {};
       return closest_idle_worker;
     } else {
-      console.log('ERROR: Missing idle worker for AllocateAvailableWorkerClosestToBuilding');
+      if (DEBUG) {
+        console.log('Error: Missing idle worker for AllocateAvailableWorkerClosestToBuilding');
+      }
       return undefined;
     }
   } else {
-    console.log('ERROR: AllocateAvailableWorkerClosestToBuilding Failed');
+    if (DEBUG) {
+      console.log('Error: AllocateAvailableWorkerClosestToBuilding Failed');
+    }
     return undefined;
   }
 }
 
 function AllocateWorkerFromActiveMine(active_mine: ActiveMineData): LwgUnit | undefined {
   if (!active_mine.gold_mine) {
-    console.log(active_mine);
+    if (DEBUG) {
+      console.log(active_mine);
+    }
     throw new Error('Missing gold mine for AllocateWorkerFromActiveMine');
   }
   const gold_mine: CachedGoldMine = active_mine.gold_mine;
   if (!gold_mine.castle) {
-    console.log(gold_mine);
+    if (DEBUG) {
+      console.log(gold_mine);
+    }
     throw new Error('Missing castle for AllocateWorkerFromActiveMine');
   }
   const castle: LwgBuilding = gold_mine.castle;
@@ -99,14 +108,14 @@ function AllocateAvailableWorkerClosestToLocation({ map_location, active_mines, 
       const new_worker: LwgUnit | undefined = AllocateWorkerFromActiveMine(giver_mine);
       if (new_worker) {
         return new_worker;
-      } else {
-        console.log('ERROR: Missing new_worker for AllocateAvailableWorkerClosestToLocation');
+      } else if (DEBUG) {
+        console.log('Error: Missing new_worker for AllocateAvailableWorkerClosestToLocation');
       }
-    } else {
-      console.log('ERROR: Missing giver_mine for AllocateAvailableWorkerClosestToLocation');
+    } else if (DEBUG) {
+      console.log('Error: Missing giver_mine for AllocateAvailableWorkerClosestToLocation');
     }
-  } else {
-    console.log('ERROR: No useful_mines for AllocateAvailableWorkerClosestToLocation');
+  } else if (DEBUG) {
+    console.log('Error: No useful_mines for AllocateAvailableWorkerClosestToLocation');
   }
     
   if (idle_workers.length > 0) {
@@ -115,11 +124,15 @@ function AllocateAvailableWorkerClosestToLocation({ map_location, active_mines, 
       closest_idle_worker.ranger_bot = {};
       return closest_idle_worker;
     } else {
-      console.log('ERROR: Missing idle worker for AllocateAvailableWorkerClosestToLocation');
+      if (DEBUG) {
+        console.log('ERROR: Missing idle worker for AllocateAvailableWorkerClosestToLocation');
+      }
       return undefined;
     }
   } else {
-    console.log('ERROR: AllocateAvailableWorkerClosestToLocation Failed');
+    if (DEBUG) {
+      console.log('ERROR: AllocateAvailableWorkerClosestToLocation Failed');
+    }
     return undefined;
   }
 }

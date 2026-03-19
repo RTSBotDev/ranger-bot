@@ -1,6 +1,6 @@
 import { DataHub } from '../data_hub';
 import { ATTACK_RADIUS, RETREAT_RADIUS, AGGRO_ATTACK_THRESHOLD,
-  ATTACK_THRESHOLD, AGGRO_RETREAT_THRESHOLD, RETREAT_THRESHOLD } from '../constants';
+  ATTACK_THRESHOLD, AGGRO_RETREAT_THRESHOLD, RETREAT_THRESHOLD, DEBUG } from '../constants';
 import { SafeGroundDistance, GetClosestActiveCastleToLocation } from '../ground_distance';
 
 interface ManageSquadKwargs {
@@ -22,7 +22,9 @@ function ManageSquad({ data_hub, battle, squad, aggro_mode }: ManageSquadKwargs)
     _CommandUnitsToAttack(squad, battle);
     return;
   } else if (squad.command != 'retreat') {
-    console.log('ERROR: Unhandled squad command: ' + squad.command);
+    if (DEBUG) {
+      console.log('Error: Unhandled squad command: ' + squad.command);
+    }
     return;
   }
 
@@ -96,8 +98,8 @@ function ManageSquad({ data_hub, battle, squad, aggro_mode }: ManageSquadKwargs)
     _CommandUnitsToAttack(squad, battle);
   } else if (squad.command == 'retreat') {
     _CommandUnitsToRetreat(squad, data_hub);
-  } else {
-    console.log('ERROR: Unhandled squad command: ' + squad.command);
+  } else if (DEBUG) {
+    console.log('Error: Unhandled squad command: ' + squad.command);
   }
 }
 
@@ -134,7 +136,9 @@ function _CommandUnitsToRetreat(squad: RangerBotSquad, data_hub: DataHub): void 
     with_workers: false,
   });
   if (!active_castle) {
-    console.log('ERROR: No active castles to retreat to in _CommandUnitsToRetreat');
+    if (DEBUG) {
+      console.log('Error: No active castles to retreat to in _CommandUnitsToRetreat');
+    }
     // TODO
     return;
   }

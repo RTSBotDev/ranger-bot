@@ -1,3 +1,4 @@
+import { DEBUG } from '../constants';
 
 interface ManageActiveCastleCacheKwargs {
   player_cache_key: string;
@@ -47,7 +48,9 @@ function _ManageActiveCastleCache(player_cache_key: string, active_castles: LwgB
   })();
 
   if (cache_invalid) {
-    console.log('ERROR: cache_invalid');
+    if (DEBUG) {
+      console.log('ERROR: cache_invalid');
+    }
     // TODO
     // for (let i=0; i<scope.ranger_bot.targets.length; i++) {
     //   const target = scope.ranger_bot.targets[i];

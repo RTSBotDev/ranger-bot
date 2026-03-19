@@ -170,8 +170,6 @@ function _RollOverUnitThreats(data_hub: DataHub, threats: TeamThreatsCache): Tea
   for (let i=0; i<all_units.length; i++) {
     const unit: LwgUnit = all_units[i];
 
-    // console.log('unit.owner.number: ' + unit.owner.number);
-
     if (unit.owner.number == scope.getMyPlayerNumber()) {
       continue;
     }
@@ -233,8 +231,6 @@ function _QueryBuildingThreats(data_hub: DataHub, threats: TeamThreatsCache): Te
 
   for (let i=0; i<all_buildings.length; i++) {
     const building: LwgBuilding = all_buildings[i];
-
-    // console.log('building.owner.number: ' + building.owner.number);
 
     if (building.owner.number == scope.getMyPlayerNumber()) {
       continue;

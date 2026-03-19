@@ -1,4 +1,5 @@
 import { GetGoldMines } from '../utils';
+import { DEBUG } from '../constants';
 
 interface GetCachedGoldMinesKwargs {
   team_cache_key: string;
@@ -19,31 +20,41 @@ function GetCachedGoldMines({ team_cache_key }: GetCachedGoldMinesKwargs): Cache
 
       const raw_cache: RangerBotGoldMine | undefined = raw_mine.ranger_bot;
       if (raw_cache === undefined) {
-        console.log(raw_gold_mines);
+        if (DEBUG) {
+          console.log(raw_gold_mines);
+        }
         throw new Error('no cache for gold mine ' + raw_mine.id);
       }
 
       const exclusion_zone: boolean[][] | undefined = raw_cache.exclusion_zone;
       if (exclusion_zone === undefined) {
-        console.log(raw_gold_mines);
+        if (DEBUG) {
+          console.log(raw_gold_mines);
+        }
         throw new Error('no exclusion_zone for gold mine ' + raw_mine.id);
       }
 
       const perimeter: boolean[][] | undefined = raw_cache.perimeter;
       if (perimeter === undefined) {
-        console.log(raw_gold_mines);
+        if (DEBUG) {
+          console.log(raw_gold_mines);
+        }
         throw new Error('no perimeter for gold mine ' + raw_mine.id);
       }
 
       const viable_castle_locations: number[][] | undefined = raw_cache.viable_castle_locations;
       if (viable_castle_locations === undefined) {
-        console.log(raw_gold_mines);
+        if (DEBUG) {
+          console.log(raw_gold_mines);
+        }
         throw new Error('no viable_castle_locations for gold mine ' + raw_mine.id);
       }
 
       const expansion_data: ExpansionData[] | undefined = raw_cache.expansion_data;
       if (expansion_data === undefined) {
-        console.log(raw_gold_mines);
+        if (DEBUG) {
+          console.log(raw_gold_mines);
+        }
         throw new Error('no expansion_data for gold mine ' + raw_mine.id);
       }
 

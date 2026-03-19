@@ -1,5 +1,5 @@
 import { DataHub } from '../data_hub';
-import { CASTLE_COST } from '../constants';
+import { CASTLE_COST, DEBUG } from '../constants';
 
 interface ReserveGoldForBuildersKwargs {
   data_hub: DataHub;
@@ -13,8 +13,11 @@ function ReserveGoldForBuilders({ data_hub }: ReserveGoldForBuildersKwargs): voi
 
     if (!builder.ranger_bot.target_building && builder.ranger_bot.order != builder.order.name) {
       if (builder.ranger_bot.reserve === undefined) {
-        console.log(builder);
-        throw new Error('Missing reserve for ReserveGoldForBuilders');
+        if (DEBUG) {
+          console.log(builder);
+          console.log('Error: Missing reserve for ReserveGoldForBuilders');
+        }
+        continue;
       }
       data_hub.spendable_gold -= builder.ranger_bot.reserve;
     }

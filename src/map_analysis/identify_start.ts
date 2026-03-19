@@ -1,3 +1,4 @@
+import { DEBUG } from '../constants';
 
 interface IdentifyStartingCastleKwargs {
   teams: RangerBotTeams;
@@ -7,13 +8,17 @@ function IdentifyStartingCastle({ teams }: IdentifyStartingCastleKwargs): LwgBui
   const my_castles: LwgBuilding[] = scope.getBuildings({ player: teams.my.id, type: 'Castle' })
     .map((c) => c.unit);
   if (my_castles.length != 1) {
-    console.log(my_castles);
+    if (DEBUG) {
+      console.log(my_castles);
+    }
     throw new Error('wrong number of castles for IdentifyStartingExpansion');
   }
   const starting_castle: LwgBuilding = my_castles[0];
   if (starting_castle.x != teams.my.start.x || starting_castle.y != teams.my.start.y) {
-    console.log(teams);
-    console.log(starting_castle);
+    if (DEBUG) {
+      console.log(teams);
+      console.log(starting_castle);
+    }
     throw new Error("dude where's my castle?");
   }
   return starting_castle;
@@ -32,8 +37,10 @@ function IdentifyStartingExpansion({ expansions, starting_castle }: IdentifyStar
   });
 
   if (!output) {
-    console.log(expansions);
-    console.log(starting_castle);
+    if (DEBUG) {
+      console.log(expansions);
+      console.log(starting_castle);
+    }
     throw new Error('IdentifyStartingExpansion failed');
   }
   return output;

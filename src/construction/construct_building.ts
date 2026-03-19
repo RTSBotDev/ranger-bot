@@ -3,6 +3,7 @@ import { AllocateWorkerFromActiveMine, AllocateWorkerFromActiveCastle,
   AllocateAvailableWorkerClosestToLocation } from '../allocate_worker';
 import { GetNumberFieldValue } from '../utils';
 import { FindSpaceForBuilding } from './find_space_for_building';
+import { DEBUG } from '../constants';
 
 interface ConstructBuildingKwargs {
   building_type: string;
@@ -59,8 +60,10 @@ function ConstructBuilding({ building_type, build_order, data_hub }: ConstructBu
   }
 
   if (!target_location) {
-    console.log(building_type);
-    console.log(data_hub.my_castles);
+    if (DEBUG) {
+      console.log(building_type);
+      console.log(data_hub.my_castles);
+    }
     throw new Error('Cannot find target_location for ConstructBuilding');
   }
 
@@ -78,7 +81,9 @@ function ConstructBuilding({ building_type, build_order, data_hub }: ConstructBu
     });
   }
   if (!new_builder) {
-    console.log('ERROR: No available builders for ConstructBuilding');
+    if (DEBUG) {
+      console.log('Error: No available builders for ConstructBuilding');
+    }
     return undefined;
   }
 

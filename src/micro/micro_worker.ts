@@ -3,6 +3,7 @@ import { GetGoldMines, GetNumberFieldValue } from '../utils';
 import { AreBuildable } from '../map_analysis/buildable';
 import { SelectCastlePlacement } from '../construction/select_castle_placement';
 import { DataHub } from '../data_hub';
+import { DEBUG } from '../constants';
 
 function MicroWorker(worker: LwgUnit, data_hub: DataHub): void {
   if (worker.ranger_bot.conscripted) {
@@ -15,8 +16,8 @@ function MicroWorker(worker: LwgUnit, data_hub: DataHub): void {
     _MicroRepairer(worker)
   } else if (!worker.ranger_bot.job) {
     // TODO: means idle worker, should only be possible when the whole map is mined out
-  } else {
-    console.log('\nERROR: Unhandled Worker Job: ' + worker.ranger_bot.job);
+  } else if (DEBUG) {
+    console.log('Error: Unhandled Worker Job: ' + worker.ranger_bot.job);
   }
 }
 
@@ -40,15 +41,17 @@ function _MicroBuilder(builder: LwgUnit, data_hub: DataHub): void {
     }
   } else if (builder.order.name == 'Move') {
     _TryToBuild(builder);
-  } else {
-    console.log('\nERROR: Unhandled Builder Order: ' + builder.order.name);
+  } else if (DEBUG) {
+    console.log('Error: Unhandled Builder Order: ' + builder.order.name);
   }
 }
 
 function _TargetLocationBuildable(builder: LwgUnit, data_hub: DataHub): boolean {
   if (!builder.ranger_bot.building_type || !builder.ranger_bot.target_location ||
       builder.ranger_bot.exclude_worker_paths === undefined) {
-    console.log(builder);
+    if (DEBUG) {
+      console.log(builder);
+    }
     throw new Error('Missing data for _TargetLocationBuildable');
   }
 
@@ -67,7 +70,9 @@ function _TargetLocationBuildable(builder: LwgUnit, data_hub: DataHub): boolean 
 
 function _TryToBuild(builder: LwgUnit): boolean {
   if (!builder.ranger_bot.cost || !builder.ranger_bot.order || !builder.ranger_bot.target_location) {
-    console.log(builder);
+    if (DEBUG) {
+      console.log(builder);
+    }
     throw new Error('Missing data for _TryToBuild');
   }
 
@@ -84,7 +89,9 @@ function _TryToBuild(builder: LwgUnit): boolean {
 
 function _FindNewCastleLocation(castle_builder: LwgUnit): void {
   if (!castle_builder.ranger_bot.expansion) {
-    console.log(castle_builder);
+    if (DEBUG) {
+      console.log(castle_builder);
+    }
     throw new Error('Missing data for _FindNewCastleLocation');
   }
 
@@ -92,8 +99,10 @@ function _FindNewCastleLocation(castle_builder: LwgUnit): void {
     player_expansion: castle_builder.ranger_bot.expansion,
   });
   if (!castle_placement) {
-    console.log(castle_builder);
-    console.log('ERROR: Missing castle_placement for _FindNewCastleLocation');
+    if (DEBUG) {
+      console.log(castle_builder);
+      console.log('Error: Missing castle_placement for _FindNewCastleLocation');
+    }
     castle_builder.ranger_bot = {};
     scope.order('Stop', [{'unit': castle_builder}]);
     return;
@@ -109,7 +118,9 @@ function _FindNewCastleLocation(castle_builder: LwgUnit): void {
 
 function _MicroMiner(miner: LwgUnit): void {
   if (!miner.ranger_bot.castle || !miner.ranger_bot.mine) {
-    console.log(miner);
+    if (DEBUG) {
+      console.log(miner);
+    }
     throw new Error('Missing data for _MicroMiner');
   }
 
@@ -127,8 +138,8 @@ function _MicroMiner(miner: LwgUnit): void {
   } else if (miner.order.name == 'Repair') { // Timing issue?
     const real_mine: LwgGoldMine = _GetRealMine(miner.ranger_bot.mine);
     scope.order('Mine', [{'unit': miner}], {'unit': {'unit': real_mine}}, true);
-  } else {
-    console.log('\nERROR: Unhandled Miner Order: ' + miner.order.name);
+  } else if (DEBUG) {
+    console.log('Error: Unhandled Miner Order: ' + miner.order.name);
   }
 }
 
@@ -142,14 +153,18 @@ function _GetRealMine(mine: CachedGoldMine): LwgGoldMine {
     }
   }
 
-  console.log(mine);
-  console.log(raw_gold_mines);
+  if (DEBUG) {
+    console.log(mine);
+    console.log(raw_gold_mines);
+  }
   throw new Error('Missing real gold mine id ' + mine.id);
 }
 
 function _MicroRepairer(repairer: LwgUnit): void {
   if (!repairer.ranger_bot.target_building) {
-    console.log(repairer);
+    if (DEBUG) {
+      console.log(repairer);
+    }
     throw new Error('ERROR: Missing target_building for _MicroRepairer');
   }
 
@@ -159,8 +174,8 @@ function _MicroRepairer(repairer: LwgUnit): void {
     scope.order('Repair', [{'unit': repairer}], {'unit': {'unit': repairer.ranger_bot.target_building}});
   } else if (repairer.order.name == 'Mine') {
     scope.order('Repair', [{'unit': repairer}], {'unit': {'unit': repairer.ranger_bot.target_building}});
-  } else {
-    console.log('\nERROR: Unhandled Repairer Order: ' + repairer.order.name);
+  } else if (DEBUG) {
+    console.log('Error: Unhandled Repairer Order: ' + repairer.order.name);
   }
 }
 

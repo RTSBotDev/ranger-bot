@@ -1,3 +1,5 @@
+import { DEBUG } from './constants';
+
 interface AnalyzeTeamsKwargs {
   player_cache_key: string;
 }
@@ -72,7 +74,9 @@ function ConfigureStartLocation(player_id: number): MapLocation {
 
   const map_name = game.data.name;
   if (!map_name) {
-    console.log(game);
+    if (DEBUG) {
+      console.log(game);
+    }
     throw new Error('Cannot find map name for ConfigureStartLocation');
   }
 
@@ -82,15 +86,19 @@ function ConfigureStartLocation(player_id: number): MapLocation {
 
   const start_locations_config = CONFIGURED_START_LOCATIONS[map_name];
   if (!start_locations_config) {
-    console.log(game);
-    console.log(game.start_locations); // TODO maybe this works sometimes?
+    if (DEBUG) {
+      console.log(game);
+      console.log(game.start_locations); // TODO maybe this works sometimes?
+    }
     throw new Error('No start locations configured for "' + map_name + '"');
   }
   const configured_start_location = start_locations_config[player_id];
   if (!configured_start_location) {
-    console.log(game);
-    console.log('map_name: ' + map_name + ', player_id: ' + player_id);
-    console.log(start_locations_config);
+    if (DEBUG) {
+      console.log(game);
+      console.log('map_name: ' + map_name + ', player_id: ' + player_id);
+      console.log(start_locations_config);
+    }
     throw new Error('No start location configured for player ' + player_id + ' on "' + map_name + '"');
   } else {
     return configured_start_location;

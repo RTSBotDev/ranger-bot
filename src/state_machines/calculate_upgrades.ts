@@ -1,5 +1,6 @@
 import { DataHub } from '../data_hub';
 import { GetStringFieldValue, GetNumberFieldValue } from '../utils';
+import { DEBUG } from '../constants';
 
 interface CalculateUpgradeLevelKwargs {
   data_hub: DataHub;
@@ -46,13 +47,17 @@ function CalculateUpgradeCost({ upgrade_type, upgrade_level }: CalculateUpgradeC
   const base_cost = GetNumberFieldValue({ piece_name: upgrade_type, field_name: 'cost' });
   const effects_fields: any = scope.getTypeFieldValue(upgrade_type, 'effectsFields');
   if (!Array.isArray(effects_fields)) {
-    console.log(effects_fields);
+    if (DEBUG) {
+      console.log(effects_fields);
+    }
     throw new Error('Wrong type of effects_fields for CalculateUpgradeCost');
   }
   const cost_index: number = effects_fields.indexOf('cost');
   const effects_modifications: any = scope.getTypeFieldValue(upgrade_type, 'effectsModifications');
   if (!Array.isArray(effects_modifications)) {
-    console.log(effects_modifications);
+    if (DEBUG) {
+      console.log(effects_modifications);
+    }
     throw new Error('Wrong type of effects_modifications for CalculateUpgradeCost');
   }
   const increment_cost = effects_modifications[cost_index];

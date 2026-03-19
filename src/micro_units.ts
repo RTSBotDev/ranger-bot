@@ -1,6 +1,6 @@
 import { DataHub } from './data_hub';
 import { MicroCombatUnit } from './micro/micro_combat_unit';
-import { WORKERS_PER_CASTLE } from './constants';
+import { WORKERS_PER_CASTLE, DEBUG } from './constants';
 import { MicroWorker } from './micro/micro_worker';
 
 interface MicroUnitsKwargs {
@@ -57,7 +57,9 @@ function _RallyCastles(data_hub: DataHub): void {
     const mining_data = castle.ranger_bot.mining_data as MiningData;
     const least_workers: ActiveMineData | undefined = mining_data.mines_data.filter((active_mine: ActiveMineData) => {
       if (!active_mine.gold_mine) {
-        console.log(active_mine);
+        if (DEBUG) {
+          console.log(active_mine);
+        }
         throw new Error('Missing gold_mine for _RallyCastles');
       }
 

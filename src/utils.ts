@@ -1,3 +1,4 @@
+import { DEBUG } from './constants';
 
 interface GetFieldValueKwargs {
   piece_name: string;
@@ -90,12 +91,16 @@ function WolvesAreObsolete(): boolean {
 
 function AssignMiner(worker: LwgUnit, assigned_mine: ActiveMineData): void {
   if (!assigned_mine.gold_mine) {
-    console.log(assigned_mine);
+    if (DEBUG) {
+      console.log(assigned_mine);
+    }
     throw new Error('Missing gold mine for assigned mine');
   }
   const gold_mine: CachedGoldMine = assigned_mine.gold_mine;
   if (!gold_mine.castle) {
-    console.log(gold_mine);
+    if (DEBUG) {
+      console.log(gold_mine);
+    }
     throw new Error('Missing castle for assigned gold mine');
   }
   const assigned_castle: LwgBuilding = gold_mine.castle;

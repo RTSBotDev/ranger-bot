@@ -1,4 +1,5 @@
 import { DataHub } from '../data_hub';
+import { DEBUG } from '../constants';
 
 interface ManageBattleStatusKwargs {
   data_hub: DataHub;
@@ -21,7 +22,9 @@ function ManageBattleStatus({ data_hub, battles, squads }: ManageBattleStatusKwa
       } else if (battle.command == 'retreat') {
         return false;
       } else {
-        console.log('ERROR: Unhandled battle command: ' + battle.command);
+        if (DEBUG) {
+          console.log('Error: Unhandled battle command: ' + battle.command);
+        }
         return false;
       }
     })();
@@ -44,7 +47,9 @@ function ManageBattleStatus({ data_hub, battles, squads }: ManageBattleStatusKwa
       } else if (squad.command === undefined) {
         return false; // not part of any battles
       } else {
-        console.log('ERROR: Unhandled squad command: ' + squad.command);
+        if (DEBUG) {
+          console.log('Error: Unhandled squad command: ' + squad.command);
+        }
         return false;
       }
     })();

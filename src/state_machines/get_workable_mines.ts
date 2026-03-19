@@ -4,7 +4,7 @@ But it can't run until after active_castles has been populated.
 */
 
 import { DataHub } from '../data_hub';
-import { WORKER_SPEED, SPEED_FACTOR } from '../constants';
+import { WORKER_SPEED, SPEED_FACTOR, DEBUG } from '../constants';
 import { GetShortestGroundDistanceToActiveCastle } from '../ground_distance';
 
 interface GetWorkableCastlesKwargs {
@@ -86,7 +86,9 @@ function _CalculateClosestTime(mining_data: MiningData, active_castles: LwgBuild
   }
 
   if (distances.length <= 0) {
-    console.log('ERROR: Missing GetShortestGroundDistanceToActiveCastle for _CalculateClosestTime');
+    if (DEBUG) {
+      console.log('Error: Missing GetShortestGroundDistanceToActiveCastle for _CalculateClosestTime');
+    }
     return NaN;
   }
   return Math.min(...distances) / WORKER_SPEED;

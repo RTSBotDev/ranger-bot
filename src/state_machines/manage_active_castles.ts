@@ -1,5 +1,5 @@
 import { DataHub } from '../data_hub';
-import { REPLACEMENT_BASE_THRESHOLD } from '../constants';
+import { REPLACEMENT_BASE_THRESHOLD, DEBUG } from '../constants';
 
 interface ManageActiveCastlesKwargs {
   data_hub: DataHub;
@@ -12,7 +12,9 @@ function ManageActiveCastles({ data_hub }: ManageActiveCastlesKwargs): LwgBuildi
     const castle: LwgBuilding = data_hub.my_castles[i];
 
     if (!castle.ranger_bot.mining_data) {
-      console.log(castle.ranger_bot);
+      if (DEBUG) {
+        console.log(castle.ranger_bot);
+      }
       throw new Error('Missing mining data');
     }
 

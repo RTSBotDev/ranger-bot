@@ -1,4 +1,5 @@
 import { AssignWorkerToRepair } from '../macro/assign_repairers';
+import { DEBUG } from '../constants';
 
 interface ManageBuildersKwargs {
   builders: LwgUnit[];
@@ -33,7 +34,9 @@ function _AttachTower(builder: LwgUnit): void {
   for (let i=0; i<active_mines.length; i++) {
     const active_mine: ActiveMineData = active_mines[i];
     if (!active_mine.gold_mine) {
-      console.log(builder.ranger_bot);
+      if (DEBUG) {
+        console.log(builder.ranger_bot);
+      }
       throw new Error('Missing gold mine for _AttachTower');
     }
 
@@ -43,7 +46,9 @@ function _AttachTower(builder: LwgUnit): void {
 
 function _AttachCastle(builder: LwgUnit): void {
   if (!builder.ranger_bot.placement) {
-    console.log(builder.ranger_bot);
+    if (DEBUG) {
+      console.log(builder.ranger_bot);
+    }
     throw new Error('Missing castle placement on castle builder for _AttachCastle');
   }
   const target_castle = builder.ranger_bot.target_building as LwgBuilding;
@@ -56,7 +61,9 @@ function _AttachCastle(builder: LwgUnit): void {
   for (let i=0; i<builder.ranger_bot.placement.mines_data.length; i++) {
     const active_mine: ActiveMineData = builder.ranger_bot.placement.mines_data[i];
     if (!active_mine.gold_mine) {
-      console.log(active_mine);
+      if (DEBUG) {
+        console.log(active_mine);
+      }
       throw new Error('Missing gold_mine for _AttachCastle');
     }
 

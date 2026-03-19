@@ -11,8 +11,6 @@ interface PrintExpansionDataKwargs {
 }
 
 function PrintExpansionData({ expansions, castle_locations, mines_data, debug, midpoints }: PrintExpansionDataKwargs): void {
-  // console.log(expansions);
-
   const map: string[][] = [];
   const map_width: number = scope.getMapWidth();
   const map_height: number = scope.getMapHeight();

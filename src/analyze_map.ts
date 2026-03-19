@@ -3,7 +3,7 @@ import { RushDistance } from './map_analysis/rush_distance';
 import { AnalyzeGoldMines } from './map_analysis/analyze_gold_mines'
 import { IdentifyStartingCastle, IdentifyStartingExpansion } from './map_analysis/identify_start'
 import { ScoreExpansions } from './map_analysis/score_expansions'
-import { CASTLE_WIDTH, CASTLE_HEIGHT } from './constants';
+import { CASTLE_WIDTH, CASTLE_HEIGHT, DEBUG } from './constants';
 
 interface AnalyzeMapKwargs {
   player_cache_key: string;
@@ -72,8 +72,10 @@ function _PopulateStartingCastleCache(starting_castle: LwgBuilding, starting_exp
       return starting_castle.x == pl.castle_location.x && starting_castle.y == pl.castle_location.y;
     });
     if (placement === undefined) {
-      console.log(starting_castle);
-      console.log(starting_expansion);
+      if (DEBUG) {
+        console.log(starting_castle);
+        console.log(starting_expansion);
+      }
       throw new Error('Misplaced starting castle');
     }
 

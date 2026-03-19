@@ -1,5 +1,6 @@
 import { ArmorFactor, CalculateDps } from '../../unit_stats';
 import { SafeGroundDistance } from '../../ground_distance';
+import { DEBUG } from '../../constants';
 
 interface UnitAssignerAssignKwargs {
   targets_list: RangerBotTarget[];
@@ -109,7 +110,9 @@ class UnitAssigner {
                 data['ground_distance'] = SafeGroundDistance(target.location, unit.pos);
               }
               if (isNaN(data.ground_distance)) {
-                console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 1');
+                if (DEBUG) {
+                  console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 1');
+                }
                 shortest_distance = data.air_distance;
               } else {
                 shortest_distance = data.ground_distance;
@@ -120,7 +123,9 @@ class UnitAssigner {
                 data['ground_distance'] = SafeGroundDistance(target.location, unit.pos);
               }
               if (isNaN(data.ground_distance)) {
-                console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 2');
+                if (DEBUG) {
+                  console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 2');
+                }
               } else if (data.ground_distance < shortest_distance) {
                 closest = data;
                 shortest_distance = data.ground_distance;

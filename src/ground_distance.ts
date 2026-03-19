@@ -1,4 +1,5 @@
 import { GetNumberFieldValue, DrawRectangle } from './utils';
+import { DEBUG } from './constants';
 
 function SafeGroundDistance(p1: MapLocation, p2: MapLocation): number {
   // TODO
@@ -318,7 +319,9 @@ function _GetClosestToBuilding(building: LwgBuilding, stuff: ObjectWithLocation[
     if (isNaN(closest_distance)) {
       const ground_distance: number = SafeGroundDistance(pair.per_loc, pair.thing.location);
       if (isNaN(ground_distance)) {
-        console.log('\nERROR: missing SafeGroundDistance for _GetClosestToBuilding 1');
+        if (DEBUG) {
+          console.log('Error: missing SafeGroundDistance for _GetClosestToBuilding 1');
+        }
         continue;
       }
       closest_distance = ground_distance;
@@ -326,7 +329,9 @@ function _GetClosestToBuilding(building: LwgBuilding, stuff: ObjectWithLocation[
     } else if (pair.air_distance < closest_distance) {
       const ground_distance: number = SafeGroundDistance(pair.per_loc, pair.thing.location);
       if (isNaN(ground_distance)) {
-        console.log('\nERROR: missing SafeGroundDistance for _GetClosestToBuilding 2');
+        if (DEBUG) {
+          console.log('Error: missing SafeGroundDistance for _GetClosestToBuilding 2');
+        }
         continue;
       }
       if (ground_distance < closest_distance) {
@@ -337,9 +342,11 @@ function _GetClosestToBuilding(building: LwgBuilding, stuff: ObjectWithLocation[
   }
 
   if (!output) {
-    console.log(building);
-    console.log(stuff);
-    console.log(pairs);
+    if (DEBUG) {
+      console.log(building);
+      console.log(stuff);
+      console.log(pairs);
+    }
     throw new Error('No ground paths for _GetClosestToBuilding');
   }
 
@@ -365,7 +372,9 @@ function _GetClosestToLocation(map_location: MapLocation, stuff: ObjectWithLocat
     if (isNaN(closest_distance)) {
       const ground_distance: number = SafeGroundDistance(map_location, data.thing.location);
       if (isNaN(ground_distance)) {
-        console.log('\nERROR: missing SafeGroundDistance for _GetClosestToLocation 1');
+        if (DEBUG) {
+          console.log('Error: missing SafeGroundDistance for _GetClosestToLocation 1');
+        }
         continue;
       }
       closest_distance = ground_distance;
@@ -373,7 +382,9 @@ function _GetClosestToLocation(map_location: MapLocation, stuff: ObjectWithLocat
     } else if (data.air_distance < closest_distance) {
       const ground_distance: number = SafeGroundDistance(map_location, data.thing.location);
       if (isNaN(ground_distance)) {
-        console.log('\nERROR: missing SafeGroundDistance for _GetClosestToLocation 2');
+        if (DEBUG) {
+          console.log('Error: missing SafeGroundDistance for _GetClosestToLocation 2');
+        }
         continue;
       }
       if (ground_distance < closest_distance) {
@@ -384,9 +395,11 @@ function _GetClosestToLocation(map_location: MapLocation, stuff: ObjectWithLocat
   }
 
   if (!output) {
-    console.log(map_location);
-    console.log(stuff);
-    console.log(with_air_distance);
+    if (DEBUG) {
+      console.log(map_location);
+      console.log(stuff);
+      console.log(with_air_distance);
+    }
     throw new Error('No ground paths for _GetClosestToLocation');
   }
 

@@ -2,7 +2,7 @@ import { DataHub } from '../data_hub';
 import { WolvesAreObsolete } from '../utils';
 import { ARCHER_SUPPLY, WOLF_SUPPLY, WORKER_SUPPLY, WOLF_BUILD_TIME,
   WORKER_BUILD_TIME, HOUSE_BUILD_TIME, ARCHER_COST, WOLF_COST,
-  WORKER_COST, ARCHER_BUILD_TIME, SPEED_FACTOR } from '../constants';
+  WORKER_COST, ARCHER_BUILD_TIME, SPEED_FACTOR, DEBUG } from '../constants';
 
 interface SurveyProductionKwargs {
   data_hub: DataHub;
@@ -44,8 +44,8 @@ function _SurveyMeleeVsRanged(my_building: LwgBuilding, data_hub: DataHub): void
     } else if (queued_unit.id_string == 'worker') {
     } else if (queued_unit.isUpgrade) {
     } else if ('watchtower2' == queued_unit.id_string) {
-    } else {
-      console.log('\nERROR: Unhandled id_string: ' + queued_unit.id_string);
+    } else if (DEBUG) {
+      console.log('Error: Unhandled id_string: ' + queued_unit.id_string);
     }
   }
 }
@@ -75,7 +75,9 @@ function _SurveySupply(my_building: LwgBuilding, data_hub: DataHub): void {
         return 0;
       }
     } else {
-      console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      if (DEBUG) {
+        console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      }
       return 0;
     }
   })();
@@ -94,8 +96,10 @@ function _SurveySupply(my_building: LwgBuilding, data_hub: DataHub): void {
       if (my_building.ranger_bot.queue_finish_time) {
         return my_building.ranger_bot.queue_finish_time - scope.getCurrentGameTimeInSec();
       } else {
-        console.log(my_building);
-        console.log('ERROR: Missing queue_finish_time for _SurveySupply');
+        if (DEBUG) {
+          console.log(my_building);
+          console.log('ERROR: Missing queue_finish_time for _SurveySupply');
+        }
         return WORKER_BUILD_TIME;
       }
     } else if (my_building.type.name == 'Barracks') {
@@ -113,7 +117,9 @@ function _SurveySupply(my_building: LwgBuilding, data_hub: DataHub): void {
         return 0;
       }
     } else {
-      console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      if (DEBUG) {
+        console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      }
       return 0;
     }
   })();
@@ -150,7 +156,9 @@ function _SurveySpending(my_building: LwgBuilding, data_hub: DataHub): void {
         return 0;
       }
     } else {
-      console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      if (DEBUG) {
+        console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      }
       return 0;
     }
   })();
@@ -181,7 +189,9 @@ function _SurveySpending(my_building: LwgBuilding, data_hub: DataHub): void {
         return 0;
       }
     } else {
-      console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      if (DEBUG) {
+        console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+      }
       return 0;
     }
   })();

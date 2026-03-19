@@ -1,4 +1,4 @@
-import { TOWER_WIDTH, TOWER_HEIGHT } from '../constants';
+import { TOWER_WIDTH, TOWER_HEIGHT, DEBUG } from '../constants';
 import { IsBuildable, AreBuildable } from './buildable';
 
 interface CalculateTowerLocationKwargs {
@@ -119,18 +119,20 @@ function CalculateTowerLocation({ mines_data, raw_gold_mines }: CalculateTowerLo
   }
 
   if (viable.length <= 0) {
-    console.log(perimeter);
-    // PrintExpansionData({
-    //   mines_data: mines_data,
-    //   midpoints: midpoints,
-    //   debug: perimeter,
-    // });
-    console.log(candidates);
-    // PrintExpansionData({
-    //   mines_data: mines_data,
-    //   midpoints: midpoints,
-    //   debug: candidates,
-    // });
+    if (DEBUG) {
+      console.log(perimeter);
+      // PrintExpansionData({
+      //   mines_data: mines_data,
+      //   midpoints: midpoints,
+      //   debug: perimeter,
+      // });
+      console.log(candidates);
+      // PrintExpansionData({
+      //   mines_data: mines_data,
+      //   midpoints: midpoints,
+      //   debug: candidates,
+      // });
+    }
     throw new Error('no viable tower locations');
   }
 

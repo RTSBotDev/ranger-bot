@@ -2,7 +2,6 @@ import { GetNumberFieldValue } from './utils';
 import { SPEED_FACTOR } from './constants';
 
 function CalculateDps(piece: LwgPiece): number {
-  // console.log(piece.owner);
   // TODO: account for upgrades
   const dmg = GetNumberFieldValue({ piece_name: piece.type.id_string, field_name: 'dmg' });
   const attack_cooldown = GetNumberFieldValue({ piece_name: piece.type.id_string, field_name: 'weaponCooldown' });
@@ -11,7 +10,6 @@ function CalculateDps(piece: LwgPiece): number {
 }
 
 function CalculateArmor(piece: LwgPiece): number {
-  // console.log(piece.owner);
   // TODO: account for upgrades
   return piece.type.armor;
 }

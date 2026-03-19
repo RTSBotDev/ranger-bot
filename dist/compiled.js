@@ -15,7 +15,7 @@ var manage_states_1 = __webpack_require__(29);
 var macro_bot_1 = __webpack_require__(40);
 var army_bot_1 = __webpack_require__(60);
 var micro_units_1 = __webpack_require__(76);
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var RangerBot = (function () {
     function RangerBot(_a) {
         var team_cache_key = _a.team_cache_key, player_cache_key = _a.player_cache_key;
@@ -85,14 +85,14 @@ function ChatGlhf(_a) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DataHub = void 0;
 var analyze_teams_1 = __webpack_require__(4);
-var location_is_visible_1 = __webpack_require__(5);
-var analyze_map_1 = __webpack_require__(6);
+var location_is_visible_1 = __webpack_require__(7);
+var analyze_map_1 = __webpack_require__(8);
 var calculate_upgrades_1 = __webpack_require__(23);
 var get_cached_gold_mines_1 = __webpack_require__(24);
 var get_neutral_buildings_1 = __webpack_require__(25);
 var update_piece_caches_1 = __webpack_require__(27);
 var update_neutral_objects_1 = __webpack_require__(28);
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
 var DataHub = (function () {
     function DataHub(_a) {
         var team_cache_key = _a.team_cache_key, player_cache_key = _a.player_cache_key;
@@ -242,12 +242,13 @@ exports.DataHub = DataHub;
 
 /***/ }),
 /* 4 */
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AnalyzeTeams = AnalyzeTeams;
 exports.ConfigureStartLocation = ConfigureStartLocation;
+var constants_1 = __webpack_require__(5);
 function AnalyzeTeams(_a) {
     var player_cache_key = _a.player_cache_key;
     if (scope.ranger_bot.player_caches === undefined) {
@@ -312,20 +313,26 @@ function ConfigureStartLocation(player_id) {
     }
     var map_name = game.data.name;
     if (!map_name) {
-        console.log(game);
+        if (constants_1.DEBUG) {
+            console.log(game);
+        }
         throw new Error('Cannot find map name for ConfigureStartLocation');
     }
     var start_locations_config = CONFIGURED_START_LOCATIONS[map_name];
     if (!start_locations_config) {
-        console.log(game);
-        console.log(game.start_locations);
+        if (constants_1.DEBUG) {
+            console.log(game);
+            console.log(game.start_locations);
+        }
         throw new Error('No start locations configured for "' + map_name + '"');
     }
     var configured_start_location = start_locations_config[player_id];
     if (!configured_start_location) {
-        console.log(game);
-        console.log('map_name: ' + map_name + ', player_id: ' + player_id);
-        console.log(start_locations_config);
+        if (constants_1.DEBUG) {
+            console.log(game);
+            console.log('map_name: ' + map_name + ', player_id: ' + player_id);
+            console.log(start_locations_config);
+        }
         throw new Error('No start location configured for player ' + player_id + ' on "' + map_name + '"');
     }
     else {
@@ -336,6 +343,207 @@ function ConfigureStartLocation(player_id) {
 
 /***/ }),
 /* 5 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SNAKE_COST = exports.WOLF_COST = exports.WORKER_COST = exports.FORGE_COST = exports.ARMORY_COST = exports.BARRACKS_COST = exports.SNAKE_CHARMER_COST = exports.WOLF_DEN_COST = exports.HOUSE_COST = exports.CASTLE_COST = exports.TOWER_HEIGHT = exports.TOWER_WIDTH = exports.MINE_HEIGHT = exports.MINE_WIDTH = exports.CASTLE_HEIGHT = exports.CASTLE_WIDTH = exports.WORKER_DISRESPECT = exports.SCOUTS = exports.SCOUT_RADIUS = exports.PASSIVE_THREAT_FACTOR = exports.TARGET_RESET_THRESHOLD = exports.AGGRO_STOP_GAP = exports.AGGRO_START_GAP = exports.MINE_SCOUT_INTERVAL = exports.THREAT_DECAY = exports.CALM_DOWN_DISTANCE = exports.CONSCRIPTION_DISTANCE = exports.LAZY_ORDER_DISTANCE = exports.AGGRO_RETREAT_THRESHOLD = exports.AGGRO_ATTACK_THRESHOLD = exports.RETREAT_THRESHOLD = exports.ATTACK_THRESHOLD = exports.RETREAT_RADIUS = exports.ATTACK_RADIUS = exports.CONSCRIPTION_THREAT_RESPONSE = exports.MAX_THREAT_RESPONSE = exports.MIN_THREAT_RESPONSE = exports.BASE_TARGET_RADIUS = exports.MAX_BARRACKS = exports.MAX_FORGES = exports.REPLACEMENT_BASE_THRESHOLD = exports.GOLD_PER_MIN = exports.MAX_MINING_DISTANCE = exports.NEAR_MAX_SUPPLY = exports.BUILDING_SPACE_BUFFER = exports.PRE_QUEUE_BUFFER = exports.MAX_WORKERS = exports.WORKERS_PER_CASTLE = exports.SPEED_FACTOR = exports.DEBUG = void 0;
+exports.WATCHTOWER_DETECTION_COST = exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.SNAKE_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.SNAKE_SUPPLY = exports.WOLF_SUPPLY = exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = exports.SOLDIER_COST = exports.ARCHER_COST = void 0;
+var utils_1 = __webpack_require__(6);
+exports.DEBUG = false;
+exports.SPEED_FACTOR = 20;
+exports.WORKERS_PER_CASTLE = 12;
+exports.MAX_WORKERS = 50;
+exports.PRE_QUEUE_BUFFER = 7;
+exports.BUILDING_SPACE_BUFFER = 2;
+exports.NEAR_MAX_SUPPLY = 10;
+exports.MAX_MINING_DISTANCE = 6;
+exports.GOLD_PER_MIN = {
+    '0': 0,
+    '1': 63,
+    '2': 126,
+    '3': 188,
+    '4': 236,
+    '5': 280,
+    '6': 312,
+    '7': 343,
+    '8': 374,
+    '9': 404,
+    '10': 435,
+    '11': 466,
+    '12': 497,
+    '13': 503,
+};
+exports.REPLACEMENT_BASE_THRESHOLD = 1000;
+exports.MAX_FORGES = 3;
+exports.MAX_BARRACKS = 10;
+exports.BASE_TARGET_RADIUS = 3;
+exports.MIN_THREAT_RESPONSE = 2;
+exports.MAX_THREAT_RESPONSE = 5;
+exports.CONSCRIPTION_THREAT_RESPONSE = 2;
+exports.ATTACK_RADIUS = 19;
+exports.RETREAT_RADIUS = 9;
+exports.ATTACK_THRESHOLD = 1.65;
+exports.RETREAT_THRESHOLD = 0.85;
+exports.AGGRO_ATTACK_THRESHOLD = 0.5;
+exports.AGGRO_RETREAT_THRESHOLD = 0.25;
+exports.LAZY_ORDER_DISTANCE = 2;
+exports.CONSCRIPTION_DISTANCE = 10;
+exports.CALM_DOWN_DISTANCE = 13;
+exports.THREAT_DECAY = 0.993;
+exports.MINE_SCOUT_INTERVAL = 180;
+exports.AGGRO_START_GAP = 2;
+exports.AGGRO_STOP_GAP = 20;
+exports.TARGET_RESET_THRESHOLD = 0.01;
+exports.PASSIVE_THREAT_FACTOR = 13;
+exports.SCOUT_RADIUS = 20;
+exports.SCOUTS = 4;
+exports.WORKER_DISRESPECT = 0.15;
+exports.CASTLE_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'sizeX' });
+exports.CASTLE_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'sizeY' });
+exports.MINE_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'goldmine', field_name: 'sizeX' });
+exports.MINE_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'goldmine', field_name: 'sizeY' });
+exports.TOWER_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower', field_name: 'sizeX' });
+exports.TOWER_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower', field_name: 'sizeY' });
+exports.CASTLE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'cost' });
+exports.HOUSE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'house', field_name: 'cost' });
+exports.WOLF_DEN_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolvesden', field_name: 'cost' });
+exports.SNAKE_CHARMER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snakecharmer', field_name: 'cost' });
+exports.BARRACKS_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'barracks', field_name: 'cost' });
+exports.ARMORY_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'armory', field_name: 'cost' });
+exports.FORGE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'forge', field_name: 'cost' });
+exports.WORKER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'cost' });
+exports.WOLF_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'cost' });
+exports.SNAKE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'cost' });
+exports.ARCHER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'cost' });
+exports.SOLDIER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'cost' });
+exports.ARCHER_RANGE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgrange', field_name: 'cost' });
+exports.WORKER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'supply' });
+exports.WOLF_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'supply' });
+exports.SNAKE_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'supply' });
+exports.ARCHER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'supply' });
+exports.SOLDIER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'supply' });
+exports.HOUSE_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'house', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
+exports.WORKER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
+exports.WOLF_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
+exports.SNAKE_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
+exports.ARCHER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
+exports.SOLDIER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
+exports.WORKER_SPEED = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'movementSpeed' }) * exports.SPEED_FACTOR;
+exports.MAX_ATTACK_UPGRADE_LEVEL = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgattack', field_name: 'maxLevel' });
+exports.MAX_ARMOR_UPGRADE_LEVEL = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgarmor', field_name: 'maxLevel' });
+exports.WATCHTOWER_DETECTION_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower2', field_name: 'cost' });
+
+
+/***/ }),
+/* 6 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GetNumberFieldValue = GetNumberFieldValue;
+exports.DrawRectangle = DrawRectangle;
+exports.GetGoldMines = GetGoldMines;
+exports.AssignMiner = AssignMiner;
+exports.WolvesAreObsolete = WolvesAreObsolete;
+exports.GetStringFieldValue = GetStringFieldValue;
+var constants_1 = __webpack_require__(5);
+function GetNumberFieldValue(_a) {
+    var piece_name = _a.piece_name, field_name = _a.field_name;
+    var raw = scope.getTypeFieldValue(piece_name, field_name);
+    if (typeof (raw) == 'number') {
+        return raw;
+    }
+    else {
+        throw new Error('"' + field_name + '" of "' + piece_name + '" is not a number');
+    }
+}
+function GetStringFieldValue(_a) {
+    var piece_name = _a.piece_name, field_name = _a.field_name;
+    var raw = scope.getTypeFieldValue(piece_name, field_name);
+    if (typeof (raw) == 'string') {
+        return raw;
+    }
+    else {
+        throw new Error('"' + field_name + '" of "' + piece_name + '" is not a string');
+    }
+}
+function DrawRectangle(_a) {
+    var corner = _a.corner, width = _a.width, height = _a.height;
+    var output = [];
+    for (var dx = 0; dx < width; dx++) {
+        var x = corner.x + dx;
+        var ceiling = { 'x': x, 'y': corner.y };
+        output.push(ceiling);
+        var floor = { 'x': x, 'y': corner.y + height - 1 };
+        output.push(floor);
+    }
+    for (var dy = 1; dy < (height - 1); dy++) {
+        var y = corner.y + dy;
+        var left_wall = { 'x': corner.x, 'y': y };
+        output.push(left_wall);
+        var right_wall = { 'x': corner.x + width - 1, 'y': y };
+        output.push(right_wall);
+    }
+    return output;
+}
+function GetGoldMines() {
+    if (undefined === scope.ranger_bot.raw_gold_mines) {
+        var all_mines = scope.getBuildings({ type: 'Goldmine' })
+            .map(function (g) { return g.unit; });
+        var unique_mines = [];
+        var mine_locations = [];
+        for (var i = 0; i < all_mines.length; i++) {
+            var mine = all_mines[i];
+            if (mine_locations[mine.x] === undefined) {
+                mine_locations[mine.x] = [];
+            }
+            if (mine_locations[mine.x][mine.y]) {
+                continue;
+            }
+            unique_mines.push(mine);
+            mine_locations[mine.x][mine.y] = true;
+        }
+        scope.ranger_bot.raw_gold_mines = unique_mines;
+    }
+    return scope.ranger_bot.raw_gold_mines;
+}
+function WolvesAreObsolete() {
+    if (scope.player.upgrades.upgattack && scope.player.upgrades.upgattack > 0) {
+        return true;
+    }
+    if (scope.player.upgrades.upgarmor && scope.player.upgrades.upgarmor > 0) {
+        return true;
+    }
+    return false;
+}
+function AssignMiner(worker, assigned_mine) {
+    if (!assigned_mine.gold_mine) {
+        if (constants_1.DEBUG) {
+            console.log(assigned_mine);
+        }
+        throw new Error('Missing gold mine for assigned mine');
+    }
+    var gold_mine = assigned_mine.gold_mine;
+    if (!gold_mine.castle) {
+        if (constants_1.DEBUG) {
+            console.log(gold_mine);
+        }
+        throw new Error('Missing castle for assigned gold mine');
+    }
+    var assigned_castle = gold_mine.castle;
+    assigned_mine.workers.push(worker);
+    worker.ranger_bot = {
+        'job': 'mine',
+        'mine': gold_mine,
+        'castle': assigned_castle,
+    };
+    scope.order('Move', [{ 'unit': worker }], assigned_mine.midpoint);
+}
+
+
+/***/ }),
+/* 7 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -370,18 +578,18 @@ function LocationIsVisible(_a) {
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AnalyzeMap = AnalyzeMap;
-var pathable_locations_1 = __webpack_require__(7);
-var rush_distance_1 = __webpack_require__(8);
-var analyze_gold_mines_1 = __webpack_require__(11);
+var pathable_locations_1 = __webpack_require__(9);
+var rush_distance_1 = __webpack_require__(10);
+var analyze_gold_mines_1 = __webpack_require__(12);
 var identify_start_1 = __webpack_require__(21);
 var score_expansions_1 = __webpack_require__(22);
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function AnalyzeMap(_a) {
     var player_cache_key = _a.player_cache_key, teams = _a.teams;
     if (scope.ranger_bot.player_caches === undefined) {
@@ -433,8 +641,10 @@ function _PopulateStartingCastleCache(starting_castle, starting_expansion) {
             return starting_castle.x == pl.castle_location.x && starting_castle.y == pl.castle_location.y;
         });
         if (placement === undefined) {
-            console.log(starting_castle);
-            console.log(starting_expansion);
+            if (constants_1.DEBUG) {
+                console.log(starting_castle);
+                console.log(starting_expansion);
+            }
             throw new Error('Misplaced starting castle');
         }
         var active_mines_data = placement.mines_data.map(function (md) {
@@ -454,7 +664,7 @@ function _PopulateStartingCastleCache(starting_castle, starting_expansion) {
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -475,20 +685,23 @@ function PathableLocations() {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RushDistance = RushDistance;
-var ground_distance_1 = __webpack_require__(9);
+var ground_distance_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(5);
 function RushDistance(_a) {
     var teams = _a.teams;
     var enemy_start_distances = teams.enemies.map(function (enemy_id) {
         var enemy_start = teams.players[enemy_id].start_location;
         var ground_distance = (0, ground_distance_1.SafeGroundDistance)(teams.my.start, enemy_start);
         if (isNaN(ground_distance)) {
-            console.log('\nERROR: missing SafeGroundDistance for RushDistance');
+            if (constants_1.DEBUG) {
+                console.log('Error: missing SafeGroundDistance for RushDistance');
+            }
             return Math.sqrt(Math.pow((teams.my.start.x - enemy_start.x), 2) + Math.pow((teams.my.start.y - enemy_start.y), 2));
         }
         else {
@@ -500,7 +713,7 @@ function RushDistance(_a) {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -514,7 +727,8 @@ exports.GetClosestActiveMineToBuilding = GetClosestActiveMineToBuilding;
 exports.GetClosestUnitToBuilding = GetClosestUnitToBuilding;
 exports.GetClosestActiveMineToLocation = GetClosestActiveMineToLocation;
 exports.GetClosestUnitToLocation = GetClosestUnitToLocation;
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function SafeGroundDistance(p1, p2) {
     if (p1.x == p2.x && p1.y == p2.y) {
         return 0;
@@ -787,7 +1001,9 @@ function _GetClosestToBuilding(building, stuff) {
         if (isNaN(closest_distance)) {
             var ground_distance = SafeGroundDistance(pair.per_loc, pair.thing.location);
             if (isNaN(ground_distance)) {
-                console.log('\nERROR: missing SafeGroundDistance for _GetClosestToBuilding 1');
+                if (constants_1.DEBUG) {
+                    console.log('Error: missing SafeGroundDistance for _GetClosestToBuilding 1');
+                }
                 continue;
             }
             closest_distance = ground_distance;
@@ -796,7 +1012,9 @@ function _GetClosestToBuilding(building, stuff) {
         else if (pair.air_distance < closest_distance) {
             var ground_distance = SafeGroundDistance(pair.per_loc, pair.thing.location);
             if (isNaN(ground_distance)) {
-                console.log('\nERROR: missing SafeGroundDistance for _GetClosestToBuilding 2');
+                if (constants_1.DEBUG) {
+                    console.log('Error: missing SafeGroundDistance for _GetClosestToBuilding 2');
+                }
                 continue;
             }
             if (ground_distance < closest_distance) {
@@ -806,9 +1024,11 @@ function _GetClosestToBuilding(building, stuff) {
         }
     }
     if (!output) {
-        console.log(building);
-        console.log(stuff);
-        console.log(pairs);
+        if (constants_1.DEBUG) {
+            console.log(building);
+            console.log(stuff);
+            console.log(pairs);
+        }
         throw new Error('No ground paths for _GetClosestToBuilding');
     }
     return output;
@@ -829,7 +1049,9 @@ function _GetClosestToLocation(map_location, stuff) {
         if (isNaN(closest_distance)) {
             var ground_distance = SafeGroundDistance(map_location, data.thing.location);
             if (isNaN(ground_distance)) {
-                console.log('\nERROR: missing SafeGroundDistance for _GetClosestToLocation 1');
+                if (constants_1.DEBUG) {
+                    console.log('Error: missing SafeGroundDistance for _GetClosestToLocation 1');
+                }
                 continue;
             }
             closest_distance = ground_distance;
@@ -838,7 +1060,9 @@ function _GetClosestToLocation(map_location, stuff) {
         else if (data.air_distance < closest_distance) {
             var ground_distance = SafeGroundDistance(map_location, data.thing.location);
             if (isNaN(ground_distance)) {
-                console.log('\nERROR: missing SafeGroundDistance for _GetClosestToLocation 2');
+                if (constants_1.DEBUG) {
+                    console.log('Error: missing SafeGroundDistance for _GetClosestToLocation 2');
+                }
                 continue;
             }
             if (ground_distance < closest_distance) {
@@ -848,9 +1072,11 @@ function _GetClosestToLocation(map_location, stuff) {
         }
     }
     if (!output) {
-        console.log(map_location);
-        console.log(stuff);
-        console.log(with_air_distance);
+        if (constants_1.DEBUG) {
+            console.log(map_location);
+            console.log(stuff);
+            console.log(with_air_distance);
+        }
         throw new Error('No ground paths for _GetClosestToLocation');
     }
     return output;
@@ -858,120 +1084,18 @@ function _GetClosestToLocation(map_location, stuff) {
 
 
 /***/ }),
-/* 10 */
-/***/ ((__unused_webpack_module, exports) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GetNumberFieldValue = GetNumberFieldValue;
-exports.DrawRectangle = DrawRectangle;
-exports.GetGoldMines = GetGoldMines;
-exports.AssignMiner = AssignMiner;
-exports.WolvesAreObsolete = WolvesAreObsolete;
-exports.GetStringFieldValue = GetStringFieldValue;
-function GetNumberFieldValue(_a) {
-    var piece_name = _a.piece_name, field_name = _a.field_name;
-    var raw = scope.getTypeFieldValue(piece_name, field_name);
-    if (typeof (raw) == 'number') {
-        return raw;
-    }
-    else {
-        throw new Error('"' + field_name + '" of "' + piece_name + '" is not a number');
-    }
-}
-function GetStringFieldValue(_a) {
-    var piece_name = _a.piece_name, field_name = _a.field_name;
-    var raw = scope.getTypeFieldValue(piece_name, field_name);
-    if (typeof (raw) == 'string') {
-        return raw;
-    }
-    else {
-        throw new Error('"' + field_name + '" of "' + piece_name + '" is not a string');
-    }
-}
-function DrawRectangle(_a) {
-    var corner = _a.corner, width = _a.width, height = _a.height;
-    var output = [];
-    for (var dx = 0; dx < width; dx++) {
-        var x = corner.x + dx;
-        var ceiling = { 'x': x, 'y': corner.y };
-        output.push(ceiling);
-        var floor = { 'x': x, 'y': corner.y + height - 1 };
-        output.push(floor);
-    }
-    for (var dy = 1; dy < (height - 1); dy++) {
-        var y = corner.y + dy;
-        var left_wall = { 'x': corner.x, 'y': y };
-        output.push(left_wall);
-        var right_wall = { 'x': corner.x + width - 1, 'y': y };
-        output.push(right_wall);
-    }
-    return output;
-}
-function GetGoldMines() {
-    if (undefined === scope.ranger_bot.raw_gold_mines) {
-        var all_mines = scope.getBuildings({ type: 'Goldmine' })
-            .map(function (g) { return g.unit; });
-        var unique_mines = [];
-        var mine_locations = [];
-        for (var i = 0; i < all_mines.length; i++) {
-            var mine = all_mines[i];
-            if (mine_locations[mine.x] === undefined) {
-                mine_locations[mine.x] = [];
-            }
-            if (mine_locations[mine.x][mine.y]) {
-                continue;
-            }
-            unique_mines.push(mine);
-            mine_locations[mine.x][mine.y] = true;
-        }
-        scope.ranger_bot.raw_gold_mines = unique_mines;
-    }
-    return scope.ranger_bot.raw_gold_mines;
-}
-function WolvesAreObsolete() {
-    if (scope.player.upgrades.upgattack && scope.player.upgrades.upgattack > 0) {
-        return true;
-    }
-    if (scope.player.upgrades.upgarmor && scope.player.upgrades.upgarmor > 0) {
-        return true;
-    }
-    return false;
-}
-function AssignMiner(worker, assigned_mine) {
-    if (!assigned_mine.gold_mine) {
-        console.log(assigned_mine);
-        throw new Error('Missing gold mine for assigned mine');
-    }
-    var gold_mine = assigned_mine.gold_mine;
-    if (!gold_mine.castle) {
-        console.log(gold_mine);
-        throw new Error('Missing castle for assigned gold mine');
-    }
-    var assigned_castle = gold_mine.castle;
-    assigned_mine.workers.push(worker);
-    worker.ranger_bot = {
-        'job': 'mine',
-        'mine': gold_mine,
-        'castle': assigned_castle,
-    };
-    scope.order('Move', [{ 'unit': worker }], assigned_mine.midpoint);
-}
-
-
-/***/ }),
-/* 11 */
+/* 12 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AnalyzeGoldMines = AnalyzeGoldMines;
-var map_exclusion_zone_1 = __webpack_require__(12);
-var map_gold_mine_perimeter_1 = __webpack_require__(13);
+var map_exclusion_zone_1 = __webpack_require__(13);
+var map_gold_mine_perimeter_1 = __webpack_require__(14);
 var calculate_viable_castle_locations_1 = __webpack_require__(16);
 var select_castle_locations_1 = __webpack_require__(18);
-var utils_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(15);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function AnalyzeGoldMines(teams) {
     if (scope.ranger_bot.expansions === undefined) {
         var raw_gold_mines = (0, utils_1.GetGoldMines)();
@@ -1027,7 +1151,7 @@ function AnalyzeGoldMines(teams) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -1074,13 +1198,13 @@ function MapExclusionZone(_a) {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapGoldMinePerimeter = MapGoldMinePerimeter;
-var buildable_1 = __webpack_require__(14);
+var buildable_1 = __webpack_require__(15);
 function MapGoldMinePerimeter(_a) {
     var raw_mine = _a.raw_mine, raw_gold_mines = _a.raw_gold_mines, teams = _a.teams;
     var mine_cache = raw_mine.ranger_bot;
@@ -1169,14 +1293,14 @@ function _IsValid(x, y, z, raw_gold_mines, teams) {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.IsBuildable = IsBuildable;
 exports.AreBuildable = AreBuildable;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function IsBuildable(_a) {
     var map_location = _a.map_location, exclude_worker_paths = _a.exclude_worker_paths, raw_gold_mines = _a.raw_gold_mines, data_hub = _a.data_hub, teams = _a.teams;
     if (map_location.x < 0 || scope.getMapWidth() < map_location.x) {
@@ -1325,7 +1449,9 @@ function _OverlapsExpansion(map_location, player_expansion) {
         for (var j = 0; j < placement.mines_data.length; j++) {
             var active_mine = placement.mines_data[j];
             if (!active_mine.gold_mine) {
-                console.log(active_mine);
+                if (constants_1.DEBUG) {
+                    console.log(active_mine);
+                }
                 throw new Error('Missing gold_mine for _OverlapsExpansion');
             }
             if (!active_mine.gold_mine.castle) {
@@ -1344,7 +1470,9 @@ function _OverlapsExpansion(map_location, player_expansion) {
             continue;
         }
         if (!castle.ranger_bot.mining_data) {
-            console.log(castle);
+            if (constants_1.DEBUG) {
+                console.log(castle);
+            }
             throw new Error('Missing mining_data for _OverlapsExpansion');
         }
         if (_OverlapsTower(map_location, castle.ranger_bot.mining_data.tower_location)) {
@@ -1417,100 +1545,6 @@ function _OverlapsWorkerPaths(map_location, worker_paths) {
 
 
 /***/ }),
-/* 15 */
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SNAKE_COST = exports.WOLF_COST = exports.WORKER_COST = exports.FORGE_COST = exports.ARMORY_COST = exports.BARRACKS_COST = exports.SNAKE_CHARMER_COST = exports.WOLF_DEN_COST = exports.HOUSE_COST = exports.CASTLE_COST = exports.TOWER_HEIGHT = exports.TOWER_WIDTH = exports.MINE_HEIGHT = exports.MINE_WIDTH = exports.CASTLE_HEIGHT = exports.CASTLE_WIDTH = exports.WORKER_DISRESPECT = exports.SCOUTS = exports.SCOUT_RADIUS = exports.PASSIVE_THREAT_FACTOR = exports.TARGET_RESET_THRESHOLD = exports.AGGRO_STOP_GAP = exports.AGGRO_START_GAP = exports.MINE_SCOUT_INTERVAL = exports.THREAT_DECAY = exports.CALM_DOWN_DISTANCE = exports.CONSCRIPTION_DISTANCE = exports.LAZY_ORDER_DISTANCE = exports.AGGRO_RETREAT_THRESHOLD = exports.AGGRO_ATTACK_THRESHOLD = exports.RETREAT_THRESHOLD = exports.ATTACK_THRESHOLD = exports.RETREAT_RADIUS = exports.ATTACK_RADIUS = exports.CONSCRIPTION_THREAT_RESPONSE = exports.MAX_THREAT_RESPONSE = exports.MIN_THREAT_RESPONSE = exports.BASE_TARGET_RADIUS = exports.MAX_BARRACKS = exports.MAX_FORGES = exports.REPLACEMENT_BASE_THRESHOLD = exports.GOLD_PER_MIN = exports.MAX_MINING_DISTANCE = exports.NEAR_MAX_SUPPLY = exports.BUILDING_SPACE_BUFFER = exports.PRE_QUEUE_BUFFER = exports.MAX_WORKERS = exports.WORKERS_PER_CASTLE = exports.SPEED_FACTOR = exports.DEBUG = void 0;
-exports.WATCHTOWER_DETECTION_COST = exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.SNAKE_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.SNAKE_SUPPLY = exports.WOLF_SUPPLY = exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = exports.SOLDIER_COST = exports.ARCHER_COST = void 0;
-var utils_1 = __webpack_require__(10);
-exports.DEBUG = true;
-exports.SPEED_FACTOR = 20;
-exports.WORKERS_PER_CASTLE = 12;
-exports.MAX_WORKERS = 50;
-exports.PRE_QUEUE_BUFFER = 7;
-exports.BUILDING_SPACE_BUFFER = 2;
-exports.NEAR_MAX_SUPPLY = 10;
-exports.MAX_MINING_DISTANCE = 6;
-exports.GOLD_PER_MIN = {
-    '0': 0,
-    '1': 63,
-    '2': 126,
-    '3': 188,
-    '4': 236,
-    '5': 280,
-    '6': 312,
-    '7': 343,
-    '8': 374,
-    '9': 404,
-    '10': 435,
-    '11': 466,
-    '12': 497,
-    '13': 503,
-};
-exports.REPLACEMENT_BASE_THRESHOLD = 1000;
-exports.MAX_FORGES = 3;
-exports.MAX_BARRACKS = 10;
-exports.BASE_TARGET_RADIUS = 3;
-exports.MIN_THREAT_RESPONSE = 2;
-exports.MAX_THREAT_RESPONSE = 5;
-exports.CONSCRIPTION_THREAT_RESPONSE = 2;
-exports.ATTACK_RADIUS = 19;
-exports.RETREAT_RADIUS = 9;
-exports.ATTACK_THRESHOLD = 1.65;
-exports.RETREAT_THRESHOLD = 0.85;
-exports.AGGRO_ATTACK_THRESHOLD = 0.5;
-exports.AGGRO_RETREAT_THRESHOLD = 0.25;
-exports.LAZY_ORDER_DISTANCE = 2;
-exports.CONSCRIPTION_DISTANCE = 10;
-exports.CALM_DOWN_DISTANCE = 13;
-exports.THREAT_DECAY = 0.993;
-exports.MINE_SCOUT_INTERVAL = 180;
-exports.AGGRO_START_GAP = 2;
-exports.AGGRO_STOP_GAP = 20;
-exports.TARGET_RESET_THRESHOLD = 0.01;
-exports.PASSIVE_THREAT_FACTOR = 13;
-exports.SCOUT_RADIUS = 20;
-exports.SCOUTS = 4;
-exports.WORKER_DISRESPECT = 0.15;
-exports.CASTLE_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'sizeX' });
-exports.CASTLE_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'sizeY' });
-exports.MINE_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'goldmine', field_name: 'sizeX' });
-exports.MINE_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'goldmine', field_name: 'sizeY' });
-exports.TOWER_WIDTH = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower', field_name: 'sizeX' });
-exports.TOWER_HEIGHT = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower', field_name: 'sizeY' });
-exports.CASTLE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'castle', field_name: 'cost' });
-exports.HOUSE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'house', field_name: 'cost' });
-exports.WOLF_DEN_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolvesden', field_name: 'cost' });
-exports.SNAKE_CHARMER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snakecharmer', field_name: 'cost' });
-exports.BARRACKS_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'barracks', field_name: 'cost' });
-exports.ARMORY_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'armory', field_name: 'cost' });
-exports.FORGE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'forge', field_name: 'cost' });
-exports.WORKER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'cost' });
-exports.WOLF_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'cost' });
-exports.SNAKE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'cost' });
-exports.ARCHER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'cost' });
-exports.SOLDIER_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'cost' });
-exports.ARCHER_RANGE_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgrange', field_name: 'cost' });
-exports.WORKER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'supply' });
-exports.WOLF_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'supply' });
-exports.SNAKE_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'supply' });
-exports.ARCHER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'supply' });
-exports.SOLDIER_SUPPLY = (0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'supply' });
-exports.HOUSE_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'house', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
-exports.WORKER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
-exports.WOLF_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'wolf', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
-exports.SNAKE_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'snake', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
-exports.ARCHER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'archer', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
-exports.SOLDIER_BUILD_TIME = Math.floor((0, utils_1.GetNumberFieldValue)({ piece_name: 'soldier', field_name: 'buildTime' }) / exports.SPEED_FACTOR);
-exports.WORKER_SPEED = (0, utils_1.GetNumberFieldValue)({ piece_name: 'worker', field_name: 'movementSpeed' }) * exports.SPEED_FACTOR;
-exports.MAX_ATTACK_UPGRADE_LEVEL = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgattack', field_name: 'maxLevel' });
-exports.MAX_ARMOR_UPGRADE_LEVEL = (0, utils_1.GetNumberFieldValue)({ piece_name: 'upgarmor', field_name: 'maxLevel' });
-exports.WATCHTOWER_DETECTION_COST = (0, utils_1.GetNumberFieldValue)({ piece_name: 'watchtower2', field_name: 'cost' });
-
-
-/***/ }),
 /* 16 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -1518,11 +1552,11 @@ exports.WATCHTOWER_DETECTION_COST = (0, utils_1.GetNumberFieldValue)({ piece_nam
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CalculateViableCastleLocations = CalculateViableCastleLocations;
 exports.CalculateMidpoint = CalculateMidpoint;
-var constants_1 = __webpack_require__(15);
-var buildable_1 = __webpack_require__(14);
-var ground_distance_1 = __webpack_require__(9);
-var utils_1 = __webpack_require__(10);
-var constants_2 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
+var buildable_1 = __webpack_require__(15);
+var ground_distance_1 = __webpack_require__(11);
+var utils_1 = __webpack_require__(6);
+var constants_2 = __webpack_require__(5);
 var print_expansion_data_1 = __webpack_require__(17);
 function CalculateViableCastleLocations(_a) {
     var raw_mine = _a.raw_mine, raw_gold_mines = _a.raw_gold_mines, teams = _a.teams;
@@ -1662,8 +1696,8 @@ function _CalculateMiningDistance(base_x, base_y, mine_id) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PrintExpansionData = PrintExpansionData;
-var utils_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(15);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 var analyze_teams_1 = __webpack_require__(4);
 function PrintExpansionData(_a) {
     var expansions = _a.expansions, castle_locations = _a.castle_locations, mines_data = _a.mines_data, debug = _a.debug, midpoints = _a.midpoints;
@@ -1900,6 +1934,7 @@ exports.SelectCastleLocations = SelectCastleLocations;
 var calculate_worker_paths_1 = __webpack_require__(19);
 var calculate_tower_location_1 = __webpack_require__(20);
 var calculate_viable_castle_locations_1 = __webpack_require__(16);
+var constants_1 = __webpack_require__(5);
 function SelectCastleLocations(_a) {
     var raw_gold_mines = _a.raw_gold_mines, teams = _a.teams;
     var grouping = new _GroupCastleLocations(raw_gold_mines);
@@ -1990,7 +2025,9 @@ function _AddCastlePositionData(partial, expansion_id, teams) {
             var mine_data = castle_data.mines_data
                 .find(function (md) { return md.gold_mine_id == raw_mine.id; });
             if (mine_data === undefined) {
-                console.log(castle_data);
+                if (constants_1.DEBUG) {
+                    console.log(castle_data);
+                }
                 throw new Error('Missing mine_data for _AddCastlePositionData');
             }
             new_expansion_data.push({
@@ -2075,8 +2112,8 @@ function _CalculateCastlePositionData(castle_location, raw_gold_mines, teams) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CalculateWorkerPaths = CalculateWorkerPaths;
-var constants_1 = __webpack_require__(15);
-var buildable_1 = __webpack_require__(14);
+var constants_1 = __webpack_require__(5);
+var buildable_1 = __webpack_require__(15);
 function CalculateWorkerPaths(_a) {
     var raw_mine = _a.raw_mine, castle_location = _a.castle_location, teams = _a.teams;
     var castle_points = [];
@@ -2165,8 +2202,8 @@ function CalculateWorkerPaths(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CalculateTowerLocation = CalculateTowerLocation;
-var constants_1 = __webpack_require__(15);
-var buildable_1 = __webpack_require__(14);
+var constants_1 = __webpack_require__(5);
+var buildable_1 = __webpack_require__(15);
 function CalculateTowerLocation(_a) {
     var mines_data = _a.mines_data, raw_gold_mines = _a.raw_gold_mines;
     var midpoints = [];
@@ -2276,8 +2313,10 @@ function CalculateTowerLocation(_a) {
         }
     }
     if (viable.length <= 0) {
-        console.log(perimeter);
-        console.log(candidates);
+        if (constants_1.DEBUG) {
+            console.log(perimeter);
+            console.log(candidates);
+        }
         throw new Error('no viable tower locations');
     }
     var winner = viable.sort(function (a, b) { return a.score - b.score; })[0];
@@ -2307,24 +2346,29 @@ function _AreBuildable(x, y, raw_gold_mines) {
 
 /***/ }),
 /* 21 */
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.IdentifyStartingCastle = IdentifyStartingCastle;
 exports.IdentifyStartingExpansion = IdentifyStartingExpansion;
+var constants_1 = __webpack_require__(5);
 function IdentifyStartingCastle(_a) {
     var teams = _a.teams;
     var my_castles = scope.getBuildings({ player: teams.my.id, type: 'Castle' })
         .map(function (c) { return c.unit; });
     if (my_castles.length != 1) {
-        console.log(my_castles);
+        if (constants_1.DEBUG) {
+            console.log(my_castles);
+        }
         throw new Error('wrong number of castles for IdentifyStartingExpansion');
     }
     var starting_castle = my_castles[0];
     if (starting_castle.x != teams.my.start.x || starting_castle.y != teams.my.start.y) {
-        console.log(teams);
-        console.log(starting_castle);
+        if (constants_1.DEBUG) {
+            console.log(teams);
+            console.log(starting_castle);
+        }
         throw new Error("dude where's my castle?");
     }
     return starting_castle;
@@ -2337,8 +2381,10 @@ function IdentifyStartingExpansion(_a) {
         });
     });
     if (!output) {
-        console.log(expansions);
-        console.log(starting_castle);
+        if (constants_1.DEBUG) {
+            console.log(expansions);
+            console.log(starting_castle);
+        }
         throw new Error('IdentifyStartingExpansion failed');
     }
     return output;
@@ -2352,7 +2398,8 @@ function IdentifyStartingExpansion(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ScoreExpansions = ScoreExpansions;
-var ground_distance_1 = __webpack_require__(9);
+var ground_distance_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(5);
 function ScoreExpansions(_a) {
     var expansions = _a.expansions, starting_expansion = _a.starting_expansion, teams = _a.teams;
     var start = starting_expansion.castle_placements[0].mines_data[0].midpoint;
@@ -2360,9 +2407,11 @@ function ScoreExpansions(_a) {
         var destination = expansion.castle_placements[0].mines_data[0].midpoint;
         var score = (0, ground_distance_1.SafeGroundDistance)(start, destination);
         if (isNaN(score)) {
-            console.log(start);
-            console.log(destination);
-            console.log('ERROR: missing my ground distance for ScoreExpansions');
+            if (constants_1.DEBUG) {
+                console.log(start);
+                console.log(destination);
+                console.log('Error: missing my ground distance for ScoreExpansions');
+            }
             score = Math.sqrt(Math.pow((start.x - destination.x), 2) + Math.pow((start.y - destination.y), 2));
         }
         var enemy_start_distances = [];
@@ -2371,9 +2420,11 @@ function ScoreExpansions(_a) {
             var enemy_start = teams.players[enemy_id].start_location;
             var ground_distance = (0, ground_distance_1.SafeGroundDistance)(enemy_start, destination);
             if (isNaN(ground_distance)) {
-                console.log(enemy_start);
-                console.log(destination);
-                console.log('ERROR: missing enemy ground distance for ScoreExpansions');
+                if (constants_1.DEBUG) {
+                    console.log(enemy_start);
+                    console.log(destination);
+                    console.log('Error: missing enemy ground distance for ScoreExpansions');
+                }
                 ground_distance = Math.sqrt(Math.pow((enemy_start.x - destination.x), 2) + Math.pow((enemy_start.y - destination.y), 2));
             }
             enemy_start_distances.push(ground_distance);
@@ -2413,7 +2464,8 @@ function ScoreExpansions(_a) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CalculateUpgradeLevel = CalculateUpgradeLevel;
 exports.CalculateUpgradeCost = CalculateUpgradeCost;
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function CalculateUpgradeLevel(_a) {
     var data_hub = _a.data_hub, upgrade_type = _a.upgrade_type;
     var output = scope.player.upgrades[upgrade_type];
@@ -2443,13 +2495,17 @@ function CalculateUpgradeCost(_a) {
     var base_cost = (0, utils_1.GetNumberFieldValue)({ piece_name: upgrade_type, field_name: 'cost' });
     var effects_fields = scope.getTypeFieldValue(upgrade_type, 'effectsFields');
     if (!Array.isArray(effects_fields)) {
-        console.log(effects_fields);
+        if (constants_1.DEBUG) {
+            console.log(effects_fields);
+        }
         throw new Error('Wrong type of effects_fields for CalculateUpgradeCost');
     }
     var cost_index = effects_fields.indexOf('cost');
     var effects_modifications = scope.getTypeFieldValue(upgrade_type, 'effectsModifications');
     if (!Array.isArray(effects_modifications)) {
-        console.log(effects_modifications);
+        if (constants_1.DEBUG) {
+            console.log(effects_modifications);
+        }
         throw new Error('Wrong type of effects_modifications for CalculateUpgradeCost');
     }
     var increment_cost = effects_modifications[cost_index];
@@ -2464,7 +2520,8 @@ function CalculateUpgradeCost(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetCachedGoldMines = GetCachedGoldMines;
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function GetCachedGoldMines(_a) {
     var team_cache_key = _a.team_cache_key;
     if (scope.ranger_bot.team_caches === undefined) {
@@ -2477,27 +2534,37 @@ function GetCachedGoldMines(_a) {
             var raw_mine = raw_gold_mines[i];
             var raw_cache = raw_mine.ranger_bot;
             if (raw_cache === undefined) {
-                console.log(raw_gold_mines);
+                if (constants_1.DEBUG) {
+                    console.log(raw_gold_mines);
+                }
                 throw new Error('no cache for gold mine ' + raw_mine.id);
             }
             var exclusion_zone = raw_cache.exclusion_zone;
             if (exclusion_zone === undefined) {
-                console.log(raw_gold_mines);
+                if (constants_1.DEBUG) {
+                    console.log(raw_gold_mines);
+                }
                 throw new Error('no exclusion_zone for gold mine ' + raw_mine.id);
             }
             var perimeter = raw_cache.perimeter;
             if (perimeter === undefined) {
-                console.log(raw_gold_mines);
+                if (constants_1.DEBUG) {
+                    console.log(raw_gold_mines);
+                }
                 throw new Error('no perimeter for gold mine ' + raw_mine.id);
             }
             var viable_castle_locations = raw_cache.viable_castle_locations;
             if (viable_castle_locations === undefined) {
-                console.log(raw_gold_mines);
+                if (constants_1.DEBUG) {
+                    console.log(raw_gold_mines);
+                }
                 throw new Error('no viable_castle_locations for gold mine ' + raw_mine.id);
             }
             var expansion_data = raw_cache.expansion_data;
             if (expansion_data === undefined) {
-                console.log(raw_gold_mines);
+                if (constants_1.DEBUG) {
+                    console.log(raw_gold_mines);
+                }
                 throw new Error('no expansion_data for gold mine ' + raw_mine.id);
             }
             var new_gold_mine = {
@@ -2527,7 +2594,7 @@ function GetCachedGoldMines(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetNeutralBuildings = GetNeutralBuildings;
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
 var unit_stats_1 = __webpack_require__(26);
 function GetNeutralBuildings(_a) {
     var team_cache_key = _a.team_cache_key, teams = _a.teams;
@@ -2591,8 +2658,8 @@ exports.CalculateRange = CalculateRange;
 exports.ArmorFactor = ArmorFactor;
 exports.IsFlying = IsFlying;
 exports.IsInvisible = IsInvisible;
-var utils_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(15);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function CalculateDps(piece) {
     var dmg = (0, utils_1.GetNumberFieldValue)({ piece_name: piece.type.id_string, field_name: 'dmg' });
     var attack_cooldown = (0, utils_1.GetNumberFieldValue)({ piece_name: piece.type.id_string, field_name: 'weaponCooldown' });
@@ -2628,7 +2695,8 @@ function IsInvisible(piece) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdatePieceCaches = UpdatePieceCaches;
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function UpdatePieceCaches(_a) {
     var data_hub = _a.data_hub;
     for (var i = 0; i < data_hub.friendly_buildings.length; i++) {
@@ -2674,8 +2742,10 @@ function UpdatePieceCaches(_a) {
                     var new_mine = data_hub.gold_mines
                         .find(function (mine) { return mine.id == active_mine.gold_mine_id; });
                     if (!new_mine) {
-                        console.log(active_mine);
-                        console.log(data_hub.gold_mines);
+                        if (constants_1.DEBUG) {
+                            console.log(active_mine);
+                            console.log(data_hub.gold_mines);
+                        }
                         throw new Error('Missing gold mine for _UpdatePieceCaches');
                     }
                     active_mine.gold_mine = new_mine;
@@ -2695,8 +2765,10 @@ function _AssociateMiningData(friendly_castle, gold_mines) {
             var new_mine = gold_mines
                 .find(function (mine) { return mine.id == active_mine.gold_mine_id; });
             if (!new_mine) {
-                console.log(active_mine);
-                console.log(gold_mines);
+                if (constants_1.DEBUG) {
+                    console.log(active_mine);
+                    console.log(gold_mines);
+                }
                 throw new Error('Missing gold mine for _AssociateMiningData');
             }
             active_mine.gold_mine = new_mine;
@@ -2718,7 +2790,7 @@ function _AssociateMiningData(friendly_castle, gold_mines) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdateNeutralObjects = UpdateNeutralObjects;
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
 function UpdateNeutralObjects(_a) {
     var data_hub = _a.data_hub;
     var raw_gold_mines = (0, utils_1.GetGoldMines)();
@@ -2859,6 +2931,7 @@ function ManageMiners(_a) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ManageBuilders = ManageBuilders;
 var assign_repairers_1 = __webpack_require__(33);
+var constants_1 = __webpack_require__(5);
 function ManageBuilders(_a) {
     var builders = _a.builders;
     for (var i = 0; i < builders.length; i++) {
@@ -2884,7 +2957,9 @@ function _AttachTower(builder) {
     for (var i = 0; i < active_mines.length; i++) {
         var active_mine = active_mines[i];
         if (!active_mine.gold_mine) {
-            console.log(builder.ranger_bot);
+            if (constants_1.DEBUG) {
+                console.log(builder.ranger_bot);
+            }
             throw new Error('Missing gold mine for _AttachTower');
         }
         active_mine.gold_mine.tower = target_tower;
@@ -2892,7 +2967,9 @@ function _AttachTower(builder) {
 }
 function _AttachCastle(builder) {
     if (!builder.ranger_bot.placement) {
-        console.log(builder.ranger_bot);
+        if (constants_1.DEBUG) {
+            console.log(builder.ranger_bot);
+        }
         throw new Error('Missing castle placement on castle builder for _AttachCastle');
     }
     var target_castle = builder.ranger_bot.target_building;
@@ -2903,7 +2980,9 @@ function _AttachCastle(builder) {
     for (var i = 0; i < builder.ranger_bot.placement.mines_data.length; i++) {
         var active_mine = builder.ranger_bot.placement.mines_data[i];
         if (!active_mine.gold_mine) {
-            console.log(active_mine);
+            if (constants_1.DEBUG) {
+                console.log(active_mine);
+            }
             throw new Error('Missing gold_mine for _AttachCastle');
         }
         active_mine.gold_mine.castle = target_castle;
@@ -3013,7 +3092,8 @@ exports.AllocateAvailableWorkerClosestToLocation = AllocateAvailableWorkerCloses
 exports.AllocateWorkerFromActiveCastle = AllocateWorkerFromActiveCastle;
 exports.AllocateAvailableWorkerClosestToBuilding = AllocateAvailableWorkerClosestToBuilding;
 exports.AllocateWorkerFromActiveMine = AllocateWorkerFromActiveMine;
-var ground_distance_1 = __webpack_require__(9);
+var ground_distance_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(5);
 function AllocateAvailableWorkerClosestToBuilding(_a) {
     var building = _a.building, active_mines = _a.active_mines, idle_workers = _a.idle_workers;
     var useful_mines = active_mines.filter(function (mine) { return mine.workers.length > 0; });
@@ -3024,16 +3104,16 @@ function AllocateAvailableWorkerClosestToBuilding(_a) {
             if (new_worker) {
                 return new_worker;
             }
-            else {
-                console.log('ERROR: Missing new_worker for AllocateAvailableWorkerClosestToBuilding');
+            else if (constants_1.DEBUG) {
+                console.log('Error: Missing new_worker for AllocateAvailableWorkerClosestToBuilding');
             }
         }
-        else {
-            console.log('ERROR: Missing giver_mine for AllocateAvailableWorkerClosestToBuilding');
+        else if (constants_1.DEBUG) {
+            console.log('Error: Missing giver_mine for AllocateAvailableWorkerClosestToBuilding');
         }
     }
-    else {
-        console.log('ERROR: No useful_mines  for AllocateAvailableWorkerClosestToBuilding');
+    else if (constants_1.DEBUG) {
+        console.log('Error: No useful_mines  for AllocateAvailableWorkerClosestToBuilding');
     }
     if (idle_workers.length > 0) {
         var closest_idle_worker = (0, ground_distance_1.GetClosestUnitToBuilding)(building, idle_workers);
@@ -3042,23 +3122,31 @@ function AllocateAvailableWorkerClosestToBuilding(_a) {
             return closest_idle_worker;
         }
         else {
-            console.log('ERROR: Missing idle worker for AllocateAvailableWorkerClosestToBuilding');
+            if (constants_1.DEBUG) {
+                console.log('Error: Missing idle worker for AllocateAvailableWorkerClosestToBuilding');
+            }
             return undefined;
         }
     }
     else {
-        console.log('ERROR: AllocateAvailableWorkerClosestToBuilding Failed');
+        if (constants_1.DEBUG) {
+            console.log('Error: AllocateAvailableWorkerClosestToBuilding Failed');
+        }
         return undefined;
     }
 }
 function AllocateWorkerFromActiveMine(active_mine) {
     if (!active_mine.gold_mine) {
-        console.log(active_mine);
+        if (constants_1.DEBUG) {
+            console.log(active_mine);
+        }
         throw new Error('Missing gold mine for AllocateWorkerFromActiveMine');
     }
     var gold_mine = active_mine.gold_mine;
     if (!gold_mine.castle) {
-        console.log(gold_mine);
+        if (constants_1.DEBUG) {
+            console.log(gold_mine);
+        }
         throw new Error('Missing castle for AllocateWorkerFromActiveMine');
     }
     var castle = gold_mine.castle;
@@ -3102,16 +3190,16 @@ function AllocateAvailableWorkerClosestToLocation(_a) {
             if (new_worker) {
                 return new_worker;
             }
-            else {
-                console.log('ERROR: Missing new_worker for AllocateAvailableWorkerClosestToLocation');
+            else if (constants_1.DEBUG) {
+                console.log('Error: Missing new_worker for AllocateAvailableWorkerClosestToLocation');
             }
         }
-        else {
-            console.log('ERROR: Missing giver_mine for AllocateAvailableWorkerClosestToLocation');
+        else if (constants_1.DEBUG) {
+            console.log('Error: Missing giver_mine for AllocateAvailableWorkerClosestToLocation');
         }
     }
-    else {
-        console.log('ERROR: No useful_mines for AllocateAvailableWorkerClosestToLocation');
+    else if (constants_1.DEBUG) {
+        console.log('Error: No useful_mines for AllocateAvailableWorkerClosestToLocation');
     }
     if (idle_workers.length > 0) {
         var closest_idle_worker = (0, ground_distance_1.GetClosestUnitToLocation)(map_location, idle_workers);
@@ -3120,12 +3208,16 @@ function AllocateAvailableWorkerClosestToLocation(_a) {
             return closest_idle_worker;
         }
         else {
-            console.log('ERROR: Missing idle worker for AllocateAvailableWorkerClosestToLocation');
+            if (constants_1.DEBUG) {
+                console.log('ERROR: Missing idle worker for AllocateAvailableWorkerClosestToLocation');
+            }
             return undefined;
         }
     }
     else {
-        console.log('ERROR: AllocateAvailableWorkerClosestToLocation Failed');
+        if (constants_1.DEBUG) {
+            console.log('ERROR: AllocateAvailableWorkerClosestToLocation Failed');
+        }
         return undefined;
     }
 }
@@ -3191,14 +3283,16 @@ function FilterViableGoldMines(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ManageActiveCastles = ManageActiveCastles;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function ManageActiveCastles(_a) {
     var data_hub = _a.data_hub;
     var output = [];
     for (var i = 0; i < data_hub.my_castles.length; i++) {
         var castle = data_hub.my_castles[i];
         if (!castle.ranger_bot.mining_data) {
-            console.log(castle.ranger_bot);
+            if (constants_1.DEBUG) {
+                console.log(castle.ranger_bot);
+            }
             throw new Error('Missing mining data');
         }
         var has_mine = false;
@@ -3250,8 +3344,8 @@ function _ReleaseWorkers(inactive_mine) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetWorkableMines = GetWorkableMines;
-var constants_1 = __webpack_require__(15);
-var ground_distance_1 = __webpack_require__(9);
+var constants_1 = __webpack_require__(5);
+var ground_distance_1 = __webpack_require__(11);
 function GetWorkableMines(_a) {
     var data_hub = _a.data_hub;
     var active_mines = [];
@@ -3313,7 +3407,9 @@ function _CalculateClosestTime(mining_data, active_castles) {
         distances.push(closest_distance);
     }
     if (distances.length <= 0) {
-        console.log('ERROR: Missing GetShortestGroundDistanceToActiveCastle for _CalculateClosestTime');
+        if (constants_1.DEBUG) {
+            console.log('Error: Missing GetShortestGroundDistanceToActiveCastle for _CalculateClosestTime');
+        }
         return NaN;
     }
     return Math.min.apply(Math, distances) / constants_1.WORKER_SPEED;
@@ -3322,11 +3418,12 @@ function _CalculateClosestTime(mining_data, active_castles) {
 
 /***/ }),
 /* 39 */
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ManageActiveCastleCache = ManageActiveCastleCache;
+var constants_1 = __webpack_require__(5);
 function ManageActiveCastleCache(_a) {
     var player_cache_key = _a.player_cache_key, active_mining_bases = _a.active_mining_bases, active_castles = _a.active_castles;
     _ManageActiveMiningBasesCache(player_cache_key, active_mining_bases);
@@ -3361,7 +3458,9 @@ function _ManageActiveCastleCache(player_cache_key, active_castles) {
         return false;
     })();
     if (cache_invalid) {
-        console.log('ERROR: cache_invalid');
+        if (constants_1.DEBUG) {
+            console.log('ERROR: cache_invalid');
+        }
     }
     scope.ranger_bot.player_caches[player_cache_key].active_castle_ids = new_active_castle_ids;
 }
@@ -3379,7 +3478,7 @@ var assign_idle_workers_1 = __webpack_require__(41);
 var count_workers_needed_1 = __webpack_require__(42);
 var redistribute_miners_1 = __webpack_require__(43);
 var survey_production_1 = __webpack_require__(44);
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var estimate_income_1 = __webpack_require__(45);
 var reserve_gold_for_builders_1 = __webpack_require__(46);
 var build_house_if_needed_1 = __webpack_require__(47);
@@ -3421,9 +3520,9 @@ exports.MacroBot = MacroBot;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AssignIdleWorkers = AssignIdleWorkers;
-var constants_1 = __webpack_require__(15);
-var ground_distance_1 = __webpack_require__(9);
-var utils_1 = __webpack_require__(10);
+var constants_1 = __webpack_require__(5);
+var ground_distance_1 = __webpack_require__(11);
+var utils_1 = __webpack_require__(6);
 function AssignIdleWorkers(_a) {
     var data_hub = _a.data_hub;
     var workable_mines = data_hub.workable_mines;
@@ -3451,7 +3550,9 @@ function AssignIdleWorkers(_a) {
             if (isNaN(shortest_distance)) {
                 var ground_distance = (0, ground_distance_1.SafeGroundDistance)(data.active_mine.midpoint, idle_worker.pos);
                 if (isNaN(ground_distance)) {
-                    console.log('\nERROR: missing SafeGroundDistance for AssignIdleWorkers 1');
+                    if (constants_1.DEBUG) {
+                        console.log('Error: missing SafeGroundDistance for AssignIdleWorkers 1');
+                    }
                     continue;
                 }
                 shortest_distance = ground_distance;
@@ -3460,7 +3561,9 @@ function AssignIdleWorkers(_a) {
             else if (data.air_distance < shortest_distance) {
                 var ground_distance = (0, ground_distance_1.SafeGroundDistance)(data.active_mine.midpoint, idle_worker.pos);
                 if (isNaN(ground_distance)) {
-                    console.log('\nERROR: missing SafeGroundDistance for AssignIdleWorkers 2');
+                    if (constants_1.DEBUG) {
+                        console.log('Error: missing SafeGroundDistance for AssignIdleWorkers 2');
+                    }
                     continue;
                 }
                 if (ground_distance < shortest_distance) {
@@ -3470,8 +3573,10 @@ function AssignIdleWorkers(_a) {
             }
         }
         if (!assigned_mine) {
-            console.log(idle_worker);
-            console.log(with_air_distance);
+            if (constants_1.DEBUG) {
+                console.log(idle_worker);
+                console.log(with_air_distance);
+            }
             throw new Error('Unable to assign idle worker');
         }
         (0, utils_1.AssignMiner)(idle_worker, assigned_mine);
@@ -3494,7 +3599,7 @@ function _AssignToLeastOverfull(idle_worker, workable_mines) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CountWorkersNeeded = CountWorkersNeeded;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function CountWorkersNeeded(_a) {
     var data_hub = _a.data_hub;
     if (data_hub.my_workers.length >= constants_1.MAX_WORKERS) {
@@ -3527,14 +3632,16 @@ function CountWorkersNeeded(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RedistributeMiners = RedistributeMiners;
-var ground_distance_1 = __webpack_require__(9);
-var utils_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(15);
+var ground_distance_1 = __webpack_require__(11);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function RedistributeMiners(_a) {
     var data_hub = _a.data_hub;
     var workable_mines = data_hub.workable_mines;
     if (workable_mines.length <= 0) {
-        console.log('ERROR: No workable_mines');
+        if (constants_1.DEBUG) {
+            console.log('Error: No workable_mines');
+        }
         return;
     }
     else if (workable_mines.length <= 1) {
@@ -3562,7 +3669,9 @@ function RedistributeMiners(_a) {
             if (isNaN(shortest_distance)) {
                 var ground_distance = (0, ground_distance_1.SafeGroundDistance)(to_mine.midpoint, data.miner.pos);
                 if (isNaN(ground_distance)) {
-                    console.log('\nERROR: missing SafeGroundDistance for RedistributeMiners 1');
+                    if (constants_1.DEBUG) {
+                        console.log('Error: missing SafeGroundDistance for RedistributeMiners 1');
+                    }
                     continue;
                 }
                 shortest_distance = ground_distance;
@@ -3571,7 +3680,9 @@ function RedistributeMiners(_a) {
             else if (data.air_distance < shortest_distance) {
                 var ground_distance = (0, ground_distance_1.SafeGroundDistance)(to_mine.midpoint, data.miner.pos);
                 if (isNaN(ground_distance)) {
-                    console.log('\nERROR: missing SafeGroundDistance for RedistributeMiners 2');
+                    if (constants_1.DEBUG) {
+                        console.log('Error: missing SafeGroundDistance for RedistributeMiners 2');
+                    }
                     continue;
                 }
                 if (ground_distance < shortest_distance) {
@@ -3581,8 +3692,10 @@ function RedistributeMiners(_a) {
             }
         }
         if (!transfer_candidate) {
-            console.log(from_mine);
-            console.log(to_mine);
+            if (constants_1.DEBUG) {
+                console.log(from_mine);
+                console.log(to_mine);
+            }
             throw new Error('No transfer candidates');
         }
         (0, utils_1.AssignMiner)(transfer_candidate, to_mine);
@@ -3620,8 +3733,8 @@ function _ShouldTransfer(from_mine, to_mine) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SurveyProduction = SurveyProduction;
-var utils_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(15);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function SurveyProduction(_a) {
     var data_hub = _a.data_hub;
     for (var i = 0; i < data_hub.my_buildings.length; i++) {
@@ -3661,8 +3774,8 @@ function _SurveyMeleeVsRanged(my_building, data_hub) {
         }
         else if ('watchtower2' == queued_unit.id_string) {
         }
-        else {
-            console.log('\nERROR: Unhandled id_string: ' + queued_unit.id_string);
+        else if (constants_1.DEBUG) {
+            console.log('Error: Unhandled id_string: ' + queued_unit.id_string);
         }
     }
 }
@@ -3697,7 +3810,9 @@ function _SurveySupply(my_building, data_hub) {
             }
         }
         else {
-            console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            if (constants_1.DEBUG) {
+                console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            }
             return 0;
         }
     })();
@@ -3716,8 +3831,10 @@ function _SurveySupply(my_building, data_hub) {
                 return my_building.ranger_bot.queue_finish_time - scope.getCurrentGameTimeInSec();
             }
             else {
-                console.log(my_building);
-                console.log('ERROR: Missing queue_finish_time for _SurveySupply');
+                if (constants_1.DEBUG) {
+                    console.log(my_building);
+                    console.log('ERROR: Missing queue_finish_time for _SurveySupply');
+                }
                 return constants_1.WORKER_BUILD_TIME;
             }
         }
@@ -3741,7 +3858,9 @@ function _SurveySupply(my_building, data_hub) {
             }
         }
         else {
-            console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            if (constants_1.DEBUG) {
+                console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            }
             return 0;
         }
     })();
@@ -3782,7 +3901,9 @@ function _SurveySpending(my_building, data_hub) {
             }
         }
         else {
-            console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            if (constants_1.DEBUG) {
+                console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            }
             return 0;
         }
     })();
@@ -3818,7 +3939,9 @@ function _SurveySpending(my_building, data_hub) {
             }
         }
         else {
-            console.log('\nERROR: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            if (constants_1.DEBUG) {
+                console.log('Error: Unhandled name for _SurveySupply: ' + my_building.type.name);
+            }
             return 0;
         }
     })();
@@ -3863,7 +3986,7 @@ function _BuildOrderExceptionApplies(data_hub) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.EstimateIncome = EstimateIncome;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function EstimateIncome(_a) {
     var data_hub = _a.data_hub;
     var active_mines = data_hub.active_mines;
@@ -3884,7 +4007,7 @@ function EstimateIncome(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ReserveGoldForBuilders = ReserveGoldForBuilders;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function ReserveGoldForBuilders(_a) {
     var data_hub = _a.data_hub;
     var builders = data_hub.builders;
@@ -3892,8 +4015,11 @@ function ReserveGoldForBuilders(_a) {
         var builder = builders[i];
         if (!builder.ranger_bot.target_building && builder.ranger_bot.order != builder.order.name) {
             if (builder.ranger_bot.reserve === undefined) {
-                console.log(builder);
-                throw new Error('Missing reserve for ReserveGoldForBuilders');
+                if (constants_1.DEBUG) {
+                    console.log(builder);
+                    console.log('Error: Missing reserve for ReserveGoldForBuilders');
+                }
+                continue;
             }
             data_hub.spendable_gold -= builder.ranger_bot.reserve;
         }
@@ -3911,9 +4037,9 @@ function ReserveGoldForBuilders(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BuildHouseIfNeeded = BuildHouseIfNeeded;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var build_1 = __webpack_require__(48);
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
 function BuildHouseIfNeeded(_a) {
     var data_hub = _a.data_hub;
     if (scope.getMaxSupply() + data_hub.supply_under_construction >= scope.player.supplyCap) {
@@ -4088,8 +4214,9 @@ function BuildSnakeCharmer(_a) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ConstructBuilding = ConstructBuilding;
 var allocate_worker_1 = __webpack_require__(34);
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
 var find_space_for_building_1 = __webpack_require__(50);
+var constants_1 = __webpack_require__(5);
 function ConstructBuilding(_a) {
     var building_type = _a.building_type, build_order = _a.build_order, data_hub = _a.data_hub;
     var by_workers = data_hub.active_mines
@@ -4135,8 +4262,10 @@ function ConstructBuilding(_a) {
         }
     }
     if (!target_location) {
-        console.log(building_type);
-        console.log(data_hub.my_castles);
+        if (constants_1.DEBUG) {
+            console.log(building_type);
+            console.log(data_hub.my_castles);
+        }
         throw new Error('Cannot find target_location for ConstructBuilding');
     }
     if (!new_builder) {
@@ -4153,7 +4282,9 @@ function ConstructBuilding(_a) {
         });
     }
     if (!new_builder) {
-        console.log('ERROR: No available builders for ConstructBuilding');
+        if (constants_1.DEBUG) {
+            console.log('Error: No available builders for ConstructBuilding');
+        }
         return undefined;
     }
     var building_cost = (0, utils_1.GetNumberFieldValue)({ piece_name: building_type, field_name: 'cost' });
@@ -4179,9 +4310,9 @@ function ConstructBuilding(_a) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports._private = void 0;
 exports.FindSpaceForBuilding = FindSpaceForBuilding;
-var utils_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(15);
-var buildable_1 = __webpack_require__(14);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
+var buildable_1 = __webpack_require__(15);
 function FindSpaceForBuilding(_a) {
     var active_castle = _a.active_castle, building_type = _a.building_type, data_hub = _a.data_hub;
     var width = (0, utils_1.GetNumberFieldValue)({ piece_name: building_type, field_name: 'sizeX' });
@@ -4309,7 +4440,7 @@ exports._private = { _SeedLocalMap: _SeedLocalMap };
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TrainWorkersIfNeeded = TrainWorkersIfNeeded;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function TrainWorkersIfNeeded(_a) {
     var data_hub = _a.data_hub;
     _TrainWorkers(data_hub.active_castles, data_hub);
@@ -4394,8 +4525,8 @@ function _PreQueue(castle, data_hub) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UseBarracks = UseBarracks;
-var constants_1 = __webpack_require__(15);
-var utils_1 = __webpack_require__(10);
+var constants_1 = __webpack_require__(5);
+var utils_1 = __webpack_require__(6);
 function UseBarracks(_a) {
     var data_hub = _a.data_hub;
     for (var i = 0; i < data_hub.my_barracks.length; i++) {
@@ -4513,8 +4644,8 @@ function _ShouldFavorArchers() {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UseWolvesDen = UseWolvesDen;
-var utils_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(15);
+var utils_1 = __webpack_require__(6);
+var constants_1 = __webpack_require__(5);
 function UseWolvesDen(_a) {
     var data_hub = _a.data_hub;
     if ((0, utils_1.WolvesAreObsolete)()) {
@@ -4652,7 +4783,7 @@ function _SelectWolfDenUnit(data_hub) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ResearchUpgrades = ResearchUpgrades;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function ResearchUpgrades(_a) {
     var data_hub = _a.data_hub;
     _ResearchArcherRange(data_hub);
@@ -4724,11 +4855,11 @@ function _ResearchForgeUpgrade(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.NextBuildOrderStep = NextBuildOrderStep;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var start_expansion_when_ready_1 = __webpack_require__(56);
 var build_1 = __webpack_require__(48);
 var build_towers_1 = __webpack_require__(58);
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
 var upgrade_watchtowers_1 = __webpack_require__(59);
 function NextBuildOrderStep(_a) {
     var data_hub = _a.data_hub;
@@ -4925,20 +5056,24 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.StartExpansionWhenReady = StartExpansionWhenReady;
 var select_castle_placement_1 = __webpack_require__(57);
 var allocate_worker_1 = __webpack_require__(34);
-var ground_distance_1 = __webpack_require__(9);
-var constants_1 = __webpack_require__(15);
+var ground_distance_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(5);
 function StartExpansionWhenReady(_a) {
     var data_hub = _a.data_hub;
     var next_expansion = _SelectNextExpansion(data_hub);
     if (!next_expansion) {
-        console.log(data_hub.map.expansions);
-        console.log('ERROR: Missing next_expansion for StartExpansionWhenReady');
+        if (constants_1.DEBUG) {
+            console.log(data_hub.map.expansions);
+            console.log('ERROR: Missing next_expansion for StartExpansionWhenReady');
+        }
         return;
     }
     var castle_placement = (0, select_castle_placement_1.SelectCastlePlacement)({ player_expansion: next_expansion });
     if (!castle_placement) {
-        console.log(next_expansion);
-        console.log('ERROR: Missing castle_placement for StartExpansionWhenReady');
+        if (constants_1.DEBUG) {
+            console.log(next_expansion);
+            console.log('ERROR: Missing castle_placement for StartExpansionWhenReady');
+        }
         return;
     }
     if (_NeedsTower(castle_placement, data_hub)) {
@@ -4951,12 +5086,16 @@ function StartExpansionWhenReady(_a) {
     }
     var closest_mine = (0, ground_distance_1.GetClosestActiveMineToLocation)(castle_placement.castle_location, data_hub.active_mines);
     if (!closest_mine) {
-        console.log('ERROR: Missing closest_mine for StartExpansionWhenReady');
+        if (constants_1.DEBUG) {
+            console.log('ERROR: Missing closest_mine for StartExpansionWhenReady');
+        }
         return;
     }
     var ground_distance = (0, ground_distance_1.SafeGroundDistance)(closest_mine.midpoint, castle_placement.castle_location);
     if (isNaN(ground_distance)) {
-        console.log('ERROR: Missing ground_distance for StartExpansionWhenReady');
+        if (constants_1.DEBUG) {
+            console.log('ERROR: Missing ground_distance for StartExpansionWhenReady');
+        }
         return;
     }
     var travel_time = Math.floor(ground_distance / constants_1.WORKER_SPEED);
@@ -4966,7 +5105,9 @@ function StartExpansionWhenReady(_a) {
     }
     var new_builder = (0, allocate_worker_1.AllocateWorkerFromActiveMine)(closest_mine);
     if (!new_builder) {
-        console.log('ERROR: Missing new_builder for StartExpansionWhenReady');
+        if (constants_1.DEBUG) {
+            console.log('ERROR: Missing new_builder for StartExpansionWhenReady');
+        }
         return;
     }
     new_builder.ranger_bot = {
@@ -4991,7 +5132,9 @@ function _SelectNextExpansion(data_hub) {
             for (var j = 0; j < placement.mines_data.length; j++) {
                 var active_mine = placement.mines_data[j];
                 if (!active_mine.gold_mine) {
-                    console.log(active_mine);
+                    if (constants_1.DEBUG) {
+                        console.log(active_mine);
+                    }
                     throw new Error('Missing gold_mine for _SelectNextExpansion');
                 }
                 var gold_mine = active_mine.gold_mine;
@@ -5016,7 +5159,9 @@ function _NeedsTower(castle_placement, data_hub) {
     for (var i = 0; i < castle_placement.mines_data.length; i++) {
         var active_mine = castle_placement.mines_data[i];
         if (!active_mine.gold_mine) {
-            console.log(active_mine);
+            if (constants_1.DEBUG) {
+                console.log(active_mine);
+            }
             throw new Error('Missing gold_mine for _NeedsTower');
         }
         var gold_mine = active_mine.gold_mine;
@@ -5033,7 +5178,9 @@ function _BuildTower(castle_placement, data_hub) {
         idle_workers: data_hub.idle_workers,
     });
     if (!new_builder) {
-        console.log('ERROR: Missing new_builder for _BuildTower');
+        if (constants_1.DEBUG) {
+            console.log('ERROR: Missing new_builder for _BuildTower');
+        }
         return;
     }
     new_builder.ranger_bot = {
@@ -5058,8 +5205,8 @@ function _BuildTower(castle_placement, data_hub) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectCastlePlacement = SelectCastlePlacement;
-var buildable_1 = __webpack_require__(14);
-var constants_1 = __webpack_require__(15);
+var buildable_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function SelectCastlePlacement(_a) {
     var player_expansion = _a.player_expansion;
     var prev_score = NaN;
@@ -5069,7 +5216,9 @@ function SelectCastlePlacement(_a) {
             prev_score = placement.score;
         }
         else if (prev_score > placement.score) {
-            console.log(player_expansion);
+            if (constants_1.DEBUG) {
+                console.log(player_expansion);
+            }
             throw new Error('Disordered castle_placements for SelectCastlePlacement');
         }
         else {
@@ -5098,6 +5247,7 @@ function SelectCastlePlacement(_a) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BuildTowers = BuildTowers;
 var allocate_worker_1 = __webpack_require__(34);
+var constants_1 = __webpack_require__(5);
 function BuildTowers(_a) {
     var data_hub = _a.data_hub;
     if (!scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers) {
@@ -5124,7 +5274,9 @@ function BuildTowers(_a) {
         idle_workers: data_hub.idle_workers,
     });
     if (!new_builder) {
-        console.log('ERROR: Missing new_builder for BuildTowers');
+        if (constants_1.DEBUG) {
+            console.log('Error: Missing new_builder for BuildTowers');
+        }
         return true;
     }
     new_builder.ranger_bot = {
@@ -5150,7 +5302,7 @@ function BuildTowers(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpgradeWatchtowers = UpgradeWatchtowers;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function UpgradeWatchtowers(_a) {
     var data_hub = _a.data_hub;
     if (!scope.ranger_bot.player_caches[data_hub.player_cache_key].build_towers) {
@@ -5184,7 +5336,7 @@ function UpgradeWatchtowers(_a) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ArmyBot = void 0;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var update_threats_1 = __webpack_require__(61);
 var update_targets_1 = __webpack_require__(62);
 var prioritize_targets_1 = __webpack_require__(63);
@@ -5321,9 +5473,9 @@ exports.ArmyBot = ArmyBot;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdateThreats = UpdateThreats;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var unit_stats_1 = __webpack_require__(26);
-var utils_1 = __webpack_require__(10);
+var utils_1 = __webpack_require__(6);
 function UpdateThreats(_a) {
     var data_hub = _a.data_hub;
     if (scope.ranger_bot.team_caches[data_hub.team_cache_key].threats_last_updated_at &&
@@ -5561,8 +5713,8 @@ function _QueryBuildingThreats(data_hub, threats) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdateTargets = UpdateTargets;
-var ground_distance_1 = __webpack_require__(9);
-var constants_1 = __webpack_require__(15);
+var ground_distance_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(5);
 function UpdateTargets(_a) {
     var data_hub = _a.data_hub;
     if (scope.ranger_bot.team_caches[data_hub.team_cache_key].targets_last_updated_at &&
@@ -5691,7 +5843,9 @@ function _GlomThreats(target, threats) {
         }
         var ground_distance = (0, ground_distance_1.SafeGroundDistance)(threat.location, target.location);
         if (isNaN(ground_distance)) {
-            console.log('\nERROR: missing SafeGroundDistance for _GlomThreats');
+            if (constants_1.DEBUG) {
+                console.log('Error: missing SafeGroundDistance for _GlomThreats');
+            }
             new_threats.push(threat);
             continue;
         }
@@ -5715,8 +5869,8 @@ function _GlomThreats(target, threats) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PrioritizeTargets = PrioritizeTargets;
-var ground_distance_1 = __webpack_require__(9);
-var constants_1 = __webpack_require__(15);
+var ground_distance_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(5);
 var unit_stats_1 = __webpack_require__(26);
 function PrioritizeTargets(_a) {
     var data_hub = _a.data_hub;
@@ -5785,8 +5939,8 @@ function _CalculateTargetStrength(target) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FormSquads = FormSquads;
-var constants_1 = __webpack_require__(15);
-var ground_distance_1 = __webpack_require__(9);
+var constants_1 = __webpack_require__(5);
+var ground_distance_1 = __webpack_require__(11);
 var unit_stats_1 = __webpack_require__(26);
 function FormSquads(_a) {
     var data_hub = _a.data_hub;
@@ -5860,7 +6014,9 @@ function _GlomUnits(squad, units) {
         }
         var ground_distance = (0, ground_distance_1.SafeGroundDistance)(unit.pos, squad.location);
         if (isNaN(ground_distance)) {
-            console.log('\nERROR: missing SafeGroundDistance for _GlomUnits');
+            if (constants_1.DEBUG) {
+                console.log('Error: missing SafeGroundDistance for _GlomUnits');
+            }
             new_units.push(unit);
             continue;
         }
@@ -5884,9 +6040,9 @@ function _GlomUnits(squad, units) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ConscriptWorkers = ConscriptWorkers;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var unit_stats_1 = __webpack_require__(26);
-var ground_distance_1 = __webpack_require__(9);
+var ground_distance_1 = __webpack_require__(11);
 function ConscriptWorkers(_a) {
     var data_hub = _a.data_hub;
     var active_castles = data_hub.active_castles;
@@ -6032,8 +6188,8 @@ function _UnconscriptCastle(mining_data) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.IdentifyBattles = IdentifyBattles;
-var constants_1 = __webpack_require__(15);
-var ground_distance_1 = __webpack_require__(9);
+var constants_1 = __webpack_require__(5);
+var ground_distance_1 = __webpack_require__(11);
 function IdentifyBattles(_a) {
     var data_hub = _a.data_hub, squads = _a.squads;
     var unassigned_targets = [data_hub.targets.filter(function (t) { return t.hp > 0; })];
@@ -6178,8 +6334,8 @@ function CalculateSquadStrength(squad) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.EvaluateBattle = EvaluateBattle;
-var constants_1 = __webpack_require__(15);
-var ground_distance_1 = __webpack_require__(9);
+var constants_1 = __webpack_require__(5);
+var ground_distance_1 = __webpack_require__(11);
 function EvaluateBattle(battle, aggro_mode) {
     var friendly_dps = 0;
     var friendly_hp = 0;
@@ -6291,8 +6447,8 @@ function EvaluateBattle(battle, aggro_mode) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ManageSquad = ManageSquad;
-var constants_1 = __webpack_require__(15);
-var ground_distance_1 = __webpack_require__(9);
+var constants_1 = __webpack_require__(5);
+var ground_distance_1 = __webpack_require__(11);
 function ManageSquad(_a) {
     var data_hub = _a.data_hub, battle = _a.battle, squad = _a.squad, aggro_mode = _a.aggro_mode;
     squad.command = battle.command;
@@ -6301,7 +6457,9 @@ function ManageSquad(_a) {
         return;
     }
     else if (squad.command != 'retreat') {
-        console.log('ERROR: Unhandled squad command: ' + squad.command);
+        if (constants_1.DEBUG) {
+            console.log('Error: Unhandled squad command: ' + squad.command);
+        }
         return;
     }
     var retreat_dps = 0;
@@ -6376,8 +6534,8 @@ function ManageSquad(_a) {
     else if (squad.command == 'retreat') {
         _CommandUnitsToRetreat(squad, data_hub);
     }
-    else {
-        console.log('ERROR: Unhandled squad command: ' + squad.command);
+    else if (constants_1.DEBUG) {
+        console.log('Error: Unhandled squad command: ' + squad.command);
     }
 }
 function _CommandUnitsToAttack(squad, battle) {
@@ -6408,7 +6566,9 @@ function _CommandUnitsToRetreat(squad, data_hub) {
         with_workers: false,
     });
     if (!active_castle) {
-        console.log('ERROR: No active castles to retreat to in _CommandUnitsToRetreat');
+        if (constants_1.DEBUG) {
+            console.log('Error: No active castles to retreat to in _CommandUnitsToRetreat');
+        }
         return;
     }
     var mining_data = active_castle.ranger_bot.mining_data;
@@ -6434,11 +6594,12 @@ function _CommandUnitsToRetreat(squad, data_hub) {
 
 /***/ }),
 /* 70 */
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ManageBattleStatus = ManageBattleStatus;
+var constants_1 = __webpack_require__(5);
 function ManageBattleStatus(_a) {
     var data_hub = _a.data_hub, battles = _a.battles, squads = _a.squads;
     for (var i = 0; i < data_hub.targets.length; i++) {
@@ -6455,7 +6616,9 @@ function ManageBattleStatus(_a) {
                 return false;
             }
             else {
-                console.log('ERROR: Unhandled battle command: ' + battle.command);
+                if (constants_1.DEBUG) {
+                    console.log('Error: Unhandled battle command: ' + battle.command);
+                }
                 return false;
             }
         })();
@@ -6480,7 +6643,9 @@ function ManageBattleStatus(_a) {
                 return false;
             }
             else {
-                console.log('ERROR: Unhandled squad command: ' + squad.command);
+                if (constants_1.DEBUG) {
+                    console.log('Error: Unhandled squad command: ' + squad.command);
+                }
                 return false;
             }
         })();
@@ -6569,7 +6734,7 @@ function _AllocateUnitsInBattle(battles) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AssignUnitsToBattle = AssignUnitsToBattle;
 var unit_assigner_1 = __webpack_require__(73);
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function AssignUnitsToBattle(battle) {
     var all_units_in_battle = [];
     for (var i = 0; i < battle.squads.length; i++) {
@@ -6606,7 +6771,8 @@ function AssignUnitsToBattle(battle) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UnitAssigner = void 0;
 var unit_stats_1 = __webpack_require__(26);
-var ground_distance_1 = __webpack_require__(9);
+var ground_distance_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(5);
 var UnitAssigner = (function () {
     function UnitAssigner(my_fighting_units, lazy) {
         this.my_fighting_units = my_fighting_units;
@@ -6696,7 +6862,9 @@ var UnitAssigner = (function () {
                                 data['ground_distance'] = (0, ground_distance_1.SafeGroundDistance)(target.location, unit.pos);
                             }
                             if (isNaN(data.ground_distance)) {
-                                console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 1');
+                                if (constants_1.DEBUG) {
+                                    console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 1');
+                                }
                                 shortest_distance = data.air_distance;
                             }
                             else {
@@ -6710,7 +6878,9 @@ var UnitAssigner = (function () {
                                 data['ground_distance'] = (0, ground_distance_1.SafeGroundDistance)(target.location, unit.pos);
                             }
                             if (isNaN(data.ground_distance)) {
-                                console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 2');
+                                if (constants_1.DEBUG) {
+                                    console.log('ERROR: Missing SafeGroundDistance for AssignUnitsToTargets 2');
+                                }
                             }
                             else if (data.ground_distance < shortest_distance) {
                                 closest = data;
@@ -6763,7 +6933,7 @@ exports.UnitAssigner = UnitAssigner;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AssignUnitsToTargets = AssignUnitsToTargets;
 var unit_assigner_1 = __webpack_require__(73);
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function AssignUnitsToTargets(_a) {
     var data_hub = _a.data_hub, army_strength = _a.army_strength;
     var fighting_units = data_hub.my_fighting_units.map(function (u) { return u; });
@@ -6925,11 +7095,12 @@ function _DeAssign(targets) {
 
 /***/ }),
 /* 75 */
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CommandIdleUnits = CommandIdleUnits;
+var constants_1 = __webpack_require__(5);
 function CommandIdleUnits(my_fighting_units) {
     var mid_x = Math.floor(scope.getMapWidth() / 2);
     var mid_y = Math.floor(scope.getMapHeight() / 2);
@@ -6939,12 +7110,18 @@ function CommandIdleUnits(my_fighting_units) {
             continue;
         }
         if (fighting_unit.ranger_bot.command && !fighting_unit.ranger_bot.command_at) {
-            console.log(fighting_unit);
-            throw new Error('Missing command_at for CommandIdleUnits');
+            if (constants_1.DEBUG) {
+                console.log(fighting_unit);
+                console.log('Error: Missing command_at for CommandIdleUnits');
+                continue;
+            }
         }
         if (!fighting_unit.ranger_bot.command && fighting_unit.ranger_bot.command_at) {
-            console.log(fighting_unit);
-            throw new Error('Missing command for CommandIdleUnits');
+            if (constants_1.DEBUG) {
+                console.log(fighting_unit);
+                console.log('Error: Missing command for CommandIdleUnits');
+                continue;
+            }
         }
         var center_distance = Math.sqrt(Math.pow((fighting_unit.pos.x - mid_x), 2) + Math.pow((fighting_unit.pos.y - mid_y), 2));
         if (center_distance < 6) {
@@ -6964,7 +7141,7 @@ function CommandIdleUnits(my_fighting_units) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MicroUnits = MicroUnits;
 var micro_combat_unit_1 = __webpack_require__(77);
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 var micro_worker_1 = __webpack_require__(78);
 function MicroUnits(_a) {
     var data_hub = _a.data_hub;
@@ -7005,7 +7182,9 @@ function _RallyCastles(data_hub) {
         var mining_data = castle.ranger_bot.mining_data;
         var least_workers = mining_data.mines_data.filter(function (active_mine) {
             if (!active_mine.gold_mine) {
-                console.log(active_mine);
+                if (constants_1.DEBUG) {
+                    console.log(active_mine);
+                }
                 throw new Error('Missing gold_mine for _RallyCastles');
             }
             return active_mine.gold_mine.gold > 0;
@@ -7046,7 +7225,7 @@ function _RallyCastles(data_hub) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MicroCombatUnit = MicroCombatUnit;
-var constants_1 = __webpack_require__(15);
+var constants_1 = __webpack_require__(5);
 function MicroCombatUnit(unit) {
     if (unit.ranger_bot.command == 'fight') {
         _LazyCombatOrder(unit, 'AMove');
@@ -7060,14 +7239,16 @@ function MicroCombatUnit(unit) {
     else if (!unit.ranger_bot.command) {
         return;
     }
-    else {
-        console.log('\nERROR: Unhandled unit command: ' + unit.ranger_bot.command);
+    else if (constants_1.DEBUG) {
+        console.log('Error: Unhandled unit command: ' + unit.ranger_bot.command);
     }
 }
 function _LazyCombatOrder(unit, order) {
     if (!unit.ranger_bot.command_at) {
-        console.log(unit);
-        console.log('\nERROR: command_at is missing');
+        if (constants_1.DEBUG) {
+            console.log(unit);
+            console.log('Error: command_at is missing');
+        }
         return;
     }
     if (unit.order.name != order) {
@@ -7079,7 +7260,9 @@ function _LazyCombatOrder(unit, order) {
         return;
     }
     if (!unit.target.x || !unit.target.y) {
-        console.log(unit);
+        if (constants_1.DEBUG) {
+            console.log(unit);
+        }
         throw new Error('Unexpected value for target in _LazyCombatOrder');
     }
     var distance = Math.sqrt(Math.pow((unit.target.x - unit.ranger_bot.command_at.x), 2) + Math.pow((unit.target.y - unit.ranger_bot.command_at.y), 2));
@@ -7098,9 +7281,10 @@ function _LazyCombatOrder(unit, order) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MicroWorker = MicroWorker;
 var micro_combat_unit_1 = __webpack_require__(77);
-var utils_1 = __webpack_require__(10);
-var buildable_1 = __webpack_require__(14);
+var utils_1 = __webpack_require__(6);
+var buildable_1 = __webpack_require__(15);
 var select_castle_placement_1 = __webpack_require__(57);
+var constants_1 = __webpack_require__(5);
 function MicroWorker(worker, data_hub) {
     if (worker.ranger_bot.conscripted) {
         (0, micro_combat_unit_1.MicroCombatUnit)(worker);
@@ -7116,8 +7300,8 @@ function MicroWorker(worker, data_hub) {
     }
     else if (!worker.ranger_bot.job) {
     }
-    else {
-        console.log('\nERROR: Unhandled Worker Job: ' + worker.ranger_bot.job);
+    else if (constants_1.DEBUG) {
+        console.log('Error: Unhandled Worker Job: ' + worker.ranger_bot.job);
     }
 }
 function _MicroBuilder(builder, data_hub) {
@@ -7144,14 +7328,16 @@ function _MicroBuilder(builder, data_hub) {
     else if (builder.order.name == 'Move') {
         _TryToBuild(builder);
     }
-    else {
-        console.log('\nERROR: Unhandled Builder Order: ' + builder.order.name);
+    else if (constants_1.DEBUG) {
+        console.log('Error: Unhandled Builder Order: ' + builder.order.name);
     }
 }
 function _TargetLocationBuildable(builder, data_hub) {
     if (!builder.ranger_bot.building_type || !builder.ranger_bot.target_location ||
         builder.ranger_bot.exclude_worker_paths === undefined) {
-        console.log(builder);
+        if (constants_1.DEBUG) {
+            console.log(builder);
+        }
         throw new Error('Missing data for _TargetLocationBuildable');
     }
     var width = (0, utils_1.GetNumberFieldValue)({ piece_name: builder.ranger_bot.building_type, field_name: 'sizeX' });
@@ -7167,7 +7353,9 @@ function _TargetLocationBuildable(builder, data_hub) {
 }
 function _TryToBuild(builder) {
     if (!builder.ranger_bot.cost || !builder.ranger_bot.order || !builder.ranger_bot.target_location) {
-        console.log(builder);
+        if (constants_1.DEBUG) {
+            console.log(builder);
+        }
         throw new Error('Missing data for _TryToBuild');
     }
     if (builder.ranger_bot.target_building) {
@@ -7184,15 +7372,19 @@ function _TryToBuild(builder) {
 }
 function _FindNewCastleLocation(castle_builder) {
     if (!castle_builder.ranger_bot.expansion) {
-        console.log(castle_builder);
+        if (constants_1.DEBUG) {
+            console.log(castle_builder);
+        }
         throw new Error('Missing data for _FindNewCastleLocation');
     }
     var castle_placement = (0, select_castle_placement_1.SelectCastlePlacement)({
         player_expansion: castle_builder.ranger_bot.expansion,
     });
     if (!castle_placement) {
-        console.log(castle_builder);
-        console.log('ERROR: Missing castle_placement for _FindNewCastleLocation');
+        if (constants_1.DEBUG) {
+            console.log(castle_builder);
+            console.log('Error: Missing castle_placement for _FindNewCastleLocation');
+        }
         castle_builder.ranger_bot = {};
         scope.order('Stop', [{ 'unit': castle_builder }]);
         return;
@@ -7205,7 +7397,9 @@ function _FindNewCastleLocation(castle_builder) {
 }
 function _MicroMiner(miner) {
     if (!miner.ranger_bot.castle || !miner.ranger_bot.mine) {
-        console.log(miner);
+        if (constants_1.DEBUG) {
+            console.log(miner);
+        }
         throw new Error('Missing data for _MicroMiner');
     }
     if (!miner.ranger_bot.castle.isAlive && miner.ranger_bot.castle.hp <= 0) {
@@ -7227,8 +7421,8 @@ function _MicroMiner(miner) {
         var real_mine = _GetRealMine(miner.ranger_bot.mine);
         scope.order('Mine', [{ 'unit': miner }], { 'unit': { 'unit': real_mine } }, true);
     }
-    else {
-        console.log('\nERROR: Unhandled Miner Order: ' + miner.order.name);
+    else if (constants_1.DEBUG) {
+        console.log('Error: Unhandled Miner Order: ' + miner.order.name);
     }
 }
 function _GetRealMine(mine) {
@@ -7239,13 +7433,17 @@ function _GetRealMine(mine) {
             return real_gold_mine;
         }
     }
-    console.log(mine);
-    console.log(raw_gold_mines);
+    if (constants_1.DEBUG) {
+        console.log(mine);
+        console.log(raw_gold_mines);
+    }
     throw new Error('Missing real gold mine id ' + mine.id);
 }
 function _MicroRepairer(repairer) {
     if (!repairer.ranger_bot.target_building) {
-        console.log(repairer);
+        if (constants_1.DEBUG) {
+            console.log(repairer);
+        }
         throw new Error('ERROR: Missing target_building for _MicroRepairer');
     }
     if (repairer.order.name == 'Repair') {
@@ -7257,8 +7455,8 @@ function _MicroRepairer(repairer) {
     else if (repairer.order.name == 'Mine') {
         scope.order('Repair', [{ 'unit': repairer }], { 'unit': { 'unit': repairer.ranger_bot.target_building } });
     }
-    else {
-        console.log('\nERROR: Unhandled Repairer Order: ' + repairer.order.name);
+    else if (constants_1.DEBUG) {
+        console.log('Error: Unhandled Repairer Order: ' + repairer.order.name);
     }
 }
 

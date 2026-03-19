@@ -1,5 +1,5 @@
 import { DataHub } from '../data_hub';
-import { WORKERS_PER_CASTLE } from '../constants';
+import { WORKERS_PER_CASTLE, DEBUG } from '../constants';
 import { SafeGroundDistance } from '../ground_distance';
 import { AssignMiner } from '../utils';
 
@@ -39,7 +39,9 @@ function AssignIdleWorkers({ data_hub }: AssignIdleWorkersKwargs): void {
       if (isNaN(shortest_distance)) {
         const ground_distance = SafeGroundDistance(data.active_mine.midpoint, idle_worker.pos);
         if (isNaN(ground_distance)) {
-          console.log('\nERROR: missing SafeGroundDistance for AssignIdleWorkers 1');
+          if (DEBUG) {
+            console.log('Error: missing SafeGroundDistance for AssignIdleWorkers 1');
+          }
           continue;
         }
         shortest_distance = ground_distance;
@@ -47,7 +49,9 @@ function AssignIdleWorkers({ data_hub }: AssignIdleWorkersKwargs): void {
       } else if (data.air_distance < shortest_distance) {
         const ground_distance = SafeGroundDistance(data.active_mine.midpoint, idle_worker.pos);
         if (isNaN(ground_distance)) {
-          console.log('\nERROR: missing SafeGroundDistance for AssignIdleWorkers 2');
+          if (DEBUG) {
+            console.log('Error: missing SafeGroundDistance for AssignIdleWorkers 2');
+          }
           continue;
         }
         if (ground_distance < shortest_distance) {
@@ -58,8 +62,10 @@ function AssignIdleWorkers({ data_hub }: AssignIdleWorkersKwargs): void {
     }
 
     if (!assigned_mine) {
-      console.log(idle_worker);
-      console.log(with_air_distance);
+      if (DEBUG) {
+        console.log(idle_worker);
+        console.log(with_air_distance);
+      }
       throw new Error('Unable to assign idle worker');
     }
 

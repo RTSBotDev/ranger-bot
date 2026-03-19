@@ -1,7 +1,7 @@
 import { DataHub } from '../data_hub';
 import { SafeGroundDistance } from '../ground_distance';
 import { AssignMiner } from '../utils';
-import { WORKERS_PER_CASTLE } from '../constants';
+import { WORKERS_PER_CASTLE, DEBUG } from '../constants';
 
 interface RedistributeMinersKwargs {
   data_hub: DataHub;
@@ -10,7 +10,9 @@ interface RedistributeMinersKwargs {
 function RedistributeMiners({ data_hub }: RedistributeMinersKwargs): void {
   let workable_mines = data_hub.workable_mines as ActiveMineData[];
   if (workable_mines.length <= 0) {
-    console.log('ERROR: No workable_mines');
+    if (DEBUG) {
+      console.log('Error: No workable_mines');
+    }
     return;
   } else if (workable_mines.length <= 1) {
     return;
@@ -40,7 +42,9 @@ function RedistributeMiners({ data_hub }: RedistributeMinersKwargs): void {
       if (isNaN(shortest_distance)) {
         const ground_distance: number = SafeGroundDistance(to_mine.midpoint, data.miner.pos);
         if (isNaN(ground_distance)) {
-          console.log('\nERROR: missing SafeGroundDistance for RedistributeMiners 1');
+          if (DEBUG) {
+            console.log('Error: missing SafeGroundDistance for RedistributeMiners 1');
+          }
           continue;
         }
         shortest_distance = ground_distance;
@@ -48,7 +52,9 @@ function RedistributeMiners({ data_hub }: RedistributeMinersKwargs): void {
       } else if (data.air_distance < shortest_distance) {
         const ground_distance: number = SafeGroundDistance(to_mine.midpoint, data.miner.pos);
         if (isNaN(ground_distance)) {
-          console.log('\nERROR: missing SafeGroundDistance for RedistributeMiners 2');
+          if (DEBUG) {
+            console.log('Error: missing SafeGroundDistance for RedistributeMiners 2');
+          }
           continue;
         }
         if (ground_distance < shortest_distance) {
@@ -59,8 +65,10 @@ function RedistributeMiners({ data_hub }: RedistributeMinersKwargs): void {
     }
 
     if (!transfer_candidate) {
-      console.log(from_mine);
-      console.log(to_mine);
+      if (DEBUG) {
+        console.log(from_mine);
+        console.log(to_mine);
+      }
       throw new Error('No transfer candidates');
     }
 

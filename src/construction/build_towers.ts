@@ -1,5 +1,6 @@
 import { DataHub } from '../data_hub';
 import { AllocateAvailableWorkerClosestToLocation } from '../allocate_worker';
+import { DEBUG } from '../constants';
 
 interface BuildTowersKwargs {
   data_hub: DataHub;
@@ -34,7 +35,9 @@ function BuildTowers({ data_hub }: BuildTowersKwargs): boolean {
     idle_workers: data_hub.idle_workers as LwgUnit[],
   });
   if (!new_builder) {
-    console.log('ERROR: Missing new_builder for BuildTowers');
+    if (DEBUG) {
+      console.log('Error: Missing new_builder for BuildTowers');
+    }
     return true;
   }
 

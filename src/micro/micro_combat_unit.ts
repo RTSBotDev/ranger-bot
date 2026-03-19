@@ -1,4 +1,4 @@
-import { LAZY_ORDER_DISTANCE } from '../constants';
+import { LAZY_ORDER_DISTANCE, DEBUG } from '../constants';
 
 function MicroCombatUnit(unit: LwgUnit): void {
   if (unit.ranger_bot.command == 'fight') {
@@ -9,15 +9,17 @@ function MicroCombatUnit(unit: LwgUnit): void {
     _LazyCombatOrder(unit, 'AMove');
   } else if (!unit.ranger_bot.command) {
     return;
-  } else {
-    console.log('\nERROR: Unhandled unit command: ' + unit.ranger_bot.command);
+  } else if (DEBUG) {
+    console.log('Error: Unhandled unit command: ' + unit.ranger_bot.command);
   }
 }
 
 function _LazyCombatOrder(unit: LwgUnit, order: string): void {
   if (!unit.ranger_bot.command_at) {
-    console.log(unit);
-    console.log('\nERROR: command_at is missing');
+    if (DEBUG) {
+      console.log(unit);
+      console.log('Error: command_at is missing');
+    }
     return;
   }
 
@@ -32,7 +34,9 @@ function _LazyCombatOrder(unit: LwgUnit, order: string): void {
   }
 
   if (!unit.target.x || !unit.target.y) {
-    console.log(unit);
+    if (DEBUG) {
+      console.log(unit);
+    }
     throw new Error('Unexpected value for target in _LazyCombatOrder');
   }
 

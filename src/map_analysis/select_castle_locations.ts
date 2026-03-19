@@ -1,6 +1,7 @@
 import { CalculateWorkerPaths } from './calculate_worker_paths';
 import { CalculateTowerLocation } from './calculate_tower_location';
 import { CalculateMidpoint } from './calculate_viable_castle_locations';
+import { DEBUG } from '../constants';
 
 interface SelectCastleLocationsKwargs {
   raw_gold_mines: LwgGoldMine[];
@@ -123,7 +124,9 @@ function _AddCastlePositionData(partial: PartialExpansion, expansion_id: number,
       const mine_data: CastleMineData | undefined = castle_data.mines_data
         .find((md: CastleMineData) => md.gold_mine_id == raw_mine.id);
       if (mine_data === undefined) {
-        console.log(castle_data);
+        if (DEBUG) {
+          console.log(castle_data);
+        }
         throw new Error('Missing mine_data for _AddCastlePositionData');
       }
 

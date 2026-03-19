@@ -2,7 +2,7 @@ import { DataHub } from '../data_hub';
 import { SelectCastlePlacement } from './select_castle_placement';
 import { AllocateAvailableWorkerClosestToLocation, AllocateWorkerFromActiveMine } from '../allocate_worker';
 import { GetClosestActiveMineToLocation, SafeGroundDistance } from '../ground_distance';
-import { WORKER_SPEED, CASTLE_COST } from '../constants';
+import { WORKER_SPEED, CASTLE_COST, DEBUG } from '../constants';
 
 interface StartExpansionWhenReadyKwargs {
   data_hub: DataHub;
@@ -11,15 +11,19 @@ interface StartExpansionWhenReadyKwargs {
 function StartExpansionWhenReady({ data_hub }: StartExpansionWhenReadyKwargs): void {
   const next_expansion: PlayerExpansion | undefined = _SelectNextExpansion(data_hub);
   if (!next_expansion) {
-    console.log(data_hub.map.expansions);
-    console.log('ERROR: Missing next_expansion for StartExpansionWhenReady');
+    if (DEBUG) {
+      console.log(data_hub.map.expansions);
+      console.log('ERROR: Missing next_expansion for StartExpansionWhenReady');
+    }
     return;
   }
 
   const castle_placement: PlayerCastlePlacement | undefined = SelectCastlePlacement({ player_expansion: next_expansion });
   if (!castle_placement) {
-    console.log(next_expansion);
-    console.log('ERROR: Missing castle_placement for StartExpansionWhenReady');
+    if (DEBUG) {
+      console.log(next_expansion);
+      console.log('ERROR: Missing castle_placement for StartExpansionWhenReady');
+    }
     return;
   }
 
@@ -35,12 +39,16 @@ function StartExpansionWhenReady({ data_hub }: StartExpansionWhenReadyKwargs): v
 
   const closest_mine: ActiveMineData | undefined = GetClosestActiveMineToLocation(castle_placement.castle_location, data_hub.active_mines as ActiveMineData[]);
   if (!closest_mine) {
-    console.log('ERROR: Missing closest_mine for StartExpansionWhenReady');
+    if (DEBUG) {
+      console.log('ERROR: Missing closest_mine for StartExpansionWhenReady');
+    }
     return;
   }
   const ground_distance = SafeGroundDistance(closest_mine.midpoint, castle_placement.castle_location);
   if (isNaN(ground_distance)) {
-    console.log('ERROR: Missing ground_distance for StartExpansionWhenReady');
+    if (DEBUG) {
+      console.log('ERROR: Missing ground_distance for StartExpansionWhenReady');
+    }
     return;
   }
   const travel_time = Math.floor(ground_distance / WORKER_SPEED);
@@ -51,7 +59,9 @@ function StartExpansionWhenReady({ data_hub }: StartExpansionWhenReadyKwargs): v
 
   const new_builder: LwgUnit | undefined = AllocateWorkerFromActiveMine(closest_mine);
   if (!new_builder) {
-    console.log('ERROR: Missing new_builder for StartExpansionWhenReady');
+    if (DEBUG) {
+      console.log('ERROR: Missing new_builder for StartExpansionWhenReady');
+    }
     return;
   }
 
@@ -81,7 +91,9 @@ function _SelectNextExpansion(data_hub: DataHub): PlayerExpansion | undefined {
       for (let j=0; j<placement.mines_data.length; j++) {
         const active_mine: ActiveMineData = placement.mines_data[j];
         if (!active_mine.gold_mine) {
-          console.log(active_mine);
+          if (DEBUG) {
+            console.log(active_mine);
+          }
           throw new Error('Missing gold_mine for _SelectNextExpansion');
         }
         const gold_mine: CachedGoldMine = active_mine.gold_mine;
@@ -109,7 +121,9 @@ function _NeedsTower(castle_placement: PlayerCastlePlacement, data_hub: DataHub)
   for (let i=0; i<castle_placement.mines_data.length; i++) {
     const active_mine: ActiveMineData = castle_placement.mines_data[i];
     if (!active_mine.gold_mine) {
-      console.log(active_mine);
+      if (DEBUG) {
+        console.log(active_mine);
+      }
       throw new Error('Missing gold_mine for _NeedsTower');
     }
     const gold_mine: CachedGoldMine = active_mine.gold_mine;
@@ -129,7 +143,9 @@ function _BuildTower(castle_placement: PlayerCastlePlacement, data_hub: DataHub)
     idle_workers: data_hub.idle_workers as LwgUnit[],
   });
   if (!new_builder) {
-    console.log('ERROR: Missing new_builder for _BuildTower');
+    if (DEBUG) {
+      console.log('ERROR: Missing new_builder for _BuildTower');
+    }
     return;
   }
 

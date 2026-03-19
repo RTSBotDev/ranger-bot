@@ -1,3 +1,4 @@
+import { DEBUG } from '../constants';
 
 function CommandIdleUnits(my_fighting_units: LwgUnit[]): void {
   const mid_x = Math.floor(scope.getMapWidth() / 2);
@@ -10,12 +11,18 @@ function CommandIdleUnits(my_fighting_units: LwgUnit[]): void {
       continue;
     }
     if (fighting_unit.ranger_bot.command && !fighting_unit.ranger_bot.command_at) {
-      console.log(fighting_unit);
-      throw new Error('Missing command_at for CommandIdleUnits');
+      if (DEBUG) {
+        console.log(fighting_unit);
+        console.log('Error: Missing command_at for CommandIdleUnits');
+        continue;
+      }
     }
     if (!fighting_unit.ranger_bot.command && fighting_unit.ranger_bot.command_at) {
-      console.log(fighting_unit);
-      throw new Error('Missing command for CommandIdleUnits');
+      if (DEBUG) {
+        console.log(fighting_unit);
+        console.log('Error: Missing command for CommandIdleUnits');
+        continue;
+      }
     }
 
     const center_distance = Math.sqrt((fighting_unit.pos.x - mid_x)**2 + (fighting_unit.pos.y - mid_y)**2);

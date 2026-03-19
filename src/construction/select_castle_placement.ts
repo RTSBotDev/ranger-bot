@@ -1,6 +1,5 @@
-
 import { AreBuildable } from '../map_analysis/buildable';
-import { CASTLE_WIDTH, CASTLE_HEIGHT } from '../constants';
+import { CASTLE_WIDTH, CASTLE_HEIGHT, DEBUG } from '../constants';
 
 interface SelectCastlePlacementKwargs {
   player_expansion: PlayerExpansion;
@@ -14,7 +13,9 @@ function SelectCastlePlacement({ player_expansion }: SelectCastlePlacementKwargs
     if (isNaN(prev_score)) {
       prev_score = placement.score;
     } else if (prev_score > placement.score) {
-      console.log(player_expansion);
+      if (DEBUG) {
+        console.log(player_expansion);
+      }
       throw new Error('Disordered castle_placements for SelectCastlePlacement');
     } else {
       prev_score = placement.score;

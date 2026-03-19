@@ -1,4 +1,4 @@
-import { CASTLE_WIDTH, CASTLE_HEIGHT, TOWER_WIDTH, TOWER_HEIGHT } from '../constants';
+import { CASTLE_WIDTH, CASTLE_HEIGHT, TOWER_WIDTH, TOWER_HEIGHT, DEBUG } from '../constants';
 import { DataHub } from '../data_hub';
 
 interface IsBuildableKwargs {
@@ -184,7 +184,9 @@ function _OverlapsExpansion(map_location: MapLocation, player_expansion: PlayerE
       const active_mine: ActiveMineData = placement.mines_data[j];
 
       if (!active_mine.gold_mine) {
-        console.log(active_mine);
+        if (DEBUG) {
+          console.log(active_mine);
+        }
         throw new Error('Missing gold_mine for _OverlapsExpansion');
       }
 
@@ -207,7 +209,9 @@ function _OverlapsExpansion(map_location: MapLocation, player_expansion: PlayerE
     }
 
     if (!castle.ranger_bot.mining_data) {
-      console.log(castle);
+      if (DEBUG) {
+        console.log(castle);
+      }
       throw new Error('Missing mining_data for _OverlapsExpansion');
     }
 

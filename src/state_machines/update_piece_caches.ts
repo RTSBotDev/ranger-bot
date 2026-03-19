@@ -1,5 +1,6 @@
 import { DataHub } from '../data_hub';
 import { GetNumberFieldValue } from '../utils';
+import { DEBUG } from '../constants';
 
 interface UpdatePieceCachesKwargs {
   data_hub: DataHub;
@@ -57,8 +58,10 @@ function UpdatePieceCaches({ data_hub }: UpdatePieceCachesKwargs): void {
           const new_mine: CachedGoldMine | undefined = data_hub.gold_mines
             .find((mine) => mine.id == active_mine.gold_mine_id);
           if (!new_mine) {
-            console.log(active_mine);
-            console.log(data_hub.gold_mines);
+            if (DEBUG) {
+              console.log(active_mine);
+              console.log(data_hub.gold_mines);
+            }
             throw new Error('Missing gold mine for _UpdatePieceCaches');
           }
           active_mine.gold_mine = new_mine;
@@ -78,8 +81,10 @@ function _AssociateMiningData(friendly_castle: LwgBuilding, gold_mines: CachedGo
       const new_mine: CachedGoldMine | undefined = gold_mines
         .find((mine) => mine.id == active_mine.gold_mine_id);
       if (!new_mine) {
-        console.log(active_mine);
-        console.log(gold_mines);
+        if (DEBUG) {
+          console.log(active_mine);
+          console.log(gold_mines);
+        }
         throw new Error('Missing gold mine for _AssociateMiningData');
       }
       active_mine.gold_mine = new_mine;

@@ -1,6 +1,6 @@
 import { DataHub } from '../data_hub';
 import { SafeGroundDistance } from '../ground_distance';
-import { TARGET_RESET_THRESHOLD, BASE_TARGET_RADIUS } from '../constants';
+import { TARGET_RESET_THRESHOLD, BASE_TARGET_RADIUS, DEBUG } from '../constants';
 
 interface UpdateTargetsKwargs {
   data_hub: DataHub;
@@ -151,7 +151,9 @@ function _GlomThreats(target: RangerBotTarget, threats: RangerBotThreat[][]): bo
 
     const ground_distance = SafeGroundDistance(threat.location, target.location);
     if (isNaN(ground_distance)) {
-      console.log('\nERROR: missing SafeGroundDistance for _GlomThreats');
+      if (DEBUG) {
+        console.log('Error: missing SafeGroundDistance for _GlomThreats');
+      }
       new_threats.push(threat);
       continue;
     }

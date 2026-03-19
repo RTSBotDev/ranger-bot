@@ -1,5 +1,5 @@
 import { DataHub } from '../data_hub';
-import { BASE_TARGET_RADIUS, TARGET_RESET_THRESHOLD } from '../constants';
+import { BASE_TARGET_RADIUS, TARGET_RESET_THRESHOLD, DEBUG } from '../constants';
 import { SafeGroundDistance } from '../ground_distance';
 import { IsFlying } from '../unit_stats';
 
@@ -88,7 +88,9 @@ function _GlomUnits(squad: RangerBotSquad, units: LwgUnit[][]): boolean {
 
     const ground_distance = SafeGroundDistance(unit.pos, squad.location);
     if (isNaN(ground_distance)) {
-      console.log('\nERROR: missing SafeGroundDistance for _GlomUnits');
+      if (DEBUG) {
+        console.log('Error: missing SafeGroundDistance for _GlomUnits');
+      }
       new_units.push(unit);
       continue;
     }

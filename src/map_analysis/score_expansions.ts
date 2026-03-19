@@ -1,4 +1,5 @@
 import { SafeGroundDistance } from '../ground_distance'
+import { DEBUG } from '../constants';
 
 interface ScoreExpansionsKwargs {
   expansions: Expansion[];
@@ -13,9 +14,11 @@ function ScoreExpansions({ expansions, starting_expansion, teams }: ScoreExpansi
     const destination: MapLocation = expansion.castle_placements[0].mines_data[0].midpoint;
     let score: number = SafeGroundDistance(start, destination);
     if (isNaN(score)) {
-      console.log(start);
-      console.log(destination);
-      console.log('ERROR: missing my ground distance for ScoreExpansions');
+      if (DEBUG) {
+        console.log(start);
+        console.log(destination);
+        console.log('Error: missing my ground distance for ScoreExpansions');
+      }
       score = Math.sqrt((start.x - destination.x)**2 + (start.y - destination.y)**2);
     }
 
@@ -25,9 +28,11 @@ function ScoreExpansions({ expansions, starting_expansion, teams }: ScoreExpansi
       const enemy_start: MapLocation = teams.players[enemy_id].start_location;
       let ground_distance: number = SafeGroundDistance(enemy_start, destination);
       if (isNaN(ground_distance)) {
-        console.log(enemy_start);
-        console.log(destination);
-        console.log('ERROR: missing enemy ground distance for ScoreExpansions');
+        if (DEBUG) {
+          console.log(enemy_start);
+          console.log(destination);
+          console.log('Error: missing enemy ground distance for ScoreExpansions');
+        }
         ground_distance = Math.sqrt((enemy_start.x - destination.x)**2 + (enemy_start.y - destination.y)**2);
       }
 
