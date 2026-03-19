@@ -1,6 +1,6 @@
-import { CASTLE_WIDTH, CASTLE_HEIGHT } from '../constants';
 import { CalculateWorkerPaths } from './calculate_worker_paths';
 import { CalculateTowerLocation } from './calculate_tower_location';
+import { CalculateMidpoint } from './calculate_viable_castle_locations';
 
 interface SelectCastleLocationsKwargs {
   raw_gold_mines: LwgGoldMine[];
@@ -147,17 +147,11 @@ function _AddCastlePositionData(partial: PartialExpansion, expansion_id: number,
 
 function _CalculateCastlePositionData(castle_location: MapLocation, raw_gold_mines: LwgGoldMine[], teams: RangerBotTeams): CastlePlacement {
   const mines_data: CastleMineData[] = [];
-  const castle_center_x: number = castle_location.x + (CASTLE_WIDTH - 1) / 2;
-  const castle_center_y: number = castle_location.y + (CASTLE_HEIGHT - 1) / 2;
   for (let i=0; i<raw_gold_mines.length; i++) {
     const raw_mine: LwgGoldMine = raw_gold_mines[i];
 
     const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
-
-    const midpoint: MapLocation = {
-      'x': (castle_center_x + mine_cache.center.x) / 2,
-      'y': (castle_center_y + mine_cache.center.y) / 2,
-    };
+    const midpoint = CalculateMidpoint(castle_location.x, castle_location.y, raw_mine);
 
     const worker_paths: boolean[][] = CalculateWorkerPaths({
       raw_mine: raw_mine,

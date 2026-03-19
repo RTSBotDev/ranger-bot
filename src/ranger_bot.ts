@@ -44,7 +44,7 @@ class RangerBot {
     });
 
     if (this.debug && !scope.ranger_bot.map_printed) {
-      PrintExpansionData(this.data_hub.map.expansions);
+      PrintExpansionData({ expansions: this.data_hub.map.expansions });
       scope.ranger_bot.map_printed = true;
     }
 

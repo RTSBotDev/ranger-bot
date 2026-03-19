@@ -74,10 +74,10 @@ function CalculateTowerLocation({ mines_data, raw_gold_mines }: CalculateTowerLo
         continue;
       }
 
-      for (let dx:number=0; dx<TOWER_WIDTH; dx++) {
-        const xx: number = x - dx;
-        for (let dy:number=0; dy<TOWER_HEIGHT; dy++) {
-          const yy: number = y - dy;
+      for (let dx=(-1 * TOWER_WIDTH); dx<=TOWER_WIDTH; dx++) {
+        const xx = x - dx;
+        for (let dy=(-1 * TOWER_HEIGHT); dy<=TOWER_HEIGHT; dy++) {
+          const yy = y - dy;
 
           if (candidates[xx] === undefined) {
             candidates[xx] = [];
@@ -119,7 +119,18 @@ function CalculateTowerLocation({ mines_data, raw_gold_mines }: CalculateTowerLo
   }
 
   if (viable.length <= 0) {
-    console.log(mines_data);
+    console.log(perimeter);
+    // PrintExpansionData({
+    //   mines_data: mines_data,
+    //   midpoints: midpoints,
+    //   debug: perimeter,
+    // });
+    console.log(candidates);
+    // PrintExpansionData({
+    //   mines_data: mines_data,
+    //   midpoints: midpoints,
+    //   debug: candidates,
+    // });
     throw new Error('no viable tower locations');
   }
 

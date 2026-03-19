@@ -2,7 +2,15 @@ import { GetGoldMines } from '../utils';
 import { CASTLE_WIDTH, CASTLE_HEIGHT, TOWER_WIDTH, TOWER_HEIGHT, MINE_WIDTH, MINE_HEIGHT } from '../constants';
 import { ConfigureStartLocation } from '../analyze_teams';
 
-function PrintExpansionData(expansions: Expansion[]): void {
+interface PrintExpansionDataKwargs {
+  expansions?: PlayerExpansion[];
+  castle_locations?: MapLocation[];
+  mines_data?: CastleMineData[];
+  midpoints?: MapLocation[];
+  debug?: boolean[][];
+}
+
+function PrintExpansionData({ expansions, castle_locations, mines_data, debug, midpoints }: PrintExpansionDataKwargs): void {
   // console.log(expansions);
 
   const map: string[][] = [];
@@ -21,45 +29,93 @@ function PrintExpansionData(expansions: Expansion[]): void {
     const raw_mine: LwgGoldMine = raw_gold_mines[i];
     const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
 
-    for (const [raw_x, y_list] of Object.entries(mine_cache.exclusion_zone as boolean[][])) {
-      const x = Number(raw_x);
-      if (isNaN(x) || x < 0 || x > map_width) {
-        continue;
-      }
-
-      for (const raw_y in y_list) {
-        const y = Number(raw_y);
-        if (isNaN(y) || y < 0 || y > map_height) {
+    if (mine_cache.exclusion_zone) {
+      for (const [raw_x, y_list] of Object.entries(mine_cache.exclusion_zone as boolean[][])) {
+        const x = Number(raw_x);
+        if (isNaN(x) || x < 0 || x > map_width) {
           continue;
         }
 
-        map[x][y] = 'X';
+        for (const raw_y in y_list) {
+          const y = Number(raw_y);
+          if (isNaN(y) || y < 0 || y > map_height) {
+            continue;
+          }
+
+          map[x][y] = 'X';
+        }
       }
     }
 
-    for (const [raw_x, y_list] of Object.entries(mine_cache.perimeter as boolean[][])) {
-      const x = Number(raw_x);
-      if (isNaN(x) || x < 0 || x > map_width) {
-        continue;
-      }
-
-      for (const raw_y in y_list) {
-        const y = Number(raw_y);
-        if (isNaN(y) || y < 0 || y > map_height) {
+    if (mine_cache.perimeter) {
+      for (const [raw_x, y_list] of Object.entries(mine_cache.perimeter as boolean[][])) {
+        const x = Number(raw_x);
+        if (isNaN(x) || x < 0 || x > map_width) {
           continue;
         }
 
-        map[x][y] = 'P';
+        for (const raw_y in y_list) {
+          const y = Number(raw_y);
+          if (isNaN(y) || y < 0 || y > map_height) {
+            continue;
+          }
+
+          map[x][y] = 'P';
+        }
       }
     }
   }
 
-  for (let i=0; i<expansions.length; i++) {
-    const expansion: Expansion = expansions[i];
-    const castle_placement: CastlePlacement = expansion.castle_placements[0];
+  if (expansions) {
+    for (let i=0; i<expansions.length; i++) {
+      const expansion: Expansion = expansions[i];
+      const castle_placement: CastlePlacement = expansion.castle_placements[0];
 
-    for (let j=0; j<castle_placement.mines_data.length; j++) {
-      const mine_data: CastleMineData = castle_placement.mines_data[j];
+      for (let j=0; j<castle_placement.mines_data.length; j++) {
+        const mine_data: CastleMineData = castle_placement.mines_data[j];
+
+        for (const [raw_x, y_list] of Object.entries(mine_data.worker_paths)) {
+          const x = Number(raw_x);
+          if (isNaN(x) || x < 0 || x > map_width) {
+            continue;
+          }
+
+          for (const raw_y in y_list) {
+            const y = Number(raw_y);
+            if (isNaN(y) || y < 0 || y > map_height) {
+              continue;
+            }
+
+            map[x][y] = 'W';
+          }
+        }
+      }
+
+      for (let dx=0; dx<CASTLE_WIDTH; dx++) {
+        const cx = castle_placement.castle_location.x + dx;
+
+        for (let dy=0; dy<CASTLE_HEIGHT; dy++) {
+          const cy = castle_placement.castle_location.y + dy;
+
+          map[cx][cy] = 'C';
+        }
+      }
+
+      for (let dx=0; dx<TOWER_WIDTH; dx++) {
+        const tx = castle_placement.tower_location.x + dx;
+
+        for (let dy=0; dy<TOWER_HEIGHT; dy++) {
+          const ty = castle_placement.tower_location.y + dy;
+
+          map[tx][ty] = 'T';
+        }
+      }
+    }
+  }
+
+  if (mines_data) {
+    for (let i=0; i<mines_data.length; i++) {
+      const mine_data = mines_data[i];
 
       for (const [raw_x, y_list] of Object.entries(mine_data.worker_paths)) {
         const x = Number(raw_x);
@@ -77,24 +133,20 @@ function PrintExpansionData(expansions: Expansion[]): void {
         }
       }
     }
+  }
 
-    for (let dx=0; dx<CASTLE_WIDTH; dx++) {
-      const cx = castle_placement.castle_location.x + dx;
+  if (castle_locations) {
+    for (let i=0; i<castle_locations.length; i++) {
+      const castle_location = castle_locations[i];
 
-      for (let dy=0; dy<CASTLE_HEIGHT; dy++) {
-        const cy = castle_placement.castle_location.y + dy;
+      for (let dx=0; dx<CASTLE_WIDTH; dx++) {
+        const cx = castle_location.x + dx;
 
-        map[cx][cy] = 'C';
-      }
-    }
+        for (let dy=0; dy<CASTLE_HEIGHT; dy++) {
+          const cy = castle_location.y + dy;
 
-    for (let dx=0; dx<TOWER_WIDTH; dx++) {
-      const tx = castle_placement.tower_location.x + dx;
-
-      for (let dy=0; dy<TOWER_HEIGHT; dy++) {
-        const ty = castle_placement.tower_location.y + dy;
-
-        map[tx][ty] = 'T';
+          map[cx][cy] = 'C';
+        }
       }
     }
   }
@@ -103,30 +155,34 @@ function PrintExpansionData(expansions: Expansion[]): void {
     const raw_mine: LwgGoldMine = raw_gold_mines[i];
     const mine_cache = raw_mine.ranger_bot as RangerBotGoldMine;
 
-    for (const [raw_x, y_list] of Object.entries(mine_cache.viable_castle_locations as number[][])) {
-      const x = Number(raw_x);
-      if (isNaN(x) || x < 0 || x > map_width) {
-        continue;
-      }
-
-      for (const raw_y in y_list) {
-        const y = Number(raw_y);
-        if (isNaN(y) || y < 0 || y > map_height) {
+    if (mine_cache.viable_castle_locations) {
+      for (const [raw_x, y_list] of Object.entries(mine_cache.viable_castle_locations as number[][])) {
+        const x = Number(raw_x);
+        if (isNaN(x) || x < 0 || x > map_width) {
           continue;
         }
 
-        map[x][y] = 'V';
+        for (const raw_y in y_list) {
+          const y = Number(raw_y);
+          if (isNaN(y) || y < 0 || y > map_height) {
+            continue;
+          }
+
+          map[x][y] = 'V';
+        }
       }
     }
   }
 
-  for (let i=0; i<expansions.length; i++) {
-    const expansion: Expansion = expansions[i];
-    
-    for (let j=0; j<expansion.castle_placements.length; j++) {
-      const castle_placement: CastlePlacement = expansion.castle_placements[j];
+  if (expansions) {
+    for (let i=0; i<expansions.length; i++) {
+      const expansion: Expansion = expansions[i];
+      
+      for (let j=0; j<expansion.castle_placements.length; j++) {
+        const castle_placement: CastlePlacement = expansion.castle_placements[j];
 
-      map[castle_placement.castle_location.x][castle_placement.castle_location.y] = 'E';
+        map[castle_placement.castle_location.x][castle_placement.castle_location.y] = 'E';
+      }
     }
   }
 
@@ -167,6 +223,37 @@ function PrintExpansionData(expansions: Expansion[]): void {
         const y = raw_mine.y + dy;
 
         map[x][y] = '$';
+      }
+    }
+  }
+
+  if (midpoints) {
+    for (let i=0; i<midpoints.length; i++) {
+      const midpoint = midpoints[i];
+
+      const x = Math.round(midpoint.x);
+      const y = Math.round(midpoint.y);
+      map[x][y] = '+';
+    }
+  }
+
+  if (debug) {
+    for (const [raw_x, y_list] of Object.entries(debug)) {
+      const x = Number(raw_x);
+      if (isNaN(x)) {
+        continue;
+      }
+
+      for (const raw_y in y_list) {
+        const y = Number(raw_y);
+        if (isNaN(y)) {
+          continue;
+        }
+        if (!debug[x][y]) {
+          continue;
+        }
+
+        map[x][y] = '?';
       }
     }
   }

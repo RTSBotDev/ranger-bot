@@ -46,7 +46,18 @@ function CalculateViableCastleLocations({ raw_mine, raw_gold_mines, teams }: Cal
           if (isNaN(mining_distance) || mining_distance > MAX_MINING_DISTANCE) {
             continue;
           }
-          // console.log('mining_distance: ' + mining_distance);
+
+          // TODO: Check all worker paths, not just the midpoint
+          const midpoint = CalculateMidpoint(xx, yy, raw_mine);
+          if (z != scope.getHeightLevel(midpoint.x, midpoint.y)) {
+            continue;
+          }
+          if (scope.fieldIsRamp(midpoint.x, midpoint.y)) {
+            continue;
+          }
+          if (!scope.positionIsPathable(midpoint.x, midpoint.y)) {
+            continue;
+          }
 
           if (output[xx] === undefined) {
             output[xx] = [];
@@ -57,7 +68,24 @@ function CalculateViableCastleLocations({ raw_mine, raw_gold_mines, teams }: Cal
     }
   }
 
+  if (0 == output.length) {
+    // const debug: boolean[][] = [];
+    // debug[raw_mine.x + 1] = [];
+    // debug[raw_mine.x + 1][raw_mine.y + 1] = true;
+    // PrintExpansionData({ debug: debug });
+    throw new Error('No viable castle locations');
+  }
   return output;
+}
+
+function CalculateMidpoint(castle_x: number, castle_y: number, raw_gold_mine: LwgGoldMine): MapLocation {
+  const castle_center_x: number = castle_x + (CASTLE_WIDTH - 1) / 2;
+  const castle_center_y: number = castle_y + (CASTLE_HEIGHT - 1) / 2;
+  const mine_cache = raw_gold_mine.ranger_bot as RangerBotGoldMine;
+  return {
+    'x': (castle_center_x + mine_cache.center.x) / 2,
+    'y': (castle_center_y + mine_cache.center.y) / 2,
+  };
 }
 
 function _IsViable(base_x: number, base_y: number, z: number, raw_gold_mines: LwgGoldMine[], teams: RangerBotTeams): boolean {
@@ -130,4 +158,4 @@ function _CalculateMiningDistance(base_x: number, base_y: number, mine_id: numbe
   return GroundDistanceBetweenBuildings(hypothetical_castle, real_gold_mine);
 }
 
-export { CalculateViableCastleLocations };
+export { CalculateViableCastleLocations, CalculateMidpoint };

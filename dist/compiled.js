@@ -34,7 +34,7 @@ var RangerBot = (function () {
             player_cache_key: this.player_cache_key,
         });
         if (this.debug && !scope.ranger_bot.map_printed) {
-            (0, print_expansion_data_1.PrintExpansionData)(this.data_hub.map.expansions);
+            (0, print_expansion_data_1.PrintExpansionData)({ expansions: this.data_hub.map.expansions });
             scope.ranger_bot.map_printed = true;
         }
         (0, manage_states_1.ManageStates)({ data_hub: this.data_hub });
@@ -1499,6 +1499,7 @@ exports.WATCHTOWER_DETECTION_COST = (0, utils_1.GetNumberFieldValue)({ piece_nam
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CalculateViableCastleLocations = CalculateViableCastleLocations;
+exports.CalculateMidpoint = CalculateMidpoint;
 var constants_1 = __webpack_require__(15);
 var buildable_1 = __webpack_require__(14);
 var ground_distance_1 = __webpack_require__(9);
@@ -1533,6 +1534,16 @@ function CalculateViableCastleLocations(_a) {
                     if (isNaN(mining_distance) || mining_distance > constants_1.MAX_MINING_DISTANCE) {
                         continue;
                     }
+                    var midpoint = CalculateMidpoint(xx, yy, raw_mine);
+                    if (z != scope.getHeightLevel(midpoint.x, midpoint.y)) {
+                        continue;
+                    }
+                    if (scope.fieldIsRamp(midpoint.x, midpoint.y)) {
+                        continue;
+                    }
+                    if (!scope.positionIsPathable(midpoint.x, midpoint.y)) {
+                        continue;
+                    }
                     if (output[xx] === undefined) {
                         output[xx] = [];
                     }
@@ -1541,7 +1552,19 @@ function CalculateViableCastleLocations(_a) {
             }
         }
     }
+    if (0 == output.length) {
+        throw new Error('No viable castle locations');
+    }
     return output;
+}
+function CalculateMidpoint(castle_x, castle_y, raw_gold_mine) {
+    var castle_center_x = castle_x + (constants_1.CASTLE_WIDTH - 1) / 2;
+    var castle_center_y = castle_y + (constants_1.CASTLE_HEIGHT - 1) / 2;
+    var mine_cache = raw_gold_mine.ranger_bot;
+    return {
+        'x': (castle_center_x + mine_cache.center.x) / 2,
+        'y': (castle_center_y + mine_cache.center.y) / 2,
+    };
 }
 function _IsViable(base_x, base_y, z, raw_gold_mines, teams) {
     if (z != scope.getHeightLevel(base_x, base_y)) {
@@ -1613,9 +1636,9 @@ function _CalculateMiningDistance(base_x, base_y, mine_id) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectCastleLocations = SelectCastleLocations;
-var constants_1 = __webpack_require__(15);
 var calculate_worker_paths_1 = __webpack_require__(18);
 var calculate_tower_location_1 = __webpack_require__(19);
+var calculate_viable_castle_locations_1 = __webpack_require__(16);
 function SelectCastleLocations(_a) {
     var raw_gold_mines = _a.raw_gold_mines, teams = _a.teams;
     var grouping = new _GroupCastleLocations(raw_gold_mines);
@@ -1729,15 +1752,10 @@ function _AddCastlePositionData(partial, expansion_id, teams) {
 }
 function _CalculateCastlePositionData(castle_location, raw_gold_mines, teams) {
     var mines_data = [];
-    var castle_center_x = castle_location.x + (constants_1.CASTLE_WIDTH - 1) / 2;
-    var castle_center_y = castle_location.y + (constants_1.CASTLE_HEIGHT - 1) / 2;
     for (var i = 0; i < raw_gold_mines.length; i++) {
         var raw_mine = raw_gold_mines[i];
         var mine_cache = raw_mine.ranger_bot;
-        var midpoint = {
-            'x': (castle_center_x + mine_cache.center.x) / 2,
-            'y': (castle_center_y + mine_cache.center.y) / 2,
-        };
+        var midpoint = (0, calculate_viable_castle_locations_1.CalculateMidpoint)(castle_location.x, castle_location.y, raw_mine);
         var worker_paths = (0, calculate_worker_paths_1.CalculateWorkerPaths)({
             raw_mine: raw_mine,
             castle_location: castle_location,
@@ -1959,9 +1977,9 @@ function CalculateTowerLocation(_a) {
             if (isNaN(y)) {
                 continue;
             }
-            for (var dx = 0; dx < constants_1.TOWER_WIDTH; dx++) {
+            for (var dx = (-1 * constants_1.TOWER_WIDTH); dx <= constants_1.TOWER_WIDTH; dx++) {
                 var xx = x - dx;
-                for (var dy = 0; dy < constants_1.TOWER_HEIGHT; dy++) {
+                for (var dy = (-1 * constants_1.TOWER_HEIGHT); dy <= constants_1.TOWER_HEIGHT; dy++) {
                     var yy = y - dy;
                     if (candidates[xx] === undefined) {
                         candidates[xx] = [];
@@ -1997,7 +2015,8 @@ function CalculateTowerLocation(_a) {
         }
     }
     if (viable.length <= 0) {
-        console.log(mines_data);
+        console.log(perimeter);
+        console.log(candidates);
         throw new Error('no viable tower locations');
     }
     var winner = viable.sort(function (a, b) { return a.score - b.score; })[0];
@@ -2486,7 +2505,8 @@ exports.PrintExpansionData = PrintExpansionData;
 var utils_1 = __webpack_require__(10);
 var constants_1 = __webpack_require__(15);
 var analyze_teams_1 = __webpack_require__(4);
-function PrintExpansionData(expansions) {
+function PrintExpansionData(_a) {
+    var expansions = _a.expansions, castle_locations = _a.castle_locations, mines_data = _a.mines_data, debug = _a.debug, midpoints = _a.midpoints;
     var map = [];
     var map_width = scope.getMapWidth();
     var map_height = scope.getMapHeight();
@@ -2500,42 +2520,81 @@ function PrintExpansionData(expansions) {
     for (var i = 0; i < raw_gold_mines.length; i++) {
         var raw_mine = raw_gold_mines[i];
         var mine_cache = raw_mine.ranger_bot;
-        for (var _i = 0, _a = Object.entries(mine_cache.exclusion_zone); _i < _a.length; _i++) {
-            var _b = _a[_i], raw_x = _b[0], y_list = _b[1];
-            var x = Number(raw_x);
-            if (isNaN(x) || x < 0 || x > map_width) {
-                continue;
-            }
-            for (var raw_y in y_list) {
-                var y = Number(raw_y);
-                if (isNaN(y) || y < 0 || y > map_height) {
+        if (mine_cache.exclusion_zone) {
+            for (var _i = 0, _b = Object.entries(mine_cache.exclusion_zone); _i < _b.length; _i++) {
+                var _c = _b[_i], raw_x = _c[0], y_list = _c[1];
+                var x = Number(raw_x);
+                if (isNaN(x) || x < 0 || x > map_width) {
                     continue;
                 }
-                map[x][y] = 'X';
+                for (var raw_y in y_list) {
+                    var y = Number(raw_y);
+                    if (isNaN(y) || y < 0 || y > map_height) {
+                        continue;
+                    }
+                    map[x][y] = 'X';
+                }
             }
         }
-        for (var _c = 0, _d = Object.entries(mine_cache.perimeter); _c < _d.length; _c++) {
-            var _e = _d[_c], raw_x = _e[0], y_list = _e[1];
-            var x = Number(raw_x);
-            if (isNaN(x) || x < 0 || x > map_width) {
-                continue;
-            }
-            for (var raw_y in y_list) {
-                var y = Number(raw_y);
-                if (isNaN(y) || y < 0 || y > map_height) {
+        if (mine_cache.perimeter) {
+            for (var _d = 0, _e = Object.entries(mine_cache.perimeter); _d < _e.length; _d++) {
+                var _f = _e[_d], raw_x = _f[0], y_list = _f[1];
+                var x = Number(raw_x);
+                if (isNaN(x) || x < 0 || x > map_width) {
                     continue;
                 }
-                map[x][y] = 'P';
+                for (var raw_y in y_list) {
+                    var y = Number(raw_y);
+                    if (isNaN(y) || y < 0 || y > map_height) {
+                        continue;
+                    }
+                    map[x][y] = 'P';
+                }
             }
         }
     }
-    for (var i = 0; i < expansions.length; i++) {
-        var expansion = expansions[i];
-        var castle_placement = expansion.castle_placements[0];
-        for (var j = 0; j < castle_placement.mines_data.length; j++) {
-            var mine_data = castle_placement.mines_data[j];
-            for (var _f = 0, _g = Object.entries(mine_data.worker_paths); _f < _g.length; _f++) {
-                var _h = _g[_f], raw_x = _h[0], y_list = _h[1];
+    if (expansions) {
+        for (var i = 0; i < expansions.length; i++) {
+            var expansion = expansions[i];
+            var castle_placement = expansion.castle_placements[0];
+            for (var j = 0; j < castle_placement.mines_data.length; j++) {
+                var mine_data = castle_placement.mines_data[j];
+                for (var _g = 0, _h = Object.entries(mine_data.worker_paths); _g < _h.length; _g++) {
+                    var _j = _h[_g], raw_x = _j[0], y_list = _j[1];
+                    var x = Number(raw_x);
+                    if (isNaN(x) || x < 0 || x > map_width) {
+                        continue;
+                    }
+                    for (var raw_y in y_list) {
+                        var y = Number(raw_y);
+                        if (isNaN(y) || y < 0 || y > map_height) {
+                            continue;
+                        }
+                        map[x][y] = 'W';
+                    }
+                }
+            }
+            for (var dx = 0; dx < constants_1.CASTLE_WIDTH; dx++) {
+                var cx = castle_placement.castle_location.x + dx;
+                for (var dy = 0; dy < constants_1.CASTLE_HEIGHT; dy++) {
+                    var cy = castle_placement.castle_location.y + dy;
+                    map[cx][cy] = 'C';
+                }
+            }
+            for (var dx = 0; dx < constants_1.TOWER_WIDTH; dx++) {
+                var tx = castle_placement.tower_location.x + dx;
+                for (var dy = 0; dy < constants_1.TOWER_HEIGHT; dy++) {
+                    var ty = castle_placement.tower_location.y + dy;
+                    map[tx][ty] = 'T';
+                }
+            }
+        }
+    }
+    if (mines_data) {
+        for (var i = 0; i < mines_data.length; i++) {
+            var mine_data = mines_data[i];
+            for (var _k = 0, _l = Object.entries(mine_data.worker_paths); _k < _l.length; _k++) {
+                var _m = _l[_k], raw_x = _m[0], y_list = _m[1];
                 var x = Number(raw_x);
                 if (isNaN(x) || x < 0 || x > map_width) {
                     continue;
@@ -2549,44 +2608,46 @@ function PrintExpansionData(expansions) {
                 }
             }
         }
-        for (var dx = 0; dx < constants_1.CASTLE_WIDTH; dx++) {
-            var cx = castle_placement.castle_location.x + dx;
-            for (var dy = 0; dy < constants_1.CASTLE_HEIGHT; dy++) {
-                var cy = castle_placement.castle_location.y + dy;
-                map[cx][cy] = 'C';
-            }
-        }
-        for (var dx = 0; dx < constants_1.TOWER_WIDTH; dx++) {
-            var tx = castle_placement.tower_location.x + dx;
-            for (var dy = 0; dy < constants_1.TOWER_HEIGHT; dy++) {
-                var ty = castle_placement.tower_location.y + dy;
-                map[tx][ty] = 'T';
+    }
+    if (castle_locations) {
+        for (var i = 0; i < castle_locations.length; i++) {
+            var castle_location = castle_locations[i];
+            for (var dx = 0; dx < constants_1.CASTLE_WIDTH; dx++) {
+                var cx = castle_location.x + dx;
+                for (var dy = 0; dy < constants_1.CASTLE_HEIGHT; dy++) {
+                    var cy = castle_location.y + dy;
+                    map[cx][cy] = 'C';
+                }
             }
         }
     }
     for (var i = 0; i < raw_gold_mines.length; i++) {
         var raw_mine = raw_gold_mines[i];
         var mine_cache = raw_mine.ranger_bot;
-        for (var _j = 0, _k = Object.entries(mine_cache.viable_castle_locations); _j < _k.length; _j++) {
-            var _l = _k[_j], raw_x = _l[0], y_list = _l[1];
-            var x = Number(raw_x);
-            if (isNaN(x) || x < 0 || x > map_width) {
-                continue;
-            }
-            for (var raw_y in y_list) {
-                var y = Number(raw_y);
-                if (isNaN(y) || y < 0 || y > map_height) {
+        if (mine_cache.viable_castle_locations) {
+            for (var _o = 0, _p = Object.entries(mine_cache.viable_castle_locations); _o < _p.length; _o++) {
+                var _q = _p[_o], raw_x = _q[0], y_list = _q[1];
+                var x = Number(raw_x);
+                if (isNaN(x) || x < 0 || x > map_width) {
                     continue;
                 }
-                map[x][y] = 'V';
+                for (var raw_y in y_list) {
+                    var y = Number(raw_y);
+                    if (isNaN(y) || y < 0 || y > map_height) {
+                        continue;
+                    }
+                    map[x][y] = 'V';
+                }
             }
         }
     }
-    for (var i = 0; i < expansions.length; i++) {
-        var expansion = expansions[i];
-        for (var j = 0; j < expansion.castle_placements.length; j++) {
-            var castle_placement = expansion.castle_placements[j];
-            map[castle_placement.castle_location.x][castle_placement.castle_location.y] = 'E';
+    if (expansions) {
+        for (var i = 0; i < expansions.length; i++) {
+            var expansion = expansions[i];
+            for (var j = 0; j < expansion.castle_placements.length; j++) {
+                var castle_placement = expansion.castle_placements[j];
+                map[castle_placement.castle_location.x][castle_placement.castle_location.y] = 'E';
+            }
         }
     }
     for (var x = 0; x <= map_width; x++) {
@@ -2621,16 +2682,43 @@ function PrintExpansionData(expansions) {
             }
         }
     }
+    if (midpoints) {
+        for (var i = 0; i < midpoints.length; i++) {
+            var midpoint = midpoints[i];
+            var x = Math.round(midpoint.x);
+            var y = Math.round(midpoint.y);
+            map[x][y] = '+';
+        }
+    }
+    if (debug) {
+        for (var _r = 0, _s = Object.entries(debug); _r < _s.length; _r++) {
+            var _t = _s[_r], raw_x = _t[0], y_list = _t[1];
+            var x = Number(raw_x);
+            if (isNaN(x)) {
+                continue;
+            }
+            for (var raw_y in y_list) {
+                var y = Number(raw_y);
+                if (isNaN(y)) {
+                    continue;
+                }
+                if (!debug[x][y]) {
+                    continue;
+                }
+                map[x][y] = '?';
+            }
+        }
+    }
     var printable_map = '';
-    for (var _m = 0, _o = Object.entries(map); _m < _o.length; _m++) {
-        var _p = _o[_m], raw_x = _p[0], y_list = _p[1];
+    for (var _u = 0, _v = Object.entries(map); _u < _v.length; _u++) {
+        var _w = _v[_u], raw_x = _w[0], y_list = _w[1];
         var x = Number(raw_x);
         if (isNaN(x) || x < 0 || x > map_width) {
             continue;
         }
         printable_map += '\n';
-        for (var _q = 0, _r = Object.entries(y_list); _q < _r.length; _q++) {
-            var _s = _r[_q], raw_y = _s[0], char = _s[1];
+        for (var _x = 0, _y = Object.entries(y_list); _x < _y.length; _x++) {
+            var _z = _y[_x], raw_y = _z[0], char = _z[1];
             var y = Number(raw_y);
             if (isNaN(y) || y < 0 || y > map_height) {
                 continue;
