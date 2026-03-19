@@ -1,5 +1,7 @@
 import { GetNumberFieldValue } from './utils';
 
+export const DEBUG = true;
+
 export const SPEED_FACTOR: number = 20;
 export const WORKERS_PER_CASTLE: number = 12;
 export const MAX_WORKERS: number = 50;

@@ -5,15 +5,14 @@ import { ManageStates } from './manage_states';
 import { MacroBot } from './macro_bot';
 import { ArmyBot } from './army_bot';
 import { MicroUnits } from './micro_units';
+import { DEBUG } from './constants';
 
 interface RangerBotConstructor {
-  debug: boolean;
   team_cache_key: string;
   player_cache_key: string;
 }
 
 class RangerBot {
-  debug: boolean;
   team_cache_key: string;
   player_cache_key: string;
   game_time: number;
@@ -23,8 +22,7 @@ class RangerBot {
   macro_bot?: MacroBot;
   army_bot?: ArmyBot;
 
-  constructor({ debug, team_cache_key, player_cache_key }: RangerBotConstructor) {
-    this.debug = debug;
+  constructor({ team_cache_key, player_cache_key }: RangerBotConstructor) {
     this.team_cache_key = team_cache_key;
     this.player_cache_key = player_cache_key;
     this.game_time = scope.getCurrentGameTimeInSec();
@@ -32,7 +30,7 @@ class RangerBot {
   }
 
   Step(): void {
-    if (this.debug) {
+    if (DEBUG) {
       console.log('\nscope.getCurrentGameTimeInSec(): ' + this.game_time);
     }
 
@@ -43,7 +41,7 @@ class RangerBot {
       player_cache_key: this.player_cache_key,
     });
 
-    if (this.debug && !scope.ranger_bot.map_printed) {
+    if (DEBUG && !scope.ranger_bot.map_printed) {
       PrintExpansionData({ expansions: this.data_hub.map.expansions });
       scope.ranger_bot.map_printed = true;
     }
@@ -60,7 +58,7 @@ class RangerBot {
 
     this.Save();
 
-    if (this.debug) {
+    if (DEBUG) {
       const tick_sec: number = (Date.now() - this.begin_at) / 1000;
       console.log('\ntick_sec: ' + tick_sec);
     }

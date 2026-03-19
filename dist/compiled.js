@@ -15,17 +15,17 @@ var manage_states_1 = __webpack_require__(29);
 var macro_bot_1 = __webpack_require__(40);
 var army_bot_1 = __webpack_require__(60);
 var micro_units_1 = __webpack_require__(76);
+var constants_1 = __webpack_require__(15);
 var RangerBot = (function () {
     function RangerBot(_a) {
-        var debug = _a.debug, team_cache_key = _a.team_cache_key, player_cache_key = _a.player_cache_key;
-        this.debug = debug;
+        var team_cache_key = _a.team_cache_key, player_cache_key = _a.player_cache_key;
         this.team_cache_key = team_cache_key;
         this.player_cache_key = player_cache_key;
         this.game_time = scope.getCurrentGameTimeInSec();
         this.begin_at = Date.now();
     }
     RangerBot.prototype.Step = function () {
-        if (this.debug) {
+        if (constants_1.DEBUG) {
             console.log('\nscope.getCurrentGameTimeInSec(): ' + this.game_time);
         }
         (0, chatting_1.ChatGlhf)({ game_time: this.game_time });
@@ -33,7 +33,7 @@ var RangerBot = (function () {
             team_cache_key: this.team_cache_key,
             player_cache_key: this.player_cache_key,
         });
-        if (this.debug && !scope.ranger_bot.map_printed) {
+        if (constants_1.DEBUG && !scope.ranger_bot.map_printed) {
             (0, print_expansion_data_1.PrintExpansionData)({ expansions: this.data_hub.map.expansions });
             scope.ranger_bot.map_printed = true;
         }
@@ -44,7 +44,7 @@ var RangerBot = (function () {
         this.army_bot.Step();
         (0, micro_units_1.MicroUnits)({ data_hub: this.data_hub });
         this.Save();
-        if (this.debug) {
+        if (constants_1.DEBUG) {
             var tick_sec = (Date.now() - this.begin_at) / 1000;
             console.log('\ntick_sec: ' + tick_sec);
         }
@@ -1405,9 +1405,10 @@ function _OverlapsWorkerPaths(map_location, worker_paths) {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ARCHER_COST = exports.SNAKE_COST = exports.WOLF_COST = exports.WORKER_COST = exports.FORGE_COST = exports.ARMORY_COST = exports.BARRACKS_COST = exports.SNAKE_CHARMER_COST = exports.WOLF_DEN_COST = exports.HOUSE_COST = exports.CASTLE_COST = exports.TOWER_HEIGHT = exports.TOWER_WIDTH = exports.MINE_HEIGHT = exports.MINE_WIDTH = exports.CASTLE_HEIGHT = exports.CASTLE_WIDTH = exports.WORKER_DISRESPECT = exports.SCOUTS = exports.SCOUT_RADIUS = exports.PASSIVE_THREAT_FACTOR = exports.TARGET_RESET_THRESHOLD = exports.AGGRO_STOP_GAP = exports.AGGRO_START_GAP = exports.MINE_SCOUT_INTERVAL = exports.THREAT_DECAY = exports.CALM_DOWN_DISTANCE = exports.CONSCRIPTION_DISTANCE = exports.LAZY_ORDER_DISTANCE = exports.AGGRO_RETREAT_THRESHOLD = exports.AGGRO_ATTACK_THRESHOLD = exports.RETREAT_THRESHOLD = exports.ATTACK_THRESHOLD = exports.RETREAT_RADIUS = exports.ATTACK_RADIUS = exports.CONSCRIPTION_THREAT_RESPONSE = exports.MAX_THREAT_RESPONSE = exports.MIN_THREAT_RESPONSE = exports.BASE_TARGET_RADIUS = exports.MAX_BARRACKS = exports.MAX_FORGES = exports.REPLACEMENT_BASE_THRESHOLD = exports.GOLD_PER_MIN = exports.MAX_MINING_DISTANCE = exports.NEAR_MAX_SUPPLY = exports.BUILDING_SPACE_BUFFER = exports.PRE_QUEUE_BUFFER = exports.MAX_WORKERS = exports.WORKERS_PER_CASTLE = exports.SPEED_FACTOR = void 0;
-exports.WATCHTOWER_DETECTION_COST = exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.SNAKE_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.SNAKE_SUPPLY = exports.WOLF_SUPPLY = exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = exports.SOLDIER_COST = void 0;
+exports.SNAKE_COST = exports.WOLF_COST = exports.WORKER_COST = exports.FORGE_COST = exports.ARMORY_COST = exports.BARRACKS_COST = exports.SNAKE_CHARMER_COST = exports.WOLF_DEN_COST = exports.HOUSE_COST = exports.CASTLE_COST = exports.TOWER_HEIGHT = exports.TOWER_WIDTH = exports.MINE_HEIGHT = exports.MINE_WIDTH = exports.CASTLE_HEIGHT = exports.CASTLE_WIDTH = exports.WORKER_DISRESPECT = exports.SCOUTS = exports.SCOUT_RADIUS = exports.PASSIVE_THREAT_FACTOR = exports.TARGET_RESET_THRESHOLD = exports.AGGRO_STOP_GAP = exports.AGGRO_START_GAP = exports.MINE_SCOUT_INTERVAL = exports.THREAT_DECAY = exports.CALM_DOWN_DISTANCE = exports.CONSCRIPTION_DISTANCE = exports.LAZY_ORDER_DISTANCE = exports.AGGRO_RETREAT_THRESHOLD = exports.AGGRO_ATTACK_THRESHOLD = exports.RETREAT_THRESHOLD = exports.ATTACK_THRESHOLD = exports.RETREAT_RADIUS = exports.ATTACK_RADIUS = exports.CONSCRIPTION_THREAT_RESPONSE = exports.MAX_THREAT_RESPONSE = exports.MIN_THREAT_RESPONSE = exports.BASE_TARGET_RADIUS = exports.MAX_BARRACKS = exports.MAX_FORGES = exports.REPLACEMENT_BASE_THRESHOLD = exports.GOLD_PER_MIN = exports.MAX_MINING_DISTANCE = exports.NEAR_MAX_SUPPLY = exports.BUILDING_SPACE_BUFFER = exports.PRE_QUEUE_BUFFER = exports.MAX_WORKERS = exports.WORKERS_PER_CASTLE = exports.SPEED_FACTOR = exports.DEBUG = void 0;
+exports.WATCHTOWER_DETECTION_COST = exports.MAX_ARMOR_UPGRADE_LEVEL = exports.MAX_ATTACK_UPGRADE_LEVEL = exports.WORKER_SPEED = exports.SOLDIER_BUILD_TIME = exports.ARCHER_BUILD_TIME = exports.SNAKE_BUILD_TIME = exports.WOLF_BUILD_TIME = exports.WORKER_BUILD_TIME = exports.HOUSE_BUILD_TIME = exports.SOLDIER_SUPPLY = exports.ARCHER_SUPPLY = exports.SNAKE_SUPPLY = exports.WOLF_SUPPLY = exports.WORKER_SUPPLY = exports.ARCHER_RANGE_COST = exports.SOLDIER_COST = exports.ARCHER_COST = void 0;
 var utils_1 = __webpack_require__(10);
+exports.DEBUG = true;
 exports.SPEED_FACTOR = 20;
 exports.WORKERS_PER_CASTLE = 12;
 exports.MAX_WORKERS = 50;
@@ -7274,7 +7275,6 @@ try {
         scope.ranger_bot.team_caches[team_cache_key] = {};
     }
     var ranger_bot = new ranger_bot_1.RangerBot({
-        debug: true,
         player_cache_key: player_cache_key,
         team_cache_key: team_cache_key,
     });

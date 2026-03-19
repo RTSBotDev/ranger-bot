@@ -26,7 +26,6 @@ try {
   }
 
   const ranger_bot = new RangerBot({
-    debug: true,
     player_cache_key: player_cache_key,
     team_cache_key: team_cache_key,
   });
