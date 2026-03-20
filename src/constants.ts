@@ -1,6 +1,6 @@
 import { GetNumberFieldValue } from './utils';
 
-export const DEBUG = false;
+export const DEBUG = true;
 
 export const SPEED_FACTOR: number = 20;
 export const WORKERS_PER_CASTLE: number = 12;
